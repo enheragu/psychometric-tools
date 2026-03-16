@@ -1,0 +1,86 @@
+{
+  "global": {
+    "title": {
+      "en": "Support and Related Work",
+      "es": "Apoyo y Trabajos Relacionados"
+    },
+    "support": {
+      "intro": {
+        "en": "If this work was useful to you, consider giving a star to the {repo_link} or citing these works:",
+        "es": "Si este trabajo te ha resultado útil, considera dar una estrella al {repo_link} o citar estos trabajos:"
+      },
+      "repo": {
+        "url": "https://github.com/enheragu/stat-tools",
+        "link_text": {
+          "en": "GitHub repository",
+          "es": "repositorio de GitHub"
+        }
+      },
+      "doi_links": [],
+      "publication_keys": [
+        "heredia2026stattools_platform"
+      ]
+    },
+    "links": [],
+    "publication_keys": []
+  },
+  "categories": {
+    "psychometric-tools": {
+      "title": {
+        "en": "Psychometric tools: support and related work",
+        "es": "Herramientas psicométricas: apoyo y trabajos relacionados"
+      },
+      "support": {
+        "doi_links": [],
+        "publication_keys": [
+          "heredia2026psychometric_tools"
+        ]
+      },
+      "links": [],
+      "publication_keys": []
+    },
+    "ml-variance-analysis": {
+      "title": {
+        "en": "ML variance analysis: support and related work",
+        "es": "Análisis de varianza en ML: apoyo y trabajos relacionados"
+      },
+      "support": {
+        "doi_links": [],
+        "publication_keys": [
+          "heredia2026ml_variance_tools"
+        ]
+      },
+      "links": [],
+      "publication_keys": []
+    }
+  },
+  "tools": {
+    "Landing": {
+      "title": {
+        "en": "Citing and related work",
+        "es": "Citas y trabajos relacionados"
+      },
+      "links": [],
+      "publication_keys": []
+    },
+    "C-NRSBTool": {
+      "category_id": "psychometric-tools",
+      "title": {
+        "en": "Citing and related work",
+        "es": "Citas y trabajos relacionados"
+      },
+      "links": [],
+      "publication_keys": []
+    },
+    "DIF-AccumulationTool": {
+      "category_id": "psychometric-tools",
+      "title": {
+        "en": "Citing and related work",
+        "es": "Citas y trabajos relacionados"
+      },
+      "links": [],
+      "publication_keys": []
+    }
+  },
+  "publications": []
+}

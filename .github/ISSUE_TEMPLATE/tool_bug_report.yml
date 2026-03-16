@@ -1,0 +1,95 @@
+name: Tool bug report
+description: Report a bug in Stat Tools (landing or a specific tool)
+title: "[Tool] Short bug summary"
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Affected category
+      description: Select the family where the issue happens
+      options:
+        - Psychometric tools
+        - ML variance analysis
+        - Shared shell/navigation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Affected tool
+      description: Select where the issue happens
+      options:
+        - Landing
+        - C-NRSBTool
+        - DIF-AccumulationTool
+        - ML variance analysis (main page)
+        - Shared navigation/header/footer
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: page_url
+    attributes:
+      label: Page URL
+      description: Full URL where the problem appears
+      placeholder: https://enheragu.github.io/stat-tools/...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: UI language
+      options:
+        - English
+        - Español
+        - Both
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps, please
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. See error ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: What should happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser / OS
+      placeholder: e.g. Firefox 124 on Ubuntu 24.04
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Extra context (optional)
+      description: Screenshots, console errors, or any extra details

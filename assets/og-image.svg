@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Stat Tools social preview">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#58a6ff"/>
+      <stop offset="100%" stop-color="#2f81f7"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="60" y="70" width="1080" height="490" rx="24" fill="#0f141b" stroke="#30363d" stroke-width="2"/>
+
+  <rect x="95" y="115" width="1010" height="70" rx="14" fill="url(#accent)"/>
+  <text x="125" y="161" fill="#ffffff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="40" font-weight="700">Stat Tools</text>
+
+  <text x="95" y="250" fill="#c9d1d9" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="44" font-weight="600">Unified research tools landing</text>
+  <text x="95" y="302" fill="#8b949e" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30">C-NRSBTool · DIF-AccumulationTool</text>
+
+  <rect x="95" y="355" width="495" height="165" rx="16" fill="#111827" stroke="#30363d"/>
+  <rect x="610" y="355" width="495" height="165" rx="16" fill="#111827" stroke="#30363d"/>
+
+  <text x="125" y="420" fill="#58a6ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="32" font-weight="700">C-NRSBTool</text>
+  <text x="125" y="462" fill="#c9d1d9" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24">Country selection bias with HDI</text>
+
+  <text x="640" y="420" fill="#58a6ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="32" font-weight="700">DIF-AccumulationTool</text>
+  <text x="640" y="462" fill="#c9d1d9" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24">DIF accumulation simulator</text>
+</svg>

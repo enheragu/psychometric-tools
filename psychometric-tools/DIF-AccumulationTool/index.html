@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      var p = window.location.pathname;
+      if (p === '/stat-tools/psychometric-tools/DIF-AccumulationTool') {
+        window.location.replace('/stat-tools/psychometric-tools/DIF-AccumulationTool/' + window.location.search + window.location.hash);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('theme');
+      var dark = saved ? saved === 'dark' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (dark) document.documentElement.classList.add('dark');
+    })();
+  </script>
+  <title>DIF-AccumulationTool — Differential Item Functioning (DIF) Accumulation Simulator</title>
+  <meta name="description" content="Simulate how Differential Item Functioning (DIF) accumulates into total-score differences across groups in ordered polytomous tests (GRM).">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#58a6ff">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DIF-AccumulationTool">
+  <meta property="og:url" content="https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:title" content="DIF-AccumulationTool — Differential Item Functioning accumulation simulator">
+  <meta property="og:description" content="Simulate how Differential Item Functioning (DIF) accumulates into total-score differences across groups in ordered polytomous tests.">
+  <meta property="og:image" content="https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/assets/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="DIF-AccumulationTool preview image">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DIF-AccumulationTool — Differential Item Functioning accumulation simulator">
+  <meta name="twitter:description" content="Simulate how Differential Item Functioning (DIF) accumulates into total-score differences across groups in ordered polytomous tests.">
+  <meta name="twitter:image" content="https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/assets/og-image.png">
+
+  <link rel="canonical" href="https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="alternate" hreflang="x-default" href="https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/">
+  <link rel="alternate" hreflang="en" href="https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/?lang=en">
+  <link rel="alternate" hreflang="es" href="https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/?lang=es">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DIF-AccumulationTool",
+    "url": "https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/",
+    "applicationCategory": "ResearchApplication",
+    "operatingSystem": "Any",
+    "inLanguage": ["en", "es"],
+    "description": "Differential Item Functioning (DIF) accumulation simulator for ordered polytomous tests using GRM assumptions.",
+    "author": {
+      "@type": "Person",
+      "name": "Enrique Heredia-Aguado"
+    }
+  }
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-68Q3YFYBS9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-68Q3YFYBS9');
+  </script>
+
+  <link rel="stylesheet" href="/assets/shared/theme-tokens.css" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/theme-tokens.css';">
+  <link rel="stylesheet" href="/assets/shared/app-shell.css" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/app-shell.css';">
+  <link rel="stylesheet" href="/assets/shared/modal-primitives.css?v=20260316" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/modal-primitives.css?v=20260316';">
+  <link rel="stylesheet" href="/assets/shared/publication-ui.css?v=20260316" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/publication-ui.css?v=20260316';">
+  <link rel="stylesheet" href="/assets/shared/controls.css" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/controls.css';">
+  <link rel="stylesheet" href="/assets/shared/tools-nav.css" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/tools-nav.css';">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div>
+        <h1>DIF-AccumulationTool</h1>
+        <p class="subtitle">Differential Item Functioning (DIF) accumulation simulator for ordered polytomous tests</p>
+      </div>
+      <div class="header-controls">
+        <button id="btn-theme" class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme" aria-pressed="false">
+          <span class="theme-icon sun" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+              <path d="M12 4.75a.75.75 0 0 1 .75-.75h0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75h0a.75.75 0 0 1-.75-.75zm0 13a.75.75 0 0 1 .75-.75h0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75h0a.75.75 0 0 1-.75-.75zM5.97 6.78a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 1 1-1.06 1.06L5.97 7.84a.75.75 0 0 1 0-1.06zm9.9 9.9a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 1 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06zM4.75 12a.75.75 0 0 1 .75-.75H7a.75.75 0 0 1 0 1.5H5.5a.75.75 0 0 1-.75-.75zm13.5 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5H19a.75.75 0 0 1-.75-.75zM6.78 18.03a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0zm9.9-9.9a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 0 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0z"></path>
+              <circle cx="12" cy="12" r="3.75"></circle>
+            </svg>
+          </span>
+          <span class="theme-track" aria-hidden="true">
+            <span class="theme-thumb"></span>
+          </span>
+          <span class="theme-icon moon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+              <path d="M14.5 3.5a.75.75 0 0 1 .92-.73 8.75 8.75 0 1 1-10.65 10.65.75.75 0 0 1 .73-.92A7.25 7.25 0 0 0 14.5 3.5z"></path>
+            </svg>
+          </span>
+        </button>
+        <div class="lang-switcher" role="group" aria-label="Language selector">
+          <button id="btn-en" class="lang-btn active" type="button"><span class="flag-icon flag-gb" aria-hidden="true"></span><span>EN</span></button>
+          <button id="btn-es" class="lang-btn" type="button"><span class="flag-icon flag-es" aria-hidden="true"></span><span>ES</span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="content-shell">
+    <section class="intro-panel">
+      <h2 id="intro-title">About this tool</h2>
+      <p id="intro-text">This simulator shows how small Differential Item Functioning (DIF) effects at the item level can accumulate into systematic total-score differences between groups in graded response model (GRM) tests.</p>
+    </section>
+
+    <main>
+      <section class="panel panel-controls">
+        <div class="panel-header">
+          <h2 id="cfg-title">Test setup</h2>
+        </div>
+
+        <div class="panel-block grid-2">
+          <div>
+            <label for="num-items" id="lbl-items">Number of items</label>
+            <div class="stepper">
+              <button class="btn-stepper" data-step-target="num-items" data-step="-1" type="button">−</button>
+              <input id="num-items" type="number" min="1" max="80" value="8">
+              <button class="btn-stepper" data-step-target="num-items" data-step="1" type="button">+</button>
+            </div>
+          </div>
+          <div>
+            <label for="num-cats" id="lbl-cats">Response categories</label>
+            <div class="stepper">
+              <button class="btn-stepper" data-step-target="num-cats" data-step="-1" type="button">−</button>
+              <input id="num-cats" type="number" min="2" max="8" value="5">
+              <button class="btn-stepper" data-step-target="num-cats" data-step="1" type="button">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-block grid-2">
+          <div>
+            <label for="n-group-a" id="lbl-group-a">Group A sample size</label>
+            <input id="n-group-a" type="number" min="100" max="50000" value="2000">
+          </div>
+          <div>
+            <label for="n-group-b" id="lbl-group-b">Group B sample size</label>
+            <input id="n-group-b" type="number" min="100" max="50000" value="2000">
+          </div>
+        </div>
+
+        <div class="panel-block preset-block">
+          <span class="preset-label section-label" id="lbl-preset">Load example</span>
+          <div class="preset-btns">
+            <button id="btn-preset-nodif" class="btn-ghost" type="button">No DIF</button>
+            <button id="btn-preset-dif" class="btn-ghost" type="button">Uniform DIF</button>
+          </div>
+        </div>
+
+        <div class="panel-block bulk-block">
+          <details id="bulk-details">
+            <summary><span class="preset-label section-label" id="lbl-bulk">Bulk item input</span></summary>
+            <textarea id="bulk-input" rows="7">1;A;1.20;-1.0,-0.2,0.8,1.6
+1;B;1.05;-0.4,0.4,1.2,2.0
+2;A;1.45;-1.3,-0.4,0.5,1.4
+2;B;1.20;-0.6,0.2,1.0,1.9</textarea>
+            <div class="preset-btns bulk-actions">
+              <button id="btn-apply-bulk" class="btn-primary" type="button">Apply bulk input</button>
+            </div>
+            <p class="hint" id="bulk-status"></p>
+            <ul id="bulk-errors" class="bulk-errors hidden"></ul>
+          </details>
+        </div>
+
+        <div class="panel-block controls-row">
+          <button id="btn-simulate" class="btn-primary" type="button">Run base simulation</button>
+          <div class="preset-btns export-row">
+            <button id="btn-export-csv" class="btn-secondary btn-export" type="button">Export CSV</button>
+            <button id="btn-export-json" class="btn-secondary btn-export" type="button">Export JSON</button>
+          </div>
+        </div>
+
+        <div class="panel-block sim-method">
+          <h3 id="method-title">How the simulation works</h3>
+          <p id="method-text"></p>
+        </div>
+      </section>
+
+      <section class="panel panel-sim-output hidden" id="sim-results">
+        <div class="panel-header sim-output-header">
+          <div>
+            <h2 id="sim-output-title">Simulation output</h2>
+          </div>
+        </div>
+        <div class="sim-results-body">
+          <div class="sim-badges" id="sim-summary"></div>
+          <div class="sim-actions-row hidden" id="sim-actions-row">
+            <div class="sim-fit-row">
+              <span id="lbl-sim-fit">Overlay model</span>
+              <strong id="sim-fit-model-text">Normal-ogive</strong>
+            </div>
+          </div>
+          <div class="sim-hist-block hidden" id="sim-hist-block">
+            <div class="sim-hist-head" id="sim-hist-head">
+              <span id="sim-hist-title">Score distribution</span>
+              <span id="sim-hist-expand">Click to expand</span>
+            </div>
+            <canvas id="sim-hist-canvas"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-items">
+        <div class="panel-header">
+          <h2 id="items-title">Item parameters (GRM)</h2>
+          <div class="view-toggle" role="group" aria-label="Curve view mode">
+            <button id="btn-view-category" class="btn-ghost active" type="button">Category</button>
+            <button id="btn-view-cumulative" class="btn-ghost" type="button">Cumulative</button>
+          </div>
+        </div>
+        <div id="item-forms" class="item-forms"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="chart-modal-overlay" class="chart-modal-overlay hidden">
+    <div class="chart-modal" role="dialog" aria-modal="true" aria-labelledby="chart-modal-title">
+      <div class="chart-modal-head">
+        <h3 id="chart-modal-title">Item chart</h3>
+        <div class="chart-modal-actions">
+          <div class="view-toggle" role="group" aria-label="Modal curve view mode">
+            <button id="btn-modal-view-category" class="btn-ghost active" type="button">Category</button>
+            <button id="btn-modal-view-cumulative" class="btn-ghost" type="button">Cumulative</button>
+          </div>
+          <button id="btn-close-modal" class="btn-outline btn-chart-close" type="button">Close</button>
+        </div>
+      </div>
+      <canvas id="chart-modal-canvas"></canvas>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <section id="related-work-root" class="related-work-root"></section>
+    <div class="footer-credits">
+      <p id="footer-idea-credit">Idea by: <a href="https://fantasmamecanico.wordpress.com/" target="_blank" rel="noopener noreferrer">Alejandro Rujano</a></p>
+      <p id="footer-app-updated">Author: <a href="https://enheragu.github.io/" target="_blank" rel="noopener noreferrer">Enrique Heredia-Aguado</a></p>
+    </div>
+    <p class="footer-report-row"><a id="footer-report-problem" href="https://github.com/enheragu/stat-tools/issues/new?template=tool_bug_report.yml&title=%5BDIF-AccumulationTool%5D%20" target="_blank" rel="noopener noreferrer">Report problem</a></p>
+  </footer>
+
+  <script src="/assets/shared/chart-interactions.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/chart-interactions.js';"></script>
+  <script src="/assets/shared/publication-ui.js?v=20260316" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/publication-ui.js?v=20260316';"></script>
+  <script src="/assets/shared/related-work.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/related-work.js';"></script>
+  <script>
+    window.ToolsNavConfig = {
+      showBackButton: true,
+      homePath: '/stat-tools/',
+      currentPath: '/stat-tools/psychometric-tools/DIF-AccumulationTool/',
+      preserveLangParam: true,
+      backLabel: { en: 'Back to landing', es: 'Volver al inicio' },
+      menuSections: [
+        {
+          items: [
+            { href: '/stat-tools/', label: { en: 'Main page', es: 'Página principal' } }
+          ]
+        },
+        {
+          title: { en: 'Psychometric tools', es: 'Herramientas psicométricas' },
+          items: [
+            { href: '/stat-tools/psychometric-tools/C-NRSBTool/', label: 'C-NRSBTool' },
+            { href: '/stat-tools/psychometric-tools/DIF-AccumulationTool/', label: 'DIF-AccumulationTool' }
+          ]
+        },
+        {
+          title: { en: 'ML variance analysis', es: 'Análisis de varianza ML' },
+          items: [
+            { href: '/stat-tools/ml-variance-analysis/', label: { en: 'Main page', es: 'Página principal' } }
+          ]
+        }
+      ]
+    };
+  </script>
+  <script src="/assets/shared/shared-footer.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/shared-footer.js';"></script>
+  <script src="/assets/shared/tools-nav.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/tools-nav.js';"></script>
+  <script src="/assets/shared/ui-core.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/ui-core.js';"></script>
+  <script src="/assets/shared/i18n-core.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/i18n-core.js';"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
