@@ -148,7 +148,7 @@
       toolId: 'Landing',
       lang: state.lang,
       sourceUrl: '/psychometric-tools/assets/related-work.json',
-      publicationsSourceUrl: 'https://enheragu.github.io/publications-data.json',
+      publicationsSourceUrl: window.PUBLICATIONS_SOURCE_URL || 'https://enheragu.github.io/publications-data.json',
     });
     var hasContent = root.children.length > 0 || root.textContent.trim().length > 0;
     root.classList.toggle('hidden', !hasContent);

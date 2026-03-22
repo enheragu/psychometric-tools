@@ -76,7 +76,7 @@ const App = (() => {
       relatedWork: {
         toolId: 'DIF-AccumulationTool',
         sourceUrl: '/psychometric-tools/assets/related-work.json',
-        publicationsSourceUrl: 'https://enheragu.github.io/publications-data.json',
+        publicationsSourceUrl: window.PUBLICATIONS_SOURCE_URL || 'https://enheragu.github.io/publications-data.json',
       },
       onApplyLanguage: (_copy, lang) => {
         state.lang = lang;

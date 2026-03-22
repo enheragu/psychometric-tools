@@ -45,7 +45,7 @@ const App = (() => {
       relatedWork: {
         toolId: 'C-NRSBTool',
         sourceUrl: '/psychometric-tools/assets/related-work.json',
-        publicationsSourceUrl: 'https://enheragu.github.io/publications-data.json',
+        publicationsSourceUrl: window.PUBLICATIONS_SOURCE_URL || 'https://enheragu.github.io/publications-data.json',
       },
       onApplyLanguage: (_copy, _lang) => {
         if (typeof I18n.applyToDOM === 'function') I18n.applyToDOM();
