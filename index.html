@@ -1,139 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    (function () {
-      var saved = localStorage.getItem('theme');
-      var dark = saved ? saved === 'dark' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      if (dark) document.documentElement.classList.add('dark');
-    })();
-  </script>
-  <title>Stat Tools — Research tools landing</title>
-  <meta name="description" content="Unified landing page for psychometric tools and machine-learning variance analysis tools.">
-  <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#58a6ff">
-
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Stat Tools">
-  <meta property="og:url" content="https://enheragu.github.io/stat-tools/">
-  <meta property="og:title" content="Stat Tools — Research tools landing">
-  <meta property="og:description" content="Unified access to psychometric tools and ML variance analysis sections.">
-  <meta property="og:image" content="https://enheragu.github.io/stat-tools/assets/og-image.svg">
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Stat Tools — Research tools landing">
-  <meta name="twitter:description" content="Unified access to psychometric tools and ML variance analysis sections.">
-  <meta name="twitter:image" content="https://enheragu.github.io/stat-tools/assets/og-image.svg">
-
-  <link rel="canonical" href="https://enheragu.github.io/stat-tools/">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-
-  <link rel="stylesheet" href="/assets/shared/theme-tokens.css" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/theme-tokens.css';">
-  <link rel="stylesheet" href="/assets/shared/app-shell.css" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/app-shell.css';">
-  <link rel="stylesheet" href="/assets/shared/modal-primitives.css?v=20260316" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/modal-primitives.css?v=20260316';">
-  <link rel="stylesheet" href="/assets/shared/publication-ui.css?v=20260316" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/publication-ui.css?v=20260316';">
-  <link rel="stylesheet" href="/assets/shared/controls.css" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/controls.css';">
-  <link rel="stylesheet" href="/assets/shared/tools-nav.css" onerror="this.onerror=null;this.href='https://enheragu.github.io/assets/shared/tools-nav.css';">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <header>
-    <div class="header-inner">
-      <div>
-        <h1 id="site-title">Stat Tools</h1>
-        <p id="site-subtitle" class="subtitle">Unified landing for research-focused statistical web tools</p>
-      </div>
-      <div class="header-controls">
-        <button id="btn-theme" class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme" aria-pressed="false">
-          <span class="theme-icon sun" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-              <path d="M12 4.75a.75.75 0 0 1 .75-.75h0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75h0a.75.75 0 0 1-.75-.75zm0 13a.75.75 0 0 1 .75-.75h0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75h0a.75.75 0 0 1-.75-.75zM5.97 6.78a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 1 1-1.06 1.06L5.97 7.84a.75.75 0 0 1 0-1.06zm9.9 9.9a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 1 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06zM4.75 12a.75.75 0 0 1 .75-.75H7a.75.75 0 0 1 0 1.5H5.5a.75.75 0 0 1-.75-.75zm13.5 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5H19a.75.75 0 0 1-.75-.75zM6.78 18.03a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0zm9.9-9.9a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 0 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0z"></path>
-              <circle cx="12" cy="12" r="3.75"></circle>
-            </svg>
-          </span>
-          <span class="theme-track" aria-hidden="true"><span class="theme-thumb"></span></span>
-          <span class="theme-icon moon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-              <path d="M14.5 3.5a.75.75 0 0 1 .92-.73 8.75 8.75 0 1 1-10.65 10.65.75.75 0 0 1 .73-.92A7.25 7.25 0 0 0 14.5 3.5z"></path>
-            </svg>
-          </span>
-        </button>
-        <div class="lang-switcher" role="group" aria-label="Language selector" id="lang-switcher">
-          <button id="btn-en" class="lang-btn active" type="button"><span class="flag-icon flag-gb" aria-hidden="true"></span><span>EN</span></button>
-          <button id="btn-es" class="lang-btn" type="button"><span class="flag-icon flag-es" aria-hidden="true"></span><span>ES</span></button>
-        </div>
-      </div>
-    </div>
-  </header>
-
+---
+layout: tool_document
+redirect_path: /psychometric-tools
+meta_title: Psychometric Tools — Research tools landing
+meta_description: Landing page for psychometric research tools.
+og_title: Psychometric Tools — Research tools landing
+header_title: Psychometric Tools
+header_subtitle: Psychometric tools for research and analysis
+intro_title: Psychometric Tools
+intro_text: Choose one tool to continue. This landing centralizes access to psychometric research tools.
+footer_report_tool_title: Landing
+footer_credits_html: |
+  <p>Idea by: <a href="https://fantasmamecanico.wordpress.com/" target="_blank" rel="noopener noreferrer">Alejandro Rujano</a></p>
+  <p>Author: <a href="https://enheragu.github.io/" target="_blank" rel="noopener noreferrer">Enrique Heredia-Aguado</a></p>
+shared_scripts_show_back_button: false
+custom_css:
+  - css/style.css
+custom_js:
+  - /tool-pages-theme/assets/shared/tool-shell/landing-page-core.js
+  - js/i18n.js
+  - js/app.js
+---
+<!--THEME_BODY-->
   <div class="content-shell">
-    <section class="intro-panel">
-      <h2 id="intro-title">One place for your statistical web tools</h2>
-      <p id="intro-text">Choose one tool to continue. This landing centralizes access and keeps a consistent experience across pages.</p>
-    </section>
 
     <main>
-      <section id="psychometric-tools" class="panel tools-panel">
-        <div class="panel-header">
-          <h2 id="tools-title">Psychometric tools</h2>
-        </div>
+      <section id="psychometric-tools" class="tools-section tools-panel">
         <div id="tools-grid" class="tools-grid"></div>
       </section>
-
-      <section id="ml-variance-analysis" class="panel tools-panel">
-        <div class="panel-header">
-          <h2 id="ml-tools-title">ML variance analysis</h2>
-        </div>
-        <div id="ml-tools-grid" class="tools-grid"></div>
-      </section>
     </main>
-
-    <section id="related-work-root" class="related-work-root related-work-root-contextual"></section>
   </div>
-
-  <footer class="site-footer">
-    <div class="footer-credits">
-      <p>Author: <a href="https://enheragu.github.io/" target="_blank" rel="noopener noreferrer">Enrique Heredia-Aguado</a></p>
-    </div>
-    <p class="footer-report-row"><a id="footer-report-problem" href="https://github.com/enheragu/stat-tools/issues/new?template=tool_bug_report.yml&title=%5BLanding%5D%20" target="_blank" rel="noopener noreferrer">Report problem</a></p>
-  </footer>
-
-  <script>
-    window.ToolsNavConfig = {
-      showBackButton: false,
-      currentPath: '/stat-tools/',
-      preserveLangParam: true,
-      menuSections: [
-        {
-          items: [
-            { href: '/stat-tools/', label: { en: 'Main page', es: 'Página principal' } }
-          ]
-        },
-        {
-          title: { en: 'Psychometric tools', es: 'Herramientas psicométricas' },
-          items: [
-            { href: '/stat-tools/psychometric-tools/C-NRSBTool/', label: 'C-NRSBTool' },
-            { href: '/stat-tools/psychometric-tools/DIF-AccumulationTool/', label: 'DIF-AccumulationTool' }
-          ]
-        },
-        {
-          title: { en: 'ML variance analysis', es: 'Análisis de varianza ML' },
-          items: [
-            { href: '/stat-tools/ml-variance-analysis/', label: { en: 'Main page', es: 'Página principal' } }
-          ]
-        }
-      ]
-    };
-  </script>
-  <script src="/assets/shared/shared-footer.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/shared-footer.js';"></script>
-  <script src="/assets/shared/tools-nav.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/tools-nav.js';"></script>
-  <script src="/assets/shared/ui-core.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/ui-core.js';"></script>
-  <script src="/assets/shared/i18n-core.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/i18n-core.js';"></script>
-  <script src="/assets/shared/publication-ui.js?v=20260316" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/publication-ui.js?v=20260316';"></script>
-  <script src="/assets/shared/related-work.js" onerror="this.onerror=null;this.src='https://enheragu.github.io/assets/shared/related-work.js';"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/app.js"></script>
-</body>
-</html>

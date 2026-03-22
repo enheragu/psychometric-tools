@@ -1,5 +1,5 @@
 name: Tool bug report
-description: Report a bug in Stat Tools (landing or a specific tool)
+description: Report a bug in Psychometric Tools (landing or a specific tool)
 title: "[Tool] Short bug summary"
 labels:
   - bug
@@ -37,7 +37,7 @@ body:
     attributes:
       label: Page URL
       description: Full URL where the problem appears
-      placeholder: https://enheragu.github.io/stat-tools/...
+      placeholder: https://enheragu.github.io/psychometric-tools/...
     validations:
       required: true
 

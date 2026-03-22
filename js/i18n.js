@@ -3,8 +3,8 @@
 
   var translations = {
     en: {
-      pageTitle: 'Stat Tools — Research tools landing',
-      siteTitle: 'Stat Tools',
+      pageTitle: 'Psychometric Tools — Research tools landing',
+      siteTitle: 'Psychometric Tools',
       subtitle: 'A practical hub for statistical tools used in applied research',
       introTitle: 'Just pick one of your liking and get started',
       introText: 'Each tool here targets a concrete methodological question. The goal is simple: make solid statistical reasoning easier to apply, explain, and share. Hope you enjoy! :)',
@@ -21,15 +21,23 @@
           title: 'DIF-AccumulationTool',
           desc: 'Explore how small item-level DIF effects can accumulate into meaningful group differences in total test scores.'
         },
-        mlVariance: {
-          title: 'ML variance analysis',
-          desc: 'Open the machine-learning variance analysis category and access tools focused on variance diagnostics and model comparison.'
+        replicationComparison: {
+          title: 'Replication and Comparison',
+          desc: 'Compare repeated-run metric distributions, inspect fitted normals, and estimate rank inversion probabilities under single-run sampling.'
+        },
+        ablationTests: {
+          title: 'Ablation Tests',
+          desc: 'Evaluate which model components really matter under repeated runs, controlling for variance and ranking instability.'
+        },
+        standardizingComparisons: {
+          title: 'Standardizing Comparisons',
+          desc: 'Define consistent comparison protocols so model rankings are fair, reproducible, and less sensitive to variance artifacts.'
         }
       }
     },
     es: {
-      pageTitle: 'Stat Tools — Portal de herramientas de investigación',
-      siteTitle: 'Stat Tools',
+      pageTitle: 'Psychometric Tools — Portal de herramientas de investigación',
+      siteTitle: 'Psychometric Tools',
       subtitle: 'Un hub práctico de herramientas estadísticas para investigación aplicada',
       introTitle: 'Elige la que más te encaje y juega con ella',
       introText: 'Cada herramienta responde a una pregunta metodológica concreta. La idea es simple: hacer que el razonamiento estadístico sólido sea más fácil de aplicar, explicar y compartir. ¡Espero que te guste! :)',
@@ -46,9 +54,17 @@
           title: 'DIF-AccumulationTool',
           desc: 'Explora cómo pequeños efectos DIF por ítem pueden acumularse y acabar generando diferencias relevantes de puntuación total entre grupos.'
         },
-        mlVariance: {
-          title: 'Análisis de varianza en ML',
-          desc: 'Abre la categoría de análisis de varianza en machine learning y accede a herramientas centradas en diagnóstico de varianza y comparación de modelos.'
+        replicationComparison: {
+          title: 'Replication and Comparison',
+          desc: 'Compara distribuciones de métricas en repeticiones, inspecciona normales ajustadas y estima probabilidades de inversión de ranking en una sola corrida.'
+        },
+        ablationTests: {
+          title: 'Ablation Tests',
+          desc: 'Evalúa qué componentes del modelo aportan realmente bajo ejecuciones repetidas, controlando varianza e inestabilidad de ranking.'
+        },
+        standardizingComparisons: {
+          title: 'Standardizing Comparisons',
+          desc: 'Define protocolos de comparación consistentes para que los rankings sean más justos, reproducibles y menos sensibles a artefactos de varianza.'
         }
       }
     }

@@ -1,0 +1,177 @@
+---
+layout: tool_document
+redirect_path: /psychometric-tools/DIF-AccumulationTool
+tool_name: DIF-AccumulationTool
+meta_title: DIF-AccumulationTool - Differential Item Functioning (DIF) Accumulation Simulator
+meta_description: Simulate how Differential Item Functioning (DIF) accumulates into total-score differences across groups in ordered polytomous tests (GRM).
+og_title: DIF-AccumulationTool - Differential Item Functioning accumulation simulator
+webapp_name: DIF-AccumulationTool
+webapp_description: Differential Item Functioning (DIF) accumulation simulator for ordered polytomous tests using GRM assumptions.
+header_title: DIF-AccumulationTool
+header_subtitle: Differential Item Functioning (DIF) accumulation simulator for ordered polytomous tests
+intro_title: About this tool
+intro_text: This simulator shows how small Differential Item Functioning (DIF) effects at the item level can accumulate into systematic total-score differences between groups in graded response model (GRM) tests.
+footer_report_enabled: true
+footer_report_label: Report problem
+footer_credits_html: |
+  <p id="footer-idea-credit">Idea by: <a href="https://fantasmamecanico.wordpress.com/" target="_blank" rel="noopener noreferrer">Alejandro Rujano</a></p>
+  <p id="footer-app-updated">Author: <a href="https://enheragu.github.io/" target="_blank" rel="noopener noreferrer">Enrique Heredia-Aguado</a></p>
+custom_css:
+  - css/style.css
+head_js:
+  - https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js
+  - https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js
+custom_js:
+  - /tool-pages-theme/assets/shared/histogram-normal-chart.js
+  - /tool-pages-theme/assets/shared/chart-legend.js
+  - js/i18n.js
+  - js/app.js
+---
+<!--THEME_BODY-->
+  <div class="content-shell">
+    <main>
+      {% capture controls_panel_body %}
+        <div class="panel-block grid-2">
+          <div>
+            <label for="num-items" id="lbl-items">Number of items</label>
+            <div class="stepper">
+              <button class="btn-stepper" data-step-target="num-items" data-step="-1" type="button">−</button>
+              <input id="num-items" type="number" min="1" max="80" value="8">
+              <button class="btn-stepper" data-step-target="num-items" data-step="1" type="button">+</button>
+            </div>
+          </div>
+          <div>
+            <label for="num-cats" id="lbl-cats">Response categories</label>
+            <div class="stepper">
+              <button class="btn-stepper" data-step-target="num-cats" data-step="-1" type="button">−</button>
+              <input id="num-cats" type="number" min="2" max="8" value="5">
+              <button class="btn-stepper" data-step-target="num-cats" data-step="1" type="button">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-block grid-2">
+          <div>
+            <label for="n-group-a" id="lbl-group-a">Group A sample size</label>
+            <input id="n-group-a" type="number" min="100" max="50000" value="2000">
+          </div>
+          <div>
+            <label for="n-group-b" id="lbl-group-b">Group B sample size</label>
+            <input id="n-group-b" type="number" min="100" max="50000" value="2000">
+          </div>
+        </div>
+
+        <div class="panel-block preset-block">
+          <span class="preset-label section-label" id="lbl-preset">Load example</span>
+          <div class="preset-btns shared-btn-group shared-btn-group--2">
+            <button id="btn-preset-nodif" class="btn-ghost btn-sm" type="button">No DIF</button>
+            <button id="btn-preset-dif" class="btn-ghost btn-sm" type="button">Uniform DIF</button>
+          </div>
+        </div>
+
+        <div class="panel-block bulk-block">
+          <details id="bulk-details">
+            <summary><span class="preset-label section-label" id="lbl-bulk">Bulk item input</span></summary>
+            <textarea id="bulk-input" rows="7">1;A;1.20;-1.0,-0.2,0.8,1.6
+1;B;1.05;-0.4,0.4,1.2,2.0
+2;A;1.45;-1.3,-0.4,0.5,1.4
+2;B;1.20;-0.6,0.2,1.0,1.9</textarea>
+            <div class="preset-btns bulk-actions">
+              <button id="btn-apply-bulk" class="btn-primary" type="button">Apply bulk input</button>
+            </div>
+            <p class="hint shared-status-hint" id="bulk-status"></p>
+            <ul id="bulk-errors" class="bulk-errors hidden"></ul>
+          </details>
+        </div>
+
+        <div class="panel-block controls-row">
+          <button id="btn-simulate" class="btn-primary btn-block" type="button">Run base simulation</button>
+          <div class="preset-btns export-row">
+            <button id="btn-export-csv" class="btn-secondary btn-export" type="button">Export CSV</button>
+            <button id="btn-export-json" class="btn-secondary btn-export" type="button">Export JSON</button>
+          </div>
+        </div>
+
+        {% capture sim_method_body %}
+          <p id="method-text"></p>
+        {% endcapture %}
+        {% include widgets/widget_content_box.html
+          tag='div'
+          panel_class='panel-block sim-method'
+          title='How the simulation works'
+          title_id='method-title'
+          title_tone='subtle'
+          body=sim_method_body
+        %}
+      {% endcapture %}
+      {% include widgets/widget_content_box.html
+        tag='section'
+        panel_class='panel panel-controls'
+        title='Test setup'
+        title_id='cfg-title'
+        title_tone='primary'
+        body=controls_panel_body
+      %}
+
+      {% capture sim_output_body %}
+        <div class="sim-results-body">
+          <div class="sim-badges" id="sim-summary"></div>
+          <div class="sim-hist-block hidden" id="sim-hist-block">
+            {% include widgets/widget_plot_card.html
+              id_key='hist'
+              tag='div'
+              card_class='sim-hist-card'
+              title='Score distribution'
+            %}
+          </div>
+        </div>
+      {% endcapture %}
+      {% include widgets/widget_content_box.html
+        panel_id='sim-results'
+        tag='section'
+        panel_class='panel panel-sim-output hidden'
+        title='Simulation output'
+        title_id='sim-output-title'
+        title_tone='primary'
+        header_class='panel-header sim-output-header'
+        body=sim_output_body
+      %}
+
+      {% capture item_params_toggle %}
+        <div class="view-toggle" role="group" aria-label="Curve view mode">
+          <button id="btn-view-category" class="btn-ghost active" type="button">Category</button>
+          <button id="btn-view-cumulative" class="btn-ghost" type="button">Cumulative</button>
+        </div>
+      {% endcapture %}
+      {% capture item_params_body %}
+        <div id="item-forms" class="item-forms"></div>
+      {% endcapture %}
+      {% include widgets/widget_content_box.html
+        tag='section'
+        panel_class='panel panel-items'
+        title='Item parameters (GRM)'
+        title_id='items-title'
+        title_tone='primary'
+        header_class='panel-header'
+        header_extra=item_params_toggle
+        body=item_params_body
+      %}
+    </main>
+  </div>
+
+  <div id="chart-modal-overlay" class="chart-modal-overlay hidden">
+    <div class="chart-modal" role="dialog" aria-modal="true" aria-labelledby="chart-modal-title">
+      <div class="chart-modal-head">
+        <h3 id="chart-modal-title" class="shared-plot-modal-title">Item chart</h3>
+        <div class="chart-modal-actions">
+          <div class="view-toggle" role="group" aria-label="Modal curve view mode">
+            <button id="btn-modal-view-category" class="btn-ghost active" type="button">Category</button>
+            <button id="btn-modal-view-cumulative" class="btn-ghost" type="button">Cumulative</button>
+          </div>
+          <button id="btn-close-modal" class="btn-outline btn-chart-close" type="button">Close</button>
+        </div>
+      </div>
+      <canvas id="chart-modal-canvas"></canvas>
+    </div>
+  </div>
+

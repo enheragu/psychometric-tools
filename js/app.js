@@ -1,30 +1,32 @@
 (function () {
   var state = {
     lang: 'en',
-    theme: window.SharedUiCore ? window.SharedUiCore.getPreferredTheme() : (localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+    theme: window.SharedUiCore ? window.SharedUiCore.getPreferredTheme() : (localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')),
+    tools: []
   };
 
   var tools = [
     {
       key: 'cNRSB',
       section: 'psychometric-tools',
-      href: '/stat-tools/psychometric-tools/C-NRSBTool/',
-      imageDark: '/stat-tools/psychometric-tools/C-NRSBTool/assets/og-image.svg',
-      imageLight: '/stat-tools/psychometric-tools/C-NRSBTool/assets/og-image-light.svg'
+      href: '/psychometric-tools/C-NRSBTool/',
+      imageDark: '/psychometric-tools/C-NRSBTool/assets/og-image.svg',
+      imageLight: '/psychometric-tools/C-NRSBTool/assets/og-image-light.svg'
     },
     {
       key: 'dif',
       section: 'psychometric-tools',
-      href: '/stat-tools/psychometric-tools/DIF-AccumulationTool/',
-      imageDark: '/stat-tools/psychometric-tools/DIF-AccumulationTool/assets/og-image.svg',
-      imageLight: '/stat-tools/psychometric-tools/DIF-AccumulationTool/assets/og-image-light.svg'
-    },
+      href: '/psychometric-tools/DIF-AccumulationTool/',
+      imageDark: '/psychometric-tools/DIF-AccumulationTool/assets/og-image.svg',
+      imageLight: '/psychometric-tools/DIF-AccumulationTool/assets/og-image-light.svg'
+    }
+  ];
+
+  var LANDING_SECTIONS = [
     {
-      key: 'mlVariance',
-      section: 'ml-variance-analysis',
-      href: '/stat-tools/ml-variance-analysis/',
-      imageDark: '/stat-tools/assets/og-image.svg',
-      imageLight: '/stat-tools/assets/og-image.svg'
+      sectionId: 'psychometric-tools',
+      gridId: 'tools-grid',
+      catalogUrl: '/psychometric-tools/tools-catalog.json',
     }
   ];
 
@@ -55,7 +57,7 @@
     state.theme = window.SharedUiCore ? window.SharedUiCore.toggleThemeValue(state.theme) : (state.theme === 'dark' ? 'light' : 'dark');
     localStorage.setItem('theme', state.theme);
     var button = document.getElementById('btn-theme');
-    if (window.SharedUiCore && button) window.SharedUiCore.animateThemeButton(button, 280);
+    if (window.SharedUiCore && button) window.SharedUiCore.animateThemeButton(button, 420);
     applyTheme();
   }
 
@@ -72,11 +74,16 @@
       var i18nCopy = window.StatToolsLandingI18n ? window.StatToolsLandingI18n.getCopy(state.lang) : null;
       var content = i18nCopy ? i18nCopy.cards[tool.key] : { title: tool.key, desc: '' };
       var coverImage = state.theme === 'dark' ? tool.imageDark : (tool.imageLight || tool.imageDark);
+      var statusBadge = '';
+      if (tool.status === 'wip') {
+        statusBadge = '<span class="tool-status-badge">WIP</span>';
+      }
+
       return [
         '<a class="tool-card" href="' + withLang(tool.href) + '">',
-        '<img class="tool-cover" src="' + coverImage + '" alt="' + content.title + ' preview" onerror="this.onerror=null;this.src=\'/stat-tools/assets/og-image.svg\';">',
+        '<img class="tool-cover" src="' + coverImage + '" alt="' + content.title + ' preview" onerror="this.onerror=null;this.src=\'/psychometric-tools/assets/og-image.png\';">',
         '<div class="tool-content">',
-        '<h3 class="tool-title">' + content.title + '</h3>',
+        '<h3 class="tool-title">' + content.title + statusBadge + '</h3>',
         '<p class="tool-desc">' + content.desc + '</p>',
         '</div>',
         '</a>'
@@ -86,9 +93,24 @@
     grid.innerHTML = cards;
   }
 
+  function getTools() {
+    return state.tools && state.tools.length ? state.tools : tools;
+  }
+
   function renderCards() {
-    renderCardsInGrid('tools-grid', tools.filter(function (tool) { return tool.section === 'psychometric-tools'; }));
-    renderCardsInGrid('ml-tools-grid', tools.filter(function (tool) { return tool.section === 'ml-variance-analysis'; }));
+    var currentTools = getTools();
+    renderCardsInGrid('tools-grid', currentTools.filter(function (tool) { return tool.section === 'psychometric-tools'; }));
+  }
+
+  async function loadLandingCatalogs() {
+    if (!window.SharedToolLandingCore || typeof window.SharedToolLandingCore.loadSectionCatalogs !== 'function') {
+      return;
+    }
+
+    var loaded = await window.SharedToolLandingCore.loadSectionCatalogs(LANDING_SECTIONS);
+    if (loaded && loaded.length) {
+      state.tools = loaded;
+    }
   }
 
   function readSectionFromUrl() {
@@ -125,11 +147,16 @@
       container: root,
       toolId: 'Landing',
       lang: state.lang,
-      sourceUrl: '/stat-tools/assets/related-work.json',
-      publicationsSourceUrl: '/enheragu_github_web_cv/_data/publications.yml',
+      sourceUrl: '/psychometric-tools/assets/related-work.json',
+      publicationsSourceUrl: 'https://enheragu.github.io/publications-data.json',
     });
     var hasContent = root.children.length > 0 || root.textContent.trim().length > 0;
     root.classList.toggle('hidden', !hasContent);
+  }
+
+  function setElText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
   }
 
   function applyLanguage() {
@@ -137,19 +164,22 @@
     if (!langCopy) return;
     document.documentElement.lang = state.lang;
     document.title = langCopy.pageTitle;
-    document.getElementById('site-title').textContent = langCopy.siteTitle;
-    document.getElementById('site-subtitle').textContent = langCopy.subtitle;
-    document.getElementById('intro-title').textContent = langCopy.introTitle;
-    document.getElementById('intro-text').textContent = langCopy.introText;
-    document.getElementById('tools-title').textContent = langCopy.toolsTitle;
-    document.getElementById('ml-tools-title').textContent = langCopy.mlToolsTitle;
+    setElText('site-title', langCopy.siteTitle);
+    setElText('site-subtitle', langCopy.subtitle);
+    setElText('intro-title', langCopy.introTitle);
+    setElText('intro-text', langCopy.introText);
+    setElText('tools-title', langCopy.toolsTitle);
     const footerReportProblem = document.getElementById('footer-report-problem');
     if (footerReportProblem) footerReportProblem.textContent = langCopy.reportProblem;
     if (window.SharedFooter?.setLang) window.SharedFooter.setLang(state.lang);
 
-    document.getElementById('btn-en').classList.toggle('active', state.lang === 'en');
-    document.getElementById('btn-es').classList.toggle('active', state.lang === 'es');
-    document.getElementById('lang-switcher').classList.toggle('lang-es', state.lang === 'es');
+    if (window.SharedUiCore?.setLangSwitcherState) {
+      window.SharedUiCore.setLangSwitcherState(state.lang, '#lang-switcher');
+    } else {
+      document.getElementById('btn-en').classList.toggle('active', state.lang === 'en');
+      document.getElementById('btn-es').classList.toggle('active', state.lang === 'es');
+      document.getElementById('lang-switcher').classList.toggle('lang-es', state.lang === 'es');
+    }
 
     if (window.SharedUiCore) {
       window.SharedUiCore.syncLangInUrl(state.lang);
@@ -159,6 +189,7 @@
       window.history.replaceState({}, '', url.toString());
     }
 
+    document.documentElement.classList.remove('i18n-pending');
     renderCards();
     applyTheme();
     renderRelatedWork();
@@ -170,7 +201,7 @@
     applyLanguage();
   }
 
-  function init() {
+  async function init() {
     state.lang = readLangFromUrl();
 
     if (window.SharedUiCore?.bindHeaderControls) {
@@ -184,12 +215,14 @@
       });
     } else {
       document.getElementById('btn-theme').addEventListener('click', toggleTheme);
-      document.getElementById('lang-switcher').addEventListener('click', function () {
+      document.querySelector('#lang-switcher').addEventListener('click', function () {
         setLang(state.lang === 'en' ? 'es' : 'en');
       });
     }
 
     applyLanguage();
+    await loadLandingCatalogs();
+    renderCards();
     focusSectionFromUrl();
   }
 

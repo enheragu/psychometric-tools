@@ -1,6 +1,6 @@
-# stat-tools
+# psychometric-tools
 
-stat-tools is a static web landing that unifies access to related statistical tools.
+psychometric-tools is a static web landing that unifies access to related statistical tools.
 
 It provides:
 
@@ -11,7 +11,7 @@ It provides:
 
 Web version:
 
-- https://enheragu.github.io/stat-tools/
+- https://enheragu.github.io/psychometric-tools/
 
 Documentation:
 

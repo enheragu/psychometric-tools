@@ -1,0 +1,24 @@
+{% comment %}
+  MLVA simulation results table: MC vs Bootstrap comparison columns.
+  The table body is populated by JS; column header text is translated at runtime.
+  Params:
+    aria_describedby — id of the element that labels this table (optional,
+                       defaults to 'official-results-title')
+{% endcomment %}
+{% assign aria_by = include.aria_describedby | default: 'official-results-title' %}
+<div class="results-table-wrap shared-results-table-wrap shared-results-table-wrap--raised-head">
+  <table class="results-table shared-results-table shared-results-table--head-center shared-results-table--num shared-results-table--zebra shared-results-table--hover shared-results-table--cap-right" aria-describedby="{{ aria_by }}">
+    <thead>
+      <tr>
+        <th class="shared-th-ghost" colspan="1" aria-hidden="true"></th>
+        <th id="th-p-wrong-group" class="shared-th-cap shared-th-cap--edge-right" colspan="2" scope="colgroup">p(!correct order)</th>
+      </tr>
+      <tr>
+        <th id="th-n" scope="col">N samples/model</th>
+        <th id="th-mc" scope="col">Monte Carlo</th>
+        <th id="th-bs" scope="col">Bootstrap</th>
+      </tr>
+    </thead>
+    <tbody id="results-table-body"></tbody>
+  </table>
+</div>

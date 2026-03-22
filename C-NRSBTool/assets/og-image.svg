@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="C-NRSBTool">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0f14" />
+      <stop offset="100%" stop-color="#0d1117" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="68" y="58" width="1064" height="514" rx="22" fill="#161b22" stroke="#30363d"/>
+  <text x="112" y="156" fill="#58a6ff" font-size="70" font-family="Segoe UI, Arial, sans-serif" font-weight="700">C-NRSBTool</text>
+  <text x="112" y="210" fill="#e6edf3" font-size="45" font-family="Segoe UI, Arial, sans-serif">Country sample selection bias analysis by HDI</text>
+
+  <line x1="112" y1="369" x2="790" y2="369" stroke="#58a6ff" stroke-width="22" stroke-linecap="round"/>
+  <line x1="112" y1="437" x2="940" y2="437" stroke="#d29922" stroke-width="22" stroke-linecap="round"/>
+  <line x1="112" y1="505" x2="1040" y2="505" stroke="#3fb950" stroke-width="22" stroke-linecap="round"/>
+</svg>

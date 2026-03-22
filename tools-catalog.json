@@ -1,0 +1,16 @@
+{
+  "tools": [
+    {
+      "key": "cNRSB",
+      "href": "/psychometric-tools/C-NRSBTool/",
+      "imageDark": "/psychometric-tools/C-NRSBTool/assets/og-image.svg",
+      "imageLight": "/psychometric-tools/C-NRSBTool/assets/og-image-light.svg"
+    },
+    {
+      "key": "dif",
+      "href": "/psychometric-tools/DIF-AccumulationTool/",
+      "imageDark": "/psychometric-tools/DIF-AccumulationTool/assets/og-image.svg",
+      "imageLight": "/psychometric-tools/DIF-AccumulationTool/assets/og-image-light.svg"
+    }
+  ]
+}

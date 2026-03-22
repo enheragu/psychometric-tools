@@ -1,0 +1,245 @@
+---
+layout: tool_document
+redirect_path: /psychometric-tools/C-NRSBTool
+tool_name: C-NRSBTool
+meta_title: C-NRSBTool - cross-national research selection bias tool with HDI (Human Development Index) Logistic Regression
+meta_description: Analyze country sample selection bias with HDI (human development index), logistic regression, ROC curve, and interactive country selection map.
+og_title: C-NRSBTool - HDI Logistic Regression
+twitter_title: C-NRSBTool - HDI Logistic Regression
+og_image_alt: C-NRSBTool - selection bias analysis with HDI and logistic regression
+title_i18n_key: page_title
+with_i18n_meta_ids: true
+webapp_name: C-NRSBTool
+webapp_description: Analyze country selection bias with Human Development Index (HDI), logistic regression, and ROC curves.
+with_checkbox_list: true
+header_title: C-NRSBTool
+header_title_i18n_key: site_title
+header_subtitle: Explore whether your country list correlates with the Human Development Index
+header_subtitle_i18n_key: site_subtitle
+intro_title: About this tool
+intro_title_i18n_key: intro_title
+intro_text: >-
+  This tool helps researchers detect and quantify selection bias in cross-national
+  studies. It may be used to check whether data availability is systematically
+  related to countries' development levels. Thus, it addresses a widespread but
+  often overlooked methodological problem: assuming missing data is random when
+  it may be actually related to national capacity to collect and report statistics.
+intro_text_i18n_html_key: intro_text_html
+footer_report_enabled: true
+footer_report_label: Report problem
+footer_report_label_i18n_key: footer_report_problem
+footer_credits_html: |
+  <p id="footer-idea-credit"></p>
+  <p id="footer-app-updated"></p>
+custom_css:
+  - https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
+  - css/style.css
+head_js:
+  - https://unpkg.com/leaflet@1.9.4/dist/leaflet.js
+  - https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js
+  - https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.umd.min.js
+custom_js:
+  - /tool-pages-theme/assets/shared/chart-legend.js
+  - js/i18n.js
+  - js/data.js
+  - js/regression.js
+  - js/map.js
+  - js/ui.js
+  - js/app.js
+---
+<!--THEME_BODY-->
+  <div class="content-shell">
+    <main>
+
+    <!-- Left: Map -->
+    {% capture map_hint_block %}
+      <span class="hint" data-i18n="map_hint">Click countries to select / deselect</span>
+    {% endcapture %}
+    {% capture map_panel_body %}
+      <div id="map"></div>
+      <div class="map-legend">
+        <span data-i18n="legend_low">Low HDI</span>
+        <div class="legend-gradient"></div>
+        <span data-i18n="legend_high">High HDI</span>
+        <span class="legend-selected" data-i18n="legend_selected">■ Selected</span>
+      </div>
+    {% endcapture %}
+    {% include widgets/widget_content_box.html
+      tag='section'
+      panel_class='panel panel-map'
+      title='World Map'
+      title_i18n_key='map_title'
+      title_tone='primary'
+      header_extra=map_hint_block
+      body=map_panel_body
+    %}
+
+    <!-- Right: Selector -->
+    {% capture selector_panel_body %}
+      <!-- Text input -->
+      <div class="panel-block">
+        <p class="hint" data-i18n="input_hint">
+          Comma-separated names, codes or ISO-3 codes. E.g.: Spain, USA, DEU, 日本
+        </p>
+        <div class="input-row">
+          <textarea id="country-input" rows="3" data-i18n-placeholder="input_placeholder"
+            placeholder="Spain, Germany, USA, BRA, ..."></textarea>
+          <button id="btn-parse" class="btn-primary btn-inline-action" data-i18n="btn_parse">Add</button>
+        </div>
+        <!-- Error popup -->
+        <div id="parse-errors" class="error-box hidden"></div>
+      </div>
+
+      <!-- Controls: select all / clear -->
+      <div class="panel-block controls-row">
+        <div class="controls-top">
+          <span class="selection-count">
+            <strong id="sel-count">0</strong>
+            <span data-i18n="countries_selected"> countries selected</span>
+          </span>
+          <label class="sort-label" for="cb-sort" data-i18n="sort_label">Sort</label>
+          <select id="cb-sort" class="sort-box" aria-label="Sort countries">
+            <option value="name-asc" data-i18n="sort_name_asc">A–Z</option>
+            <option value="name-desc" data-i18n="sort_name_desc">Z–A</option>
+            <option value="hdi-desc" data-i18n="sort_hdi_desc">HDI ↓</option>
+            <option value="hdi-asc" data-i18n="sort_hdi_asc">HDI ↑</option>
+            <option value="year-desc" data-i18n="sort_year_desc">Year ↓</option>
+            <option value="year-asc" data-i18n="sort_year_asc">Year ↑</option>
+          </select>
+        </div>
+        <div class="controls-bottom">
+          <input class="search-box" id="cb-search" type="search"
+                 data-i18n-placeholder="search_placeholder" placeholder="Filter…">
+          <div class="action-group shared-segmented-group shared-segmented-sm" role="group" aria-label="Selection actions">
+            <button class="btn-ghost" id="btn-select-all" data-i18n="btn_select_all">Select all</button>
+            <button class="btn-ghost" id="btn-invert"   data-i18n="btn_invert">Invert</button>
+            <button class="btn-ghost" id="btn-clear"    data-i18n="btn_clear">Clear all</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkbox list -->
+      <div class="panel-block checkbox-wrapper selector-block--framed">
+        <div id="checkbox-list" class="checkbox-list checkbox-list--countries"></div>
+      </div>
+
+      <!-- Run button -->
+      <div class="panel-block">
+        <button id="btn-run" class="btn-primary btn-block" data-i18n="btn_run">
+          Run Logistic Regression
+        </button>
+        <div class="export-row">
+          <button id="btn-export" class="btn-secondary btn-export" data-i18n="btn_export" type="button">
+            Export CSV
+          </button>
+          <button id="btn-export-json" class="btn-secondary btn-export" data-i18n="btn_export_json" type="button">
+            Export JSON
+          </button>
+        </div>
+      </div>
+    {% endcapture %}
+    {% include widgets/widget_content_box.html
+      tag='section'
+      panel_class='panel panel-selector'
+      title='Enter countries in your sample:'
+      title_i18n_key='input_title'
+      title_tone='subtle'
+      body=selector_panel_body
+    %}
+    </main>
+  </div>
+
+  <section class="tool-data-meta" aria-live="polite">
+    <p id="footer-data-updated"></p>
+    <p id="footer-latest-year"></p>
+    <p id="footer-data-source"></p>
+  </section>
+
+  <!-- ── Results ──────────────────────────────────────────────────── -->
+  <section id="results" class="hidden">
+    {% include widgets/widget_section_heading.html
+      title='Results'
+      emphasis='strong'
+      title_i18n_key='results_title'
+    %}
+
+    <div class="results-grid">
+
+      <!-- Stats card -->
+      {% capture stats_card_body %}
+        <div class="shared-results-table-wrap shared-results-table-wrap--full shared-results-table-wrap--no-scroll">
+          <table id="stats-table" class="shared-results-table shared-results-table--full shared-results-table--zebra shared-results-table--hover">
+            <thead>
+              <tr>
+                <th data-i18n="th_stat">Statistic</th>
+                <th data-i18n="th_value">Value</th>
+              </tr>
+            </thead>
+            <tbody id="stats-body"></tbody>
+          </table>
+        </div>
+        <p id="stats-interpretation" class="interpretation"></p>
+      {% endcapture %}
+      {% include widgets/widget_content_box.html
+        tag='div'
+        panel_class='card card-stats'
+        title='Model Statistics'
+        title_i18n_key='stats_title'
+        title_tag='h3'
+        title_class='shared-plot-title'
+        header_class='card-headline shared-plot-headline'
+        body=stats_card_body
+        body_class='card-stats-body'
+      %}
+
+      <!-- Scatter + sigmoid chart -->
+      {% capture scatter_note %}<p id="scatter-note" class="chart-note" data-i18n="chart_note_scatter">Points are binary outcomes (0/1); the green line is the fitted logistic probability.</p>{% endcapture %}
+      {% include widgets/widget_plot_card.html
+        tag='div'
+        card_class='card card-chart shared-plot-card'
+        canvas_id='regression-chart'
+        button_id='btn-expand-regression'
+        title='HDI vs Selection Probability'
+        title_i18n_key='chart_title'
+        button_i18n_key='btn_expand_chart'
+        footer_extra=scatter_note
+      %}
+
+      <!-- ROC chart -->
+      {% include widgets/widget_plot_card.html
+        tag='div'
+        card_class='card card-roc shared-plot-card'
+        canvas_id='roc-chart'
+        button_id='btn-expand-roc'
+        title='ROC Curve'
+        title_i18n_key='roc_title'
+        button_i18n_key='btn_expand_chart'
+      %}
+
+    </div>
+  </section>
+
+  <!-- ── Error modal ──────────────────────────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay hidden" onclick="UI.closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 class="shared-card-title" data-i18n="modal_title">Unrecognised countries</h3>
+      <p data-i18n="modal_intro">The following entries could not be matched:</p>
+      <ul id="modal-list"></ul>
+      <p id="modal-suggestions" class="modal-suggestions"></p>
+      <button class="btn-outline" onclick="UI.closeModal()" data-i18n="modal_close">Close</button>
+    </div>
+  </div>
+
+  <div id="chart-modal-overlay" class="chart-modal-overlay hidden" onclick="UI.closeChartModal()">
+    <div class="chart-modal" onclick="event.stopPropagation()">
+      <div class="chart-modal-head">
+        <h3 id="chart-modal-title" class="shared-plot-modal-title"></h3>
+        <button class="btn-outline btn-chart-close" type="button" onclick="UI.closeChartModal()" data-i18n="modal_close">Close</button>
+      </div>
+      <p id="chart-modal-help" class="chart-modal-help" data-i18n="chart_modal_help">
+        Wheel to zoom, drag to pan, double click to reset, Esc to close.
+      </p>
+      <canvas id="chart-modal-canvas"></canvas>
+    </div>
+  </div>
+

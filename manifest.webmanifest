@@ -1,8 +1,8 @@
 {
-  "name": "Stat Tools",
+  "name": "Psychometric Tools",
   "short_name": "StatTools",
-  "start_url": "/stat-tools/",
-  "scope": "/stat-tools/",
+  "start_url": "/psychometric-tools/",
+  "scope": "/psychometric-tools/",
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#58a6ff",
@@ -10,7 +10,7 @@
   "description": "Unified landing page for research-oriented statistical web tools.",
   "icons": [
     {
-      "src": "https://enheragu.github.io/stat-tools/assets/favicon.svg",
+      "src": "https://enheragu.github.io/psychometric-tools/assets/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }

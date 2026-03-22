@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://enheragu.github.io/stat-tools/</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://enheragu.github.io/stat-tools/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://enheragu.github.io/stat-tools/?lang=en" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://enheragu.github.io/stat-tools/?lang=es" />
+    <loc>https://enheragu.github.io/psychometric-tools/</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://enheragu.github.io/psychometric-tools/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://enheragu.github.io/psychometric-tools/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://enheragu.github.io/psychometric-tools/?lang=es" />
     <lastmod>2026-03-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://enheragu.github.io/stat-tools/psychometric-tools/C-NRSBTool/</loc>
+    <loc>https://enheragu.github.io/psychometric-tools/psychometric-tools/C-NRSBTool/</loc>
     <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://enheragu.github.io/stat-tools/psychometric-tools/DIF-AccumulationTool/</loc>
+    <loc>https://enheragu.github.io/psychometric-tools/psychometric-tools/DIF-AccumulationTool/</loc>
     <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://enheragu.github.io/stat-tools/ml-variance-analysis/</loc>
+    <loc>https://enheragu.github.io/psychometric-tools/ml-variance-analysis/</loc>
     <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

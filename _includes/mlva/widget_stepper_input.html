@@ -1,0 +1,21 @@
+{% comment %}
+  MLVA stepper input: label + numeric input with −/+ buttons.
+  Params:
+    input_id        — id for the <input> and data-step-target on buttons (required)
+    label_id        — id for the <label> element (optional)
+    label_text      — visible label text (optional)
+    label_i18n_key  — data-i18n key for the label (optional)
+    min             — input min attribute (optional)
+    max             — input max attribute (optional)
+    step            — input step attribute (optional)
+    value           — input initial value (optional)
+    delta           — positive step amount used for ±buttons, e.g. 500 (optional)
+{% endcomment %}
+<div>
+  <label{% if include.label_id %} id="{{ include.label_id }}"{% endif %} for="{{ include.input_id }}"{% if include.label_i18n_key %} data-i18n="{{ include.label_i18n_key }}"{% endif %}>{{ include.label_text }}</label>
+  <div class="stepper">
+    <button class="btn-stepper" data-step-target="{{ include.input_id }}"{% if include.delta %} data-step="-{{ include.delta }}"{% endif %} type="button">−</button>
+    <input id="{{ include.input_id }}" type="number"{% if include.min %} min="{{ include.min }}"{% endif %}{% if include.max %} max="{{ include.max }}"{% endif %}{% if include.step %} step="{{ include.step }}"{% endif %}{% if include.value %} value="{{ include.value }}"{% endif %}>
+    <button class="btn-stepper" data-step-target="{{ include.input_id }}"{% if include.delta %} data-step="{{ include.delta }}"{% endif %} type="button">+</button>
+  </div>
+</div>

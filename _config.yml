@@ -1,0 +1,21 @@
+title: psychometric-tools
+url: https://enheragu.github.io
+baseurl: /psychometric-tools
+
+plugins:
+  - jekyll-remote-theme
+
+remote_theme: enheragu/tool-pages-theme
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      lang: en
+      compact_mode: true
+      project: psychometric-tools
+      tool_name: Psychometric Tools
+      analytics_measurement_id: G-68Q3YFYBS9
+      intro_inline_cite: true
+      footer_related_contextual: true

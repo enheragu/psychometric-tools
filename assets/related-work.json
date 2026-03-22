@@ -1,25 +1,23 @@
 {
   "global": {
     "title": {
-      "en": "Support and Related Work",
-      "es": "Apoyo y Trabajos Relacionados"
+      "en": "Citing and Related Work",
+      "es": "Referencias y trabajos relacionados"
     },
     "support": {
       "intro": {
-        "en": "If this work was useful to you, consider giving a star to the {repo_link} or citing these works:",
+        "en": "If this work was useful to you, consider giving a star to the {repo_link} and citing these works:",
         "es": "Si este trabajo te ha resultado útil, considera dar una estrella al {repo_link} o citar estos trabajos:"
       },
       "repo": {
-        "url": "https://github.com/enheragu/stat-tools",
+        "url": "https://github.com/enheragu/psychometric-tools",
         "link_text": {
           "en": "GitHub repository",
           "es": "repositorio de GitHub"
         }
       },
       "doi_links": [],
-      "publication_keys": [
-        "heredia2026stattools_platform"
-      ]
+      "publication_keys": []
     },
     "links": [],
     "publication_keys": []
@@ -27,8 +25,8 @@
   "categories": {
     "psychometric-tools": {
       "title": {
-        "en": "Psychometric tools: support and related work",
-        "es": "Herramientas psicométricas: apoyo y trabajos relacionados"
+        "en": "Citing and related work",
+        "es": "Referencias y trabajos relacionados"
       },
       "support": {
         "doi_links": [],
@@ -41,46 +39,70 @@
     },
     "ml-variance-analysis": {
       "title": {
-        "en": "ML variance analysis: support and related work",
-        "es": "Análisis de varianza en ML: apoyo y trabajos relacionados"
+        "en": "Citing and related work",
+        "es": "Referencias y trabajos relacionados"
       },
       "support": {
         "doi_links": [],
         "publication_keys": [
-          "heredia2026ml_variance_tools"
+          "heredia2026ml_variance_tools",
+          "heredia2026variance_analysis_ml"
         ]
       },
-      "links": [],
-      "publication_keys": []
+      "links": [
+        {
+          "key": "mnist_learning_playground",
+          "label": "mnist-learning-playground",
+          "url": "https://github.com/enheragu/mnist-learning-playground",
+          "description": {
+            "en": "Source repository for repeated-run MNIST calculations used in this analysis.",
+            "es": "Repositorio origen de los cálculos con repeticiones en MNIST usados en este análisis."
+          }
+        },
+        {
+          "key": "yolo_test_utils",
+          "label": "yolo_test_utils",
+          "url": "https://github.com/enheragu/yolo_test_utils",
+          "description": {
+            "en": "Fusion methods and training pipeline code for multispectral detection experiments.",
+            "es": "Métodos de fusión y código de entrenamiento para experimentos de detección multiespectral."
+          }
+        }
+      ],
+      "publication_keys": [
+        "heredia2025fusion_static"
+      ]
     }
   },
   "tools": {
     "Landing": {
-      "title": {
-        "en": "Citing and related work",
-        "es": "Citas y trabajos relacionados"
-      },
       "links": [],
       "publication_keys": []
     },
     "C-NRSBTool": {
       "category_id": "psychometric-tools",
-      "title": {
-        "en": "Citing and related work",
-        "es": "Citas y trabajos relacionados"
-      },
       "links": [],
       "publication_keys": []
     },
     "DIF-AccumulationTool": {
       "category_id": "psychometric-tools",
-      "title": {
-        "en": "Citing and related work",
-        "es": "Citas y trabajos relacionados"
-      },
+      "links": [],
+      "publication_keys": []
+    },
+    "ReplicationAndComparison": {
+      "category_id": "ml-variance-analysis",
+      "links": [],
+      "publication_keys": []
+    },
+    "AblationTests": {
+      "category_id": "ml-variance-analysis",
+      "links": [],
+      "publication_keys": []
+    },
+    "StandardizingComparisons": {
+      "category_id": "ml-variance-analysis",
       "links": [],
       "publication_keys": []
     }
-  },
-  "publications": []
+  }
 }

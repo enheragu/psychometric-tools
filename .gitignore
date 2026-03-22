@@ -2,3 +2,32 @@
 Thumbs.db
 *.log
 docs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+ENV/
+
+# Local Jekyll preview artifacts
+_site/
+.jekyll-cache/
+_config.local.yml
+_includes/tool_*.html
+
+# Local-only symlink (broken on GitHub Pages; publications-data.json is a static file)
+_data/publications.yml
+
+# Redundant: publications data is fetched from https://enheragu.github.io/publications-data.json
+assets/publications-data.json
