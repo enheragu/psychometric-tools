@@ -36,46 +36,11 @@
       },
       "links": [],
       "publication_keys": []
-    },
-    "ml-variance-analysis": {
-      "title": {
-        "en": "Citing and related work",
-        "es": "Referencias y trabajos relacionados"
-      },
-      "support": {
-        "doi_links": [],
-        "publication_keys": [
-          "heredia2026ml_variance_tools",
-          "heredia2026variance_analysis_ml"
-        ]
-      },
-      "links": [
-        {
-          "key": "mnist_learning_playground",
-          "label": "mnist-learning-playground",
-          "url": "https://github.com/enheragu/mnist-learning-playground",
-          "description": {
-            "en": "Source repository for repeated-run MNIST calculations used in this analysis.",
-            "es": "Repositorio origen de los cálculos con repeticiones en MNIST usados en este análisis."
-          }
-        },
-        {
-          "key": "yolo_test_utils",
-          "label": "yolo_test_utils",
-          "url": "https://github.com/enheragu/yolo_test_utils",
-          "description": {
-            "en": "Fusion methods and training pipeline code for multispectral detection experiments.",
-            "es": "Métodos de fusión y código de entrenamiento para experimentos de detección multiespectral."
-          }
-        }
-      ],
-      "publication_keys": [
-        "heredia2025fusion_static"
-      ]
     }
   },
   "tools": {
     "Landing": {
+      "category_id": "psychometric-tools",
       "links": [],
       "publication_keys": []
     },
@@ -86,21 +51,6 @@
     },
     "DIF-AccumulationTool": {
       "category_id": "psychometric-tools",
-      "links": [],
-      "publication_keys": []
-    },
-    "ReplicationAndComparison": {
-      "category_id": "ml-variance-analysis",
-      "links": [],
-      "publication_keys": []
-    },
-    "AblationTests": {
-      "category_id": "ml-variance-analysis",
-      "links": [],
-      "publication_keys": []
-    },
-    "StandardizingComparisons": {
-      "category_id": "ml-variance-analysis",
       "links": [],
       "publication_keys": []
     }
