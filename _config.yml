@@ -8,7 +8,6 @@ plugins:
 remote_theme: enheragu/tool-pages-theme
 
 shared_assets_base: /psychometric-tools/assets/shared
-psychometric_tools_base: /psychometric-tools
 
 defaults:
   - scope:
@@ -22,3 +21,7 @@ defaults:
       analytics_measurement_id: G-68Q3YFYBS9
       intro_inline_cite: true
       footer_related_contextual: true
+      with_tools_nav: true
+      with_analysis_panels: true
+      with_chart_interactions: true
+      with_publication_ui: true
