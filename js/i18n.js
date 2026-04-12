@@ -15,7 +15,7 @@
       cards: {
         cNRSB: {
           title: 'C-NRSBTool',
-          desc: 'Check whether your country sample is systematically biased by development level (HDI), with logistic regression, ROC analysis, and interactive selection.'
+          desc: 'Check whether your country sample is systematically biased by development level (HDI) or by World Bank income group, with logistic regression, ROC analysis, a random-subsampling reference distribution, and interactive selection.'
         },
         dif: {
           title: 'DIF-AccumulationTool',
@@ -48,7 +48,7 @@
       cards: {
         cNRSB: {
           title: 'C-NRSBTool',
-          desc: 'Comprueba si tu muestra de países está sesgada de forma sistemática por nivel de desarrollo (IDH), con regresión logística, análisis ROC y selección interactiva.'
+          desc: 'Comprueba si tu muestra de países está sesgada de forma sistemática por nivel de desarrollo (IDH) o por grupo de renta del Banco Mundial, con regresión logística, análisis ROC, distribución de referencia por remuestreo aleatorio y selección interactiva.'
         },
         dif: {
           title: 'DIF-AccumulationTool',

@@ -29,6 +29,55 @@ const App = (() => {
     document.getElementById('btn-run').addEventListener(    'click',  _runRegression);
     document.getElementById('btn-export').addEventListener( 'click',  _exportCsvReport);
     document.getElementById('btn-export-json').addEventListener('click', _exportJsonReport);
+    document.querySelectorAll('.map-color-toggle [data-color-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.colorMode;
+        MapView.setColorMode(mode);
+        document.querySelectorAll('.map-color-toggle [data-color-mode]').forEach(b => {
+          b.classList.toggle('is-active', b === btn);
+        });
+        const hdiLeg = document.getElementById('map-legend-hdi');
+        const incLeg = document.getElementById('map-legend-income');
+        if (hdiLeg) hdiLeg.classList.toggle('hidden', mode !== 'hdi');
+        if (incLeg) incLeg.classList.toggle('hidden', mode !== 'income');
+      });
+    });
+
+    // ── Map legend hover → highlight matching countries ────────────
+    // Income legend chips: highlight countries of that income group.
+    document.querySelectorAll('#map-legend-income .income-legend-chip').forEach(chip => {
+      const cls = Array.from(chip.querySelector('.income-swatch')?.classList || [])
+        .find(c => c.startsWith('income-swatch--'));
+      const group = cls ? cls.replace('income-swatch--', '') : null;
+      if (!group) return;
+      chip.style.cursor = 'pointer';
+      chip.addEventListener('mouseenter', () => {
+        MapView.setHighlightFilter(iso3 => {
+          const row = Data.COUNTRY_BY_ISO3[iso3];
+          return row && row.incomeGroup === group;
+        });
+      });
+      chip.addEventListener('mouseleave', () => MapView.setHighlightFilter(null));
+    });
+
+    // HDI gradient legend: highlight countries near the hovered HDI value.
+    const hdiGradient = document.querySelector('#map-legend-hdi .legend-gradient');
+    if (hdiGradient) {
+      hdiGradient.style.cursor = 'pointer';
+      hdiGradient.addEventListener('mousemove', e => {
+        const rect = hdiGradient.getBoundingClientRect();
+        const ratio = (e.clientX - rect.left) / rect.width; // 0 = low HDI, 1 = high HDI
+        const hdiCenter = Math.max(0, Math.min(1, ratio));
+        const HDI_RANGE = 0.08; // highlight ±0.08 around cursor
+        MapView.setHighlightFilter(iso3 => {
+          const row = Data.COUNTRY_BY_ISO3[iso3];
+          if (!row || !Number.isFinite(row.hdi)) return false;
+          return Math.abs(row.hdi - hdiCenter) <= HDI_RANGE;
+        });
+      });
+      hdiGradient.addEventListener('mouseleave', () => MapView.setHighlightFilter(null));
+    }
+
     document.getElementById('cb-sort').addEventListener('change', () => UI.syncCheckboxes(_selected));
     document.getElementById('cb-search').addEventListener(  'input',  e =>
       UI.filterCheckboxes(e.target.value)
@@ -66,6 +115,16 @@ const App = (() => {
       },
     });
 
+    // Wire result tabs (HDI / income groups). Re-render charts on tab show
+    // so Chart.js measures the now-visible canvas correctly.
+    const resultsTablist = document.getElementById('results-tabs');
+    if (resultsTablist && window.SharedTabs?.bind) {
+      window.SharedTabs.bind(resultsTablist, {
+        manageVisibility: true,
+        onSelect: () => UI.refreshCharts(),
+      });
+    }
+
     // Init map (async — fetches GeoJSON)
     try {
       await MapView.init('map', _toggleCountry);
@@ -96,6 +155,7 @@ const App = (() => {
     MapView.setSelected(_selected);
     UI.syncCheckboxes(_selected);
     UI.hideResults();
+    UI.setSimStatus('', false);
   }
 
   // ── Parse CSV input ───────────────────────────────────────────────
@@ -108,6 +168,7 @@ const App = (() => {
     MapView.setSelected(_selected);
     UI.syncCheckboxes(_selected);
     UI.hideResults();
+    UI.setSimStatus('', false);
     UI.showParseErrors(unmatched);
 
     if (unmatched.length) UI.showModal(unmatched);
@@ -118,10 +179,11 @@ const App = (() => {
 
   // ── Bulk operations ───────────────────────────────────────────────
   function _selectAll() {
-    for (const { iso3 } of Data.HDI_DATA) _selected.add(iso3);
+    for (const { iso3 } of Data.COUNTRY_DATA) _selected.add(iso3);
     MapView.setSelected(_selected);
     UI.syncCheckboxes(_selected);
     UI.hideResults();
+    UI.setSimStatus('', false);
   }
 
   function _clearAll() {
@@ -129,38 +191,70 @@ const App = (() => {
     MapView.setSelected(_selected);
     UI.syncCheckboxes(_selected);
     UI.hideResults();
+    UI.setSimStatus('', false);
     document.getElementById('parse-errors').classList.add('hidden');
   }
 
   function _invertAll() {
-    for (const { iso3 } of Data.HDI_DATA) {
+    for (const { iso3 } of Data.COUNTRY_DATA) {
       if (_selected.has(iso3)) _selected.delete(iso3);
       else                     _selected.add(iso3);
     }
     MapView.setSelected(_selected);
     UI.syncCheckboxes(_selected);
     UI.hideResults();
+    UI.setSimStatus('', false);
   }
 
-  // ── Regression ────────────────────────────────────────────────────
+  function _readIterations() {
+    const el = document.getElementById('n-sim-iter');
+    const raw = el ? Number(el.value) : Income.DEFAULT_ITERATIONS;
+    const iterations = Math.max(500, Math.min(200000, Number.isFinite(raw) ? Math.floor(raw) : Income.DEFAULT_ITERATIONS));
+    if (el) el.value = String(iterations);
+    return iterations;
+  }
+
+  // ── Run analyses (HDI regression + income-group subsampling) ──────
   function _runRegression() {
-    if (_selected.size === 0) return;
-
-    const result = Regression.analyse(_selected);
-
-    if (result.error === 'degenerate') {
-      alert(I18n.t('stat_n_selected') + ': 0 or all countries selected — cannot fit model.');
+    if (_selected.size === 0) {
+      UI.setSimStatus(I18n.t('run_need_selection'), false, 'error');
       return;
     }
 
-    UI.showResults(result);
+    const iterations = _readIterations();
+    UI.setSimStatus(I18n.t('sim_status_running', { iterations }), true);
+
+    // Defer to next frame so the busy indicator actually paints
+    // before the synchronous simulation blocks the main thread.
+    requestAnimationFrame(() => {
+      const t0 = performance.now();
+      let result, incomeResult;
+      try {
+        result = Regression.analyse(_selected);
+        incomeResult = Income.analyse(_selected, { iterations });
+      } catch (err) {
+        console.error('[C-NRSBTool] Run failed:', err);
+        UI.setSimStatus(I18n.t('sim_status_error'), false, 'error');
+        return;
+      }
+
+      if (result.error === 'degenerate') {
+        UI.setSimStatus(I18n.t('sim_status_error'), false, 'error');
+        alert(I18n.t('stat_n_selected') + ': 0 or all countries selected — cannot fit model.');
+        return;
+      }
+
+      UI.showResults(result, incomeResult);
+      const ms = Math.round(performance.now() - t0);
+      UI.setSimStatus(I18n.t('sim_status_done', { ms }), false, 'ok');
+    });
   }
 
   function _exportCsvReport() {
     const report = _buildExportReport();
     if (!report) return;
 
-    const { result, rows } = report;
+    const { result, incomeResult, rows } = report;
     const lines = [];
     const pushCsvRow = values => {
       lines.push(values.map(_csvEscape).join(','));
@@ -168,8 +262,10 @@ const App = (() => {
 
     pushCsvRow(['section', 'metric', 'value']);
     pushCsvRow(['summary', 'selected_countries', _selected.size]);
-    pushCsvRow(['summary', 'total_countries_with_hdi', Data.HDI_DATA.length]);
-    pushCsvRow(['summary', 'countries_without_hdi', Data.NO_HDI_DATA.length]);
+    pushCsvRow(['summary', 'total_countries', Data.COUNTRY_DATA.length]);
+    pushCsvRow(['summary', 'total_countries_with_income_group',
+      Data.COUNTRY_DATA.filter(r => r.incomeGroup).length]);
+    pushCsvRow(['summary', 'countries_without_data', Data.NO_HDI_DATA.length]);
 
     if (result.error === 'degenerate') {
       pushCsvRow(['model', 'status', 'degenerate']);
@@ -185,8 +281,26 @@ const App = (() => {
       pushCsvRow(['model', 'auc', result.auc.toFixed(6)]);
     }
 
+    if (incomeResult && !incomeResult.error) {
+      pushCsvRow(['income_subsampling', 'sample_size', incomeResult.sampleSize]);
+      pushCsvRow(['income_subsampling', 'universe_size', incomeResult.universeSize]);
+      pushCsvRow(['income_subsampling', 'iterations', incomeResult.iterations]);
+      pushCsvRow(['income_subsampling', 'excluded_iso3', incomeResult.excludedIso3.join('|')]);
+      for (const g of incomeResult.groups) {
+        pushCsvRow(['income_subsampling_' + g.key, 'observed_pct', g.observedPct.toFixed(3)]);
+        pushCsvRow(['income_subsampling_' + g.key, 'observed_count', g.observedCount]);
+        pushCsvRow(['income_subsampling_' + g.key, 'universe_pct', g.universePct.toFixed(3)]);
+        pushCsvRow(['income_subsampling_' + g.key, 'p025', g.p025.toFixed(3)]);
+        pushCsvRow(['income_subsampling_' + g.key, 'p50', g.p50.toFixed(3)]);
+        pushCsvRow(['income_subsampling_' + g.key, 'p975', g.p975.toFixed(3)]);
+        pushCsvRow(['income_subsampling_' + g.key, 'outside_95', g.outsideCi ? '1' : '0']);
+      }
+    } else if (incomeResult) {
+      pushCsvRow(['income_subsampling', 'status', incomeResult.error]);
+    }
+
     lines.push('');
-    pushCsvRow(['country', 'iso3', 'selected', 'hdi', 'year', 'predicted_probability', 'has_hdi_data']);
+    pushCsvRow(['country', 'iso3', 'selected', 'hdi', 'hdi_year', 'income_group', 'income_year', 'predicted_probability', 'has_hdi_data']);
 
     for (const row of rows) {
       const isSelected = _selected.has(row.iso3);
@@ -201,7 +315,9 @@ const App = (() => {
         row.iso3,
         isSelected ? '1' : '0',
         hasHdi ? Number(row.hdi).toFixed(3) : '',
-        row.year ?? '',
+        row.hdiYear ?? row.year ?? '',
+        row.incomeGroup ?? '',
+        row.incomeYear ?? '',
         predicted,
         hasHdi ? '1' : '0',
       ]);
@@ -229,10 +345,18 @@ const App = (() => {
       exported_at_utc: new Date().toISOString(),
       summary: {
         selected_countries: _selected.size,
-        total_countries_with_hdi: Data.HDI_DATA.length,
-        countries_without_hdi: Data.NO_HDI_DATA.length,
+        total_countries: Data.COUNTRY_DATA.length,
+        total_countries_with_income_group: Data.COUNTRY_DATA.filter(r => r.incomeGroup).length,
+        countries_without_data: Data.NO_HDI_DATA.length,
       },
       model: report.result,
+      income_subsampling: report.incomeResult ? (() => {
+        const { groups, ...rest } = report.incomeResult;
+        return {
+          ...rest,
+          groups: groups?.map(({ distribution, ...g }) => g),
+        };
+      })() : null,
       countries: report.rows.map(row => {
         const hasHdi = Number.isFinite(row.hdi);
         const predicted = (hasHdi && report.result.error !== 'degenerate')
@@ -243,7 +367,10 @@ const App = (() => {
           iso3: row.iso3,
           selected: _selected.has(row.iso3),
           hdi: hasHdi ? row.hdi : null,
-          year: row.year ?? null,
+          hdi_year: row.hdiYear ?? row.year ?? null,
+          income_group: row.incomeGroup ?? null,
+          income_group_label: row.incomeGroupLabel ?? null,
+          income_year: row.incomeYear ?? null,
           predicted_probability: predicted,
           has_hdi_data: hasHdi,
         };
@@ -271,12 +398,24 @@ const App = (() => {
       return null;
     }
 
+    const iterations = _readIterations();
     const result = Regression.analyse(_selected);
-    const rows = [...Data.HDI_DATA, ...Data.NO_HDI_DATA]
-      .slice()
-      .sort((a, b) => String(a.country).localeCompare(String(b.country)));
+    const incomeResult = Income.analyse(_selected, { iterations });
+    const seen = new Set();
+    const rows = [];
+    for (const row of Data.COUNTRY_DATA) {
+      if (seen.has(row.iso3)) continue;
+      seen.add(row.iso3);
+      rows.push(row);
+    }
+    for (const row of Data.NO_HDI_DATA) {
+      if (seen.has(row.iso3)) continue;
+      seen.add(row.iso3);
+      rows.push(row);
+    }
+    rows.sort((a, b) => String(a.country).localeCompare(String(b.country)));
 
-    return { result, rows };
+    return { result, incomeResult, rows };
   }
 
   function _csvEscape(value) {
@@ -298,11 +437,13 @@ const App = (() => {
 
   function _renderFooterMeta() {
     const meta = Data.getMeta();
+    const incomeMeta = Data.getIncomeMeta();
     const generated = meta.generated_at_utc
       ? new Date(meta.generated_at_utc).toLocaleString(I18n.getLang() === 'es' ? 'es-ES' : 'en-GB')
       : I18n.t('footer_unknown');
 
     const latestYear = meta.latest_year_global ?? I18n.t('footer_unknown');
+    const latestIncomeYear = incomeMeta?.latest_year_global ?? I18n.t('footer_unknown');
 
     const footerData = document.getElementById('footer-data-updated');
     const footerSource = document.getElementById('footer-data-source');
@@ -314,10 +455,17 @@ const App = (() => {
       footerData.textContent = I18n.t('footer_data_updated', { date: generated });
     }
     if (footerLatest) {
-      footerLatest.textContent = I18n.t('footer_latest_year', { year: latestYear });
+      footerLatest.textContent = I18n.t('footer_latest_year', { year: latestYear, incomeYear: latestIncomeYear });
     }
     if (footerSource) {
-      footerSource.innerHTML = `${I18n.t('footer_source_prefix')} <a href="${meta.source}" target="_blank" rel="noopener noreferrer">Our World in Data</a>`;
+      const owid = 'https://ourworldindata.org/';
+      const hdiUrl = 'https://ourworldindata.org/grapher/human-development-index';
+      const incUrl = 'https://ourworldindata.org/grapher/world-bank-income-groups';
+      footerSource.innerHTML =
+        `${I18n.t('footer_source_prefix')} ` +
+        `<a href="${owid}" target="_blank" rel="noopener noreferrer">Our World in Data</a> (` +
+        `<a href="${hdiUrl}" target="_blank" rel="noopener noreferrer">HDI</a>, ` +
+        `<a href="${incUrl}" target="_blank" rel="noopener noreferrer">World Bank income groups</a>)`;
     }
     if (footerIdea) {
       footerIdea.innerHTML = `${I18n.t('footer_idea_prefix')} <a href="https://fantasmamecanico.wordpress.com/" target="_blank" rel="noopener noreferrer">Alejandro Rujano</a>`;

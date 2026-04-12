@@ -37,6 +37,27 @@ const MapView = (() => {
   let _map        = null;
   let _geoLayer   = null;
   let _onToggle   = null;   // callback(iso3, selected: bool)
+  let _colorMode  = 'hdi';  // 'hdi' | 'income'
+  let _highlightIso3 = null;       // single-country highlight
+  let _highlightFilter = null;     // function(iso3) → bool for group highlight
+  const _layerByIso3 = {};         // iso3 → [layer, ...]
+
+  // Income-group colours: 4 discrete samples from the HDI ramp.
+  function _incomeColor(group) {
+    switch (group) {
+      case 'low':          return hdiColor(0.10);
+      case 'lower_middle': return hdiColor(0.35);
+      case 'upper_middle': return hdiColor(0.65);
+      case 'high':         return hdiColor(0.90);
+      default:             return '#9ca3af';
+    }
+  }
+
+  function setColorMode(mode) {
+    _colorMode = (mode === 'income') ? 'income' : 'hdi';
+    _refresh();
+  }
+  function getColorMode() { return _colorMode; }
 
   function _resolveIso3(feature) {
     const byProps = feature?.properties?.cca3
@@ -165,48 +186,112 @@ const MapView = (() => {
   // ── Styling ───────────────────────────────────────────────────────
   function _styleFeature(feature) {
     const iso3    = _resolveIso3(feature);
-    const entry   = iso3 ? Data.HDI_BY_ISO3[iso3] : null;
+    const union   = iso3 ? Data.COUNTRY_BY_ISO3[iso3] : null;
     const noDataEntry = iso3 ? Data.NO_HDI_BY_ISO3[iso3] : null;
     const selected = iso3 ? _selected.has(iso3) : false;
 
+    let fillColor, fillOpacity;
+    if (selected) {
+      fillColor = '#58a6ff';
+      fillOpacity = 0.75;
+    } else if (union && _colorMode === 'income' && union.incomeGroup) {
+      fillColor = _incomeColor(union.incomeGroup);
+      fillOpacity = 0.80;
+    } else if (union && _colorMode === 'income' && !union.incomeGroup) {
+      fillColor = '#9ca3af';
+      fillOpacity = 0.45;
+    } else if (union && Number.isFinite(union.hdi)) {
+      fillColor = hdiColor(union.hdi);
+      fillOpacity = 0.80;
+    } else if (noDataEntry) {
+      fillColor = '#9ca3af';
+      fillOpacity = 0.65;
+    } else {
+      fillColor = '#d1d5db';
+      fillOpacity = 0.35;
+    }
+
+    // Dim when another country/group is highlighted.
+    const isHighlighted = _highlightIso3
+      ? (iso3 === _highlightIso3)
+      : _highlightFilter
+        ? (iso3 && _highlightFilter(iso3))
+        : true;
+    if (!isHighlighted && (_highlightIso3 || _highlightFilter)) {
+      fillOpacity *= 0.22;
+    }
+
     return {
-      fillColor:   selected ? '#58a6ff' : (entry ? hdiColor(entry.hdi) : (noDataEntry ? '#9ca3af' : '#d1d5db')),
-      fillOpacity: selected ? 0.75 : (entry ? 0.80 : (noDataEntry ? 0.65 : 0.35)),
-      color:       selected ? '#2563eb' : (noDataEntry ? '#6b7280' : '#fff'),
-      weight:      selected ? 1.5 : (noDataEntry ? 1.1 : 0.6),
-      dashArray:   noDataEntry ? '4 2' : undefined,
+      fillColor,
+      fillOpacity,
+      color: selected ? '#2563eb' : (noDataEntry ? '#6b7280' : '#fff'),
+      weight: selected ? 1.5 : (noDataEntry ? 1.1 : 0.6),
+      dashArray: noDataEntry ? '4 2' : undefined,
     };
   }
 
-  function _bindFeature(feature, layer) {
-    const iso3  = _resolveIso3(feature);
-    const entry = iso3 ? Data.HDI_BY_ISO3[iso3] : null;
+  function _buildTooltip(iso3) {
+    if (!iso3) return '—';
+    const union = Data.COUNTRY_BY_ISO3[iso3];
+    const noDataEntry = Data.NO_HDI_BY_ISO3[iso3];
 
-    if (!entry) {
-      const noDataEntry = iso3 ? Data.NO_HDI_BY_ISO3[iso3] : null;
-      layer.on('mouseover', () =>
-        layer.bindTooltip(
-          noDataEntry
-            ? `<strong>${noDataEntry.country}</strong><br>${I18n.t('no_hdi_data')}`
-            : (iso3 ?? '—'),
-          { sticky: true }
-        ).openTooltip()
-      );
-      return;
+    if (!union && !noDataEntry) return iso3;
+
+    const lang = (typeof I18n !== 'undefined' && I18n.getLang) ? I18n.getLang() : 'en';
+    const country = union ? Data.getCountryLabel(iso3, lang) : noDataEntry.country;
+    const lines = [`<strong>${country}</strong>`];
+
+    if (union && Number.isFinite(union.hdi)) {
+      const yearSuffix = union.hdiYear ? ` (${union.hdiYear})` : '';
+      lines.push(`${I18n.t('tooltip_hdi', { hdi: union.hdi.toFixed(3) })}${yearSuffix}`);
+    } else if (union) {
+      lines.push(I18n.t('no_hdi_data'));
+    }
+
+    if (union && union.incomeGroup) {
+      const groupLabel = I18n.t(`income_group_${union.incomeGroup}`);
+      const yearSuffix = union.incomeYear ? ` (${union.incomeYear})` : '';
+      lines.push(`${groupLabel}${yearSuffix}`);
+    }
+
+    if (!union && noDataEntry) {
+      lines.push(I18n.t('no_hdi_data'));
+    }
+
+    return lines.join('<br>');
+  }
+
+  function _bindFeature(feature, layer) {
+    const iso3 = _resolveIso3(feature);
+    const isSelectable = iso3 && Data.COUNTRY_BY_ISO3[iso3];
+
+    if (iso3) {
+      if (!_layerByIso3[iso3]) _layerByIso3[iso3] = [];
+      _layerByIso3[iso3].push(layer);
     }
 
     layer.on('mouseover', () => {
-      const yearPart = entry.year ? `<br>${I18n.t('tooltip_year', { year: entry.year })}` : '';
-      layer.bindTooltip(
-        `<strong>${entry.country}</strong><br>${I18n.t('tooltip_hdi', { hdi: entry.hdi.toFixed(3) })}${yearPart}`,
-        { sticky: true }
-      ).openTooltip();
+      layer.bindTooltip(_buildTooltip(iso3), { sticky: true }).openTooltip();
+      if (iso3) {
+        _highlightIso3 = iso3;
+        _highlightFilter = null;
+        _refresh();
+      }
     });
 
-    layer.on('click', () => {
-      const nowSelected = !_selected.has(iso3);
-      _onToggle(iso3, nowSelected);      // let app.js update state
+    layer.on('mouseout', () => {
+      if (_highlightIso3 === iso3) {
+        _highlightIso3 = null;
+        _refresh();
+      }
     });
+
+    if (isSelectable) {
+      layer.on('click', () => {
+        const nowSelected = !_selected.has(iso3);
+        _onToggle(iso3, nowSelected);
+      });
+    }
   }
 
   // ── Selection (read from external state) ─────────────────────────
@@ -224,5 +309,16 @@ const MapView = (() => {
   }
 
   // ── Public ────────────────────────────────────────────────────────
-  return { init, setSelected };
+  /**
+   * Highlight countries matching a filter function.
+   * Pass null to clear the highlight.
+   * @param {((iso3: string) => boolean)|null} filterFn
+   */
+  function setHighlightFilter(filterFn) {
+    _highlightFilter = filterFn;
+    _highlightIso3 = null;
+    _refresh();
+  }
+
+  return { init, setSelected, setColorMode, getColorMode, setHighlightFilter };
 })();

@@ -1,6 +1,24 @@
 {
+  "generated_at_utc": "2026-04-07T11:13:44+00:00",
+  "indicators": {
+    "hdi": {
+      "source": "https://ourworldindata.org/grapher/human-development-index",
+      "latest_year_global": 2023,
+      "countries": 193
+    },
+    "income_groups": {
+      "source": "https://ourworldindata.org/grapher/world-bank-income-groups",
+      "latest_year_global": 2024,
+      "countries": 220,
+      "categories": [
+        "low",
+        "lower_middle",
+        "upper_middle",
+        "high"
+      ]
+    }
+  },
   "source": "https://ourworldindata.org/grapher/human-development-index",
-  "generated_at_utc": "2026-03-12T21:17:02+00:00",
   "latest_year_global": 2023,
   "countries": 193
 }

@@ -10,14 +10,22 @@ const Data = (() => {
   const HDI_BY_ISO3 = {};
   const NO_HDI_DATA = [];
   const NO_HDI_BY_ISO3 = {};
+  const INCOME_DATA = [];           // rows with income group only
+  const INCOME_BY_ISO3 = {};
+  const COUNTRY_DATA = [];          // union (HDI ∪ income), selectable, sorted by name
+  const COUNTRY_BY_ISO3 = {};       // union: { iso3, country, hdi, hdiYear, incomeGroup, incomeYear }
   const ALIAS_MAP = new Map();
   let _aliasesByIso3 = {};
+
+  // Canonical income group order (low → high). Mirrors update_country_data.py.
+  const INCOME_GROUP_ORDER = ['low', 'lower_middle', 'upper_middle', 'high'];
 
   let _meta = {
     source: 'https://ourworldindata.org/grapher/human-development-index',
     generated_at_utc: null,
     latest_year_global: null,
     countries: 0,
+    indicators: null,
   };
 
   function normalize(s) {
@@ -55,28 +63,28 @@ const Data = (() => {
   function _buildAliasMap(extraAliasConfig = {}) {
     ALIAS_MAP.clear();
 
-    for (const row of HDI_DATA) {
-      const iso3 = row.iso3;
-      const country = row.country;
-
+    const registerCountry = (iso3, country) => {
+      if (!iso3) return;
       ALIAS_MAP.set(normalize(iso3), iso3);
-      ALIAS_MAP.set(normalize(country), iso3);
-
-      const autoCandidates = [
-        country.replace(/\s*\(country\)\s*/i, ''),
-        country.replace(/&/g, 'and'),
-      ];
-
-      for (const c of autoCandidates) {
-        ALIAS_MAP.set(normalize(c), iso3);
+      if (country) {
+        ALIAS_MAP.set(normalize(country), iso3);
+        ALIAS_MAP.set(normalize(country.replace(/\s*\(country\)\s*/i, '')), iso3);
+        ALIAS_MAP.set(normalize(country.replace(/&/g, 'and')), iso3);
       }
-    }
+    };
 
-    for (const [iso3, entry] of Object.entries(extraAliasConfig)) {
-      const iso = String(iso3 ?? '').trim().toUpperCase();
+    for (const row of HDI_DATA) registerCountry(row.iso3, row.country);
+    for (const row of INCOME_DATA) registerCountry(row.iso3, row.country);
+
+    for (const [iso3Raw, entry] of Object.entries(extraAliasConfig)) {
+      const iso = String(iso3Raw ?? '').trim().toUpperCase();
       if (!iso) continue;
       ALIAS_MAP.set(normalize(iso), iso);
-      const aliases = Array.isArray(entry?.aliases) ? entry.aliases : [];
+      // Aliases JSON stores ISO3 → [name, ISO2, alt names...] (array form),
+      // but tolerate the older { aliases: [...] } object form too.
+      const aliases = Array.isArray(entry)
+        ? entry
+        : (Array.isArray(entry?.aliases) ? entry.aliases : []);
       for (const alias of aliases) {
         ALIAS_MAP.set(normalize(alias), iso);
       }
@@ -142,10 +150,9 @@ const Data = (() => {
     }
   }
 
-  async function init() {
+  async function _loadHdi() {
     const res = await fetch('data/hdi.csv');
     if (!res.ok) throw new Error('Unable to load data/hdi.csv');
-
     const raw = await res.text();
     const lines = raw.split(/\r?\n/).filter(Boolean);
     if (lines.length < 2) throw new Error('hdi.csv has no data rows');
@@ -155,15 +162,9 @@ const Data = (() => {
     const idxIso = header.indexOf('isocode');
     const idxHdi = header.indexOf('humandevelopmentindex');
     const idxYear = header.indexOf('year');
-
     if (idxCountry < 0 || idxIso < 0 || idxHdi < 0) {
-      throw new Error('hdi.csv missing required columns: country, iso_code, human_development_index');
+      throw new Error('hdi.csv missing required columns');
     }
-
-    HDI_DATA.length = 0;
-    Object.keys(HDI_BY_ISO3).forEach(k => delete HDI_BY_ISO3[k]);
-    NO_HDI_DATA.length = 0;
-    Object.keys(NO_HDI_BY_ISO3).forEach(k => delete NO_HDI_BY_ISO3[k]);
 
     for (let i = 1; i < lines.length; i++) {
       const cells = _parseCsvLine(lines[i]);
@@ -171,27 +172,99 @@ const Data = (() => {
       const iso3 = (cells[idxIso] ?? '').trim().toUpperCase();
       const hdi = Number((cells[idxHdi] ?? '').trim());
       const year = idxYear >= 0 ? Number((cells[idxYear] ?? '').trim()) : NaN;
-
       if (!country || !iso3 || Number.isNaN(hdi)) continue;
-      const row = {
-        country,
-        iso3,
-        hdi,
-        year: Number.isFinite(year) ? year : null,
-      };
+      const row = { country, iso3, hdi, year: Number.isFinite(year) ? year : null };
       HDI_DATA.push(row);
       HDI_BY_ISO3[iso3] = row;
     }
-
     HDI_DATA.sort((a, b) => a.country.localeCompare(b.country));
+  }
+
+  async function _loadIncomeGroups() {
+    let res;
+    try {
+      res = await fetch('data/income_groups.csv');
+    } catch {
+      return;
+    }
+    if (!res.ok) return;
+    const raw = await res.text();
+    const lines = raw.split(/\r?\n/).filter(Boolean);
+    if (lines.length < 2) return;
+
+    const header = _parseCsvLine(lines[0]).map(h => normalize(h));
+    const idxCountry = header.indexOf('country');
+    const idxIso = header.indexOf('isocode');
+    const idxGroup = header.indexOf('incomegroup');
+    const idxLabel = header.indexOf('incomegrouplabel');
+    const idxYear = header.indexOf('year');
+    if (idxCountry < 0 || idxIso < 0 || idxGroup < 0) return;
+
+    for (let i = 1; i < lines.length; i++) {
+      const cells = _parseCsvLine(lines[i]);
+      const country = (cells[idxCountry] ?? '').trim();
+      const iso3 = (cells[idxIso] ?? '').trim().toUpperCase();
+      const group = (cells[idxGroup] ?? '').trim();
+      const label = idxLabel >= 0 ? (cells[idxLabel] ?? '').trim() : '';
+      const year = idxYear >= 0 ? Number((cells[idxYear] ?? '').trim()) : NaN;
+      if (!country || !iso3 || !group) continue;
+      const row = {
+        country,
+        iso3,
+        incomeGroup: group,
+        incomeGroupLabel: label || group,
+        year: Number.isFinite(year) ? year : null,
+      };
+      INCOME_DATA.push(row);
+      INCOME_BY_ISO3[iso3] = row;
+    }
+    INCOME_DATA.sort((a, b) => a.country.localeCompare(b.country));
+  }
+
+  // Selectable universe = HDI countries (UNDP sovereign states, ~193),
+  // enriched with income-group data when available. Small dependencies
+  // and non-sovereign territories that only appear in the World Bank
+  // income table (e.g. MAF, HKG, PRI) are intentionally excluded.
+  function _buildCountryUnion() {
+    COUNTRY_DATA.length = 0;
+    Object.keys(COUNTRY_BY_ISO3).forEach(k => delete COUNTRY_BY_ISO3[k]);
+    for (const iso3 of Object.keys(HDI_BY_ISO3)) {
+      const hdiRow = HDI_BY_ISO3[iso3];
+      const incRow = INCOME_BY_ISO3[iso3];
+      const entry = {
+        iso3,
+        country: hdiRow.country,
+        hdi: hdiRow.hdi,
+        hdiYear: hdiRow.year ?? null,
+        incomeGroup: incRow?.incomeGroup ?? null,
+        incomeGroupLabel: incRow?.incomeGroupLabel ?? null,
+        incomeYear: incRow?.year ?? null,
+      };
+      COUNTRY_BY_ISO3[iso3] = entry;
+      COUNTRY_DATA.push(entry);
+    }
+    COUNTRY_DATA.sort((a, b) => a.country.localeCompare(b.country));
+  }
+
+  async function init() {
+    HDI_DATA.length = 0;
+    Object.keys(HDI_BY_ISO3).forEach(k => delete HDI_BY_ISO3[k]);
+    NO_HDI_DATA.length = 0;
+    Object.keys(NO_HDI_BY_ISO3).forEach(k => delete NO_HDI_BY_ISO3[k]);
+    INCOME_DATA.length = 0;
+    Object.keys(INCOME_BY_ISO3).forEach(k => delete INCOME_BY_ISO3[k]);
+
+    await _loadHdi();
+    await _loadIncomeGroups();
 
     const extraAliases = await _loadAliasesConfig();
     _aliasesByIso3 = extraAliases;
 
     for (const [iso3Raw, entry] of Object.entries(extraAliases)) {
       const iso3 = String(iso3Raw || '').toUpperCase().trim();
-      if (!iso3 || HDI_BY_ISO3[iso3]) continue;
-      const country = String(entry?.display_en || '').trim() || iso3;
+      if (!iso3 || HDI_BY_ISO3[iso3] || INCOME_BY_ISO3[iso3]) continue;
+      const aliasNames = Array.isArray(entry) ? entry : (Array.isArray(entry?.aliases) ? entry.aliases : []);
+      const country = String(entry?.display_en || aliasNames[0] || '').trim() || iso3;
       const row = {
         country,
         iso3,
@@ -205,8 +278,10 @@ const Data = (() => {
     _buildAliasMap(extraAliases);
     NO_HDI_DATA.sort((a, b) => a.country.localeCompare(b.country));
 
+    _buildCountryUnion();
+
     await _loadMeta();
-    _meta.countries = HDI_DATA.length;
+    if (!_meta.countries) _meta.countries = HDI_DATA.length;
     if (!_meta.latest_year_global) {
       const years = HDI_DATA.map(d => d.year).filter(Number.isFinite);
       _meta.latest_year_global = years.length ? Math.max(...years) : null;
@@ -282,6 +357,18 @@ const Data = (() => {
     return _meta;
   }
 
+  function getIncomeMeta() {
+    return _meta?.indicators?.income_groups ?? null;
+  }
+
+  function getHdiMeta() {
+    return _meta?.indicators?.hdi ?? {
+      source: _meta?.source ?? null,
+      latest_year_global: _meta?.latest_year_global ?? null,
+      countries: _meta?.countries ?? HDI_DATA.length,
+    };
+  }
+
   function getCountryLabel(iso3, lang = 'en') {
     const row = HDI_BY_ISO3[iso3];
     const noDataRow = NO_HDI_BY_ISO3[iso3];
@@ -301,11 +388,18 @@ const Data = (() => {
     HDI_BY_ISO3,
     NO_HDI_DATA,
     NO_HDI_BY_ISO3,
+    INCOME_DATA,
+    INCOME_BY_ISO3,
+    COUNTRY_DATA,
+    COUNTRY_BY_ISO3,
+    INCOME_GROUP_ORDER,
     normalize,
     init,
     resolve,
     suggest,
     getMeta,
+    getHdiMeta,
+    getIncomeMeta,
     getCountryLabel,
   };
 })();

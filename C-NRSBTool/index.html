@@ -2,17 +2,18 @@
 layout: tool_document
 redirect_path: /psychometric-tools/C-NRSBTool
 tool_name: C-NRSBTool
-meta_title: C-NRSBTool - cross-national research selection bias tool with HDI (Human Development Index) Logistic Regression
-meta_description: Analyze country sample selection bias with HDI (human development index), logistic regression, ROC curve, and interactive country selection map.
-og_title: C-NRSBTool - HDI Logistic Regression
-twitter_title: C-NRSBTool - HDI Logistic Regression
-og_image_alt: C-NRSBTool - selection bias analysis with HDI and logistic regression
+meta_title: C-NRSBTool - cross-national research selection bias tool with HDI (Human Development Index) and World Bank income groups
+meta_description: Analyze country sample selection bias with HDI (human development index), World Bank income groups, logistic regression, ROC curve, random subsampling reference distributions and interactive country selection map.
+og_title: C-NRSBTool - HDI & income-group selection bias
+twitter_title: C-NRSBTool - HDI & income-group selection bias
+og_image_alt: C-NRSBTool - selection bias analysis with HDI, income groups and logistic regression
 title_i18n_key: page_title
 with_i18n_meta_ids: true
 webapp_name: C-NRSBTool
-webapp_description: Analyze country selection bias with Human Development Index (HDI), logistic regression, and ROC curves.
+webapp_description: Analyze country selection bias with Human Development Index (HDI) and World Bank income groups, using logistic regression, ROC curves and random subsampling reference distributions.
 with_checkbox_list: true
 with_chart_legend: true
+with_tabs: true
 header_title: C-NRSBTool
 header_title_i18n_key: site_title
 header_subtitle: Explore whether your country list correlates with the Human Development Index
@@ -44,6 +45,7 @@ custom_js:
   - /psychometric-tools/assets/publications-config.js
   - js/data.js
   - js/regression.js
+  - js/income.js
   - js/map.js
   - js/ui.js
   - js/app.js
@@ -55,13 +57,24 @@ custom_js:
     <!-- Left: Map -->
     {% capture map_hint_block %}
       <span class="hint" data-i18n="map_hint">Click countries to select / deselect</span>
+      <div class="action-group shared-segmented-group shared-segmented-sm map-color-toggle" role="group" aria-label="Map color mode">
+        <button id="btn-color-hdi" class="btn-ghost is-active" data-color-mode="hdi" data-i18n="map_color_hdi">HDI</button>
+        <button id="btn-color-income" class="btn-ghost" data-color-mode="income" data-i18n="map_color_income">Income</button>
+      </div>
     {% endcapture %}
     {% capture map_panel_body %}
       <div id="map"></div>
-      <div class="map-legend">
+      <div class="map-legend" id="map-legend-hdi">
         <span data-i18n="legend_low">Low HDI</span>
         <div class="legend-gradient"></div>
         <span data-i18n="legend_high">High HDI</span>
+        <span class="legend-selected" data-i18n="legend_selected">■ Selected</span>
+      </div>
+      <div class="map-legend hidden" id="map-legend-income">
+        <span class="income-legend-chip"><span class="income-swatch income-swatch--low"></span><strong data-i18n="income_abbr_low">LI</strong> · <span data-i18n="income_group_low">Low income</span></span>
+        <span class="income-legend-chip"><span class="income-swatch income-swatch--lower_middle"></span><strong data-i18n="income_abbr_lower_middle">LMI</strong> · <span data-i18n="income_group_lower_middle">Lower-middle income</span></span>
+        <span class="income-legend-chip"><span class="income-swatch income-swatch--upper_middle"></span><strong data-i18n="income_abbr_upper_middle">UMI</strong> · <span data-i18n="income_group_upper_middle">Upper-middle income</span></span>
+        <span class="income-legend-chip"><span class="income-swatch income-swatch--high"></span><strong data-i18n="income_abbr_high">HI</strong> · <span data-i18n="income_group_high">High income</span></span>
         <span class="legend-selected" data-i18n="legend_selected">■ Selected</span>
       </div>
     {% endcapture %}
@@ -124,10 +137,16 @@ custom_js:
         <div id="checkbox-list" class="checkbox-list checkbox-list--countries"></div>
       </div>
 
-      <!-- Run button -->
-      <div class="panel-block">
+      <!-- Run controls + simulation iterations -->
+      <div class="panel-block run-block">
+        <div class="run-config-row">
+          <div class="sim-iter-row">
+            <label for="n-sim-iter" id="lbl-sim-iter" data-i18n="sim_iter_label">Simulation iterations</label>
+            <input id="n-sim-iter" type="number" min="500" max="200000" step="500" value="20000">
+          </div>
+        </div>
         <button id="btn-run" class="btn-primary btn-block" data-i18n="btn_run">
-          Run Logistic Regression
+          Run analysis
         </button>
         <div class="export-row">
           <button id="btn-export" class="btn-secondary btn-export" data-i18n="btn_export" type="button">
@@ -147,14 +166,16 @@ custom_js:
       title_tone='subtle'
       body=selector_panel_body
     %}
+    <section class="tool-data-meta tool-data-meta-inline" aria-live="polite">
+      <p id="footer-data-updated"></p>
+      <p id="footer-latest-year"></p>
+      <p id="footer-data-source"></p>
+    </section>
+    <aside class="sim-status-block" aria-live="polite">
+      <p id="sim-progress" class="sim-progress hint shared-status-hint"></p>
+    </aside>
     </main>
   </div>
-
-  <section class="tool-data-meta" aria-live="polite">
-    <p id="footer-data-updated"></p>
-    <p id="footer-latest-year"></p>
-    <p id="footer-data-source"></p>
-  </section>
 
   <!-- ── Results ──────────────────────────────────────────────────── -->
   <section id="results" class="hidden">
@@ -164,60 +185,127 @@ custom_js:
       title_i18n_key='results_title'
     %}
 
-    <div class="results-grid">
+    {% capture results_tabs %}
+      <button class="shared-tab" role="tab" aria-selected="true"
+        aria-controls="results-tab-hdi" data-result-tab="hdi"
+        data-i18n="results_tab_hdi">HDI bias</button>
+      <button class="shared-tab" role="tab" aria-selected="false"
+        aria-controls="results-tab-income" data-result-tab="income"
+        data-i18n="results_tab_income">Income groups</button>
+    {% endcapture %}
 
-      <!-- Stats card -->
-      {% capture stats_card_body %}
-        <div class="shared-results-table-wrap shared-results-table-wrap--full shared-results-table-wrap--no-scroll">
-          <table id="stats-table" class="shared-results-table shared-results-table--full shared-results-table--zebra shared-results-table--hover">
-            <thead>
-              <tr>
-                <th data-i18n="th_stat">Statistic</th>
-                <th data-i18n="th_value">Value</th>
-              </tr>
-            </thead>
-            <tbody id="stats-body"></tbody>
-          </table>
+    {% capture results_tabs_content %}
+      <div id="results-tab-hdi" role="tabpanel">
+        <div class="results-grid">
+
+          <!-- Stats card -->
+          {% capture stats_card_body %}
+            <div class="shared-results-table-wrap shared-results-table-wrap--full shared-results-table-wrap--no-scroll">
+              <table id="stats-table" class="shared-results-table shared-results-table--full shared-results-table--zebra shared-results-table--hover">
+                <thead>
+                  <tr>
+                    <th data-i18n="th_stat">Statistic</th>
+                    <th data-i18n="th_value">Value</th>
+                  </tr>
+                </thead>
+                <tbody id="stats-body"></tbody>
+              </table>
+            </div>
+            <p id="stats-interpretation" class="interpretation"></p>
+          {% endcapture %}
+          {% include widgets/widget_content_box.html
+            tag='div'
+            panel_class='card card-stats'
+            title='Model Statistics'
+            title_i18n_key='stats_title'
+            title_tag='h3'
+            title_class='shared-plot-title'
+            header_class='card-headline shared-plot-headline'
+            body=stats_card_body
+            body_class='card-stats-body'
+          %}
+
+          <!-- Scatter + sigmoid chart -->
+          {% capture scatter_note %}<p id="scatter-note" class="chart-note" data-i18n="chart_note_scatter">Points are binary outcomes (0/1); the green line is the fitted logistic probability.</p>{% endcapture %}
+          {% include widgets/widget_plot_card.html
+            tag='div'
+            card_class='card card-chart shared-plot-card'
+            canvas_id='regression-chart'
+            button_id='btn-expand-regression'
+            title='HDI vs Selection Probability'
+            title_i18n_key='chart_title'
+            button_i18n_key='btn_expand_chart'
+            footer_extra=scatter_note
+          %}
+
+          <!-- ROC chart -->
+          {% include widgets/widget_plot_card.html
+            tag='div'
+            card_class='card card-roc shared-plot-card'
+            canvas_id='roc-chart'
+            button_id='btn-expand-roc'
+            title='ROC Curve'
+            title_i18n_key='roc_title'
+            button_i18n_key='btn_expand_chart'
+          %}
+
         </div>
-        <p id="stats-interpretation" class="interpretation"></p>
-      {% endcapture %}
-      {% include widgets/widget_content_box.html
-        tag='div'
-        panel_class='card card-stats'
-        title='Model Statistics'
-        title_i18n_key='stats_title'
-        title_tag='h3'
-        title_class='shared-plot-title'
-        header_class='card-headline shared-plot-headline'
-        body=stats_card_body
-        body_class='card-stats-body'
-      %}
+      </div>
 
-      <!-- Scatter + sigmoid chart -->
-      {% capture scatter_note %}<p id="scatter-note" class="chart-note" data-i18n="chart_note_scatter">Points are binary outcomes (0/1); the green line is the fitted logistic probability.</p>{% endcapture %}
-      {% include widgets/widget_plot_card.html
-        tag='div'
-        card_class='card card-chart shared-plot-card'
-        canvas_id='regression-chart'
-        button_id='btn-expand-regression'
-        title='HDI vs Selection Probability'
-        title_i18n_key='chart_title'
-        button_i18n_key='btn_expand_chart'
-        footer_extra=scatter_note
-      %}
+      <div id="results-tab-income" role="tabpanel" class="hidden">
+        <div class="income-grid">
+          {% capture income_summary_body %}
+            <p id="income-summary-line" class="income-summary-line"></p>
+            <div class="shared-results-table-wrap shared-results-table-wrap--full shared-results-table-wrap--no-scroll">
+              <table id="income-table" class="shared-results-table shared-results-table--full shared-results-table--zebra shared-results-table--hover">
+                <thead>
+                  <tr>
+                    <th data-i18n="income_th_group">Income group</th>
+                    <th data-i18n="income_th_observed">Observed</th>
+                    <th data-i18n="income_th_ci">Central 95%</th>
+                  </tr>
+                </thead>
+                <tbody id="income-body"></tbody>
+              </table>
+            </div>
+            <p id="income-interpretation" class="interpretation"></p>
+            <p id="income-excluded" class="income-excluded hidden"></p>
+          {% endcapture %}
+          {% include widgets/widget_content_box.html
+            tag='div'
+            panel_class='card card-income-stats'
+            title='Income group representation'
+            title_i18n_key='income_stats_title'
+            title_tag='h3'
+            title_class='shared-plot-title'
+            header_class='card-headline shared-plot-headline'
+            body=income_summary_body
+            body_class='card-stats-body'
+          %}
 
-      <!-- ROC chart -->
-      {% include widgets/widget_plot_card.html
-        tag='div'
-        card_class='card card-roc shared-plot-card'
-        canvas_id='roc-chart'
-        button_id='btn-expand-roc'
-        title='ROC Curve'
-        title_i18n_key='roc_title'
-        button_i18n_key='btn_expand_chart'
-      %}
+          {% capture income_chart_note %}<p id="income-note" class="chart-note" data-i18n="income_chart_note">Violins: reference distribution from random subsampling — what the share of each income group would look like if your N countries were drawn at random (without replacement) from the world. Dots: the share actually observed in input sample. Shaded band marks the central 95%.</p>{% endcapture %}
+          {% include widgets/widget_plot_card.html
+            tag='div'
+            card_class='card card-chart card-income-chart shared-plot-card'
+            canvas_id='income-chart'
+            button_id='btn-expand-income'
+            title='Random subsampling distribution vs observed share'
+            title_i18n_key='income_chart_title'
+            button_i18n_key='btn_expand_chart'
+            footer_extra=income_chart_note
+          %}
+        </div>
+      </div>
+    {% endcapture %}
 
-    </div>
+    {% include widgets/widget_tabbed_box.html
+      tabs=results_tabs
+      content=results_tabs_content
+      tablist_id='results-tabs'
+      aria_label='Results view'
+      class='results-tabs-shell'
+      fill=true
+    %}
   </section>
 
   <!-- ── Error modal ──────────────────────────────────────────────── -->
