@@ -50,6 +50,22 @@ const App = (() => {
         { aA:1.7, bA:[-1.0,-0.45, 0.75,1.6], hasDIF:false, aB:1.7, bB:[-1.0,-0.45, 0.75,1.6] },
       ],
     },
+    // 2PL preset: dichotomous items (2 categories), mix of DIF and non-DIF items.
+    dif2pl: {
+      numItems: 10, categories: 2,
+      items: [
+        { aA:1.2, bA:[0.0],   hasDIF:false, aB:1.2,  bB:[0.0] },
+        { aA:1.5, bA:[-0.5],  hasDIF:true,  aB:1.5,  bB:[0.4] },
+        { aA:1.8, bA:[0.3],   hasDIF:false, aB:1.8,  bB:[0.3] },
+        { aA:1.0, bA:[-0.8],  hasDIF:true,  aB:1.0,  bB:[0.2] },
+        { aA:1.6, bA:[0.1],   hasDIF:false, aB:1.6,  bB:[0.1] },
+        { aA:1.3, bA:[-0.3],  hasDIF:true,  aB:1.3,  bB:[0.5] },
+        { aA:2.0, bA:[0.6],   hasDIF:false, aB:2.0,  bB:[0.6] },
+        { aA:1.4, bA:[-0.6],  hasDIF:true,  aB:1.4,  bB:[0.3] },
+        { aA:1.7, bA:[0.2],   hasDIF:false, aB:1.7,  bB:[0.2] },
+        { aA:1.1, bA:[-0.4],  hasDIF:false, aB:1.1,  bB:[-0.4] },
+      ],
+    },
     dif: {
       numItems: 8, categories: 5,
       items: [
@@ -137,6 +153,7 @@ const App = (() => {
     document.getElementById('btn-simulate').addEventListener('click', runSimulation);
     document.getElementById('btn-preset-nodif').addEventListener('click', () => loadPreset('nodif'));
     document.getElementById('btn-preset-dif').addEventListener('click', () => loadPreset('dif'));
+    document.getElementById('btn-preset-2pl').addEventListener('click', () => loadPreset('dif2pl'));
     document.getElementById('btn-apply-bulk').addEventListener('click', applyBulkInput);
     const expandHistBtn = document.getElementById('btn-expand-hist');
     if (expandHistBtn) expandHistBtn.addEventListener('click', openHistModal);
@@ -201,6 +218,7 @@ const App = (() => {
     document.getElementById('lbl-preset').textContent = t('presetTitle');
     document.getElementById('btn-preset-nodif').textContent = t('presetNoDIF');
     document.getElementById('btn-preset-dif').textContent = t('presetDIF');
+    document.getElementById('btn-preset-2pl').textContent = t('preset2PL');
     document.getElementById('items-title').textContent = t('itemsTitle');
     const itemsHint = document.getElementById('items-hint');
     if (itemsHint) itemsHint.textContent = t('itemsHint');
@@ -214,10 +232,17 @@ const App = (() => {
     if (state.lastSimulation) renderSimulationSummary(state.lastSimulation);
   }
 
+  function _updateModelIndicator() {
+    const el = document.getElementById('model-indicator');
+    if (!el) return;
+    el.textContent = t(state.categories === 2 ? 'modelIndicator2PL' : 'modelIndicatorGRM');
+  }
+
   function buildItemForms() {
     const itemCount = clampInt(document.getElementById('num-items').value, 1, 80);
     const categories = clampInt(document.getElementById('num-cats').value, 2, 8);
     state.categories = categories;
+    _updateModelIndicator();
 
     const oldById = new Map(state.items.map(i => [i.id, i]));
     state.items = [];
@@ -581,8 +606,9 @@ const App = (() => {
     const meanA = mean(scoresA);
     const meanB = mean(scoresB);
     const delta = meanB - meanA;
+    const cohenD = cohensD(scoresA, scoresB);
 
-    state.lastSimulation = { meanA, meanB, delta };
+    state.lastSimulation = { meanA, meanB, delta, cohenD };
     state.lastNGroupA = nA;
     state.lastNGroupB = nB;
     renderSimulationSummary(state.lastSimulation);
@@ -592,7 +618,7 @@ const App = (() => {
     renderSimHistogram(scoresA, scoresB);
   }
 
-  function renderSimulationSummary({ meanA, meanB, delta }) {
+  function renderSimulationSummary({ meanA, meanB, delta, cohenD }) {
     document.getElementById('sim-summary').innerHTML = `
       <div class="sim-badge">
         <span class="sim-badge-label">${t('simMeanA')}</span>
@@ -604,7 +630,7 @@ const App = (() => {
       </div>
       <div class="sim-badge delta">
         <span class="sim-badge-label">${t('simDelta')}</span>
-        <span class="sim-badge-value">${delta.toFixed(3)}</span>
+        <span class="sim-badge-value">${cohenD.toFixed(3)}</span>
       </div>`;
   }
 
@@ -736,6 +762,19 @@ const App = (() => {
     if (values.length < 2) return 0;
     const variance = values.reduce((acc, value) => acc + ((value - meanValue) ** 2), 0) / values.length;
     return Math.sqrt(Math.max(variance, 0));
+  }
+
+  // Cohen's d: (meanB - meanA) / pooled SD (unbiased, using n-1 denominators).
+  function cohensD(scoresA, scoresB) {
+    const nA = scoresA.length;
+    const nB = scoresB.length;
+    if (nA < 2 || nB < 2) return 0;
+    const mA = mean(scoresA);
+    const mB = mean(scoresB);
+    const varA = scoresA.reduce((acc, v) => acc + (v - mA) ** 2, 0) / (nA - 1);
+    const varB = scoresB.reduce((acc, v) => acc + (v - mB) ** 2, 0) / (nB - 1);
+    const pooledSD = Math.sqrt(((nA - 1) * varA + (nB - 1) * varB) / (nA + nB - 2));
+    return pooledSD > 0 ? (mB - mA) / pooledSD : 0;
   }
 
   function erfApprox(x) {
@@ -956,7 +995,9 @@ const App = (() => {
     push(['summary', 'categories', state.categories]);
     push(['summary', 'mean_a', state.lastSimulation.meanA.toFixed(6)]);
     push(['summary', 'mean_b', state.lastSimulation.meanB.toFixed(6)]);
-    push(['summary', 'delta', state.lastSimulation.delta.toFixed(6)]);
+    push(['summary', 'delta_raw', state.lastSimulation.delta.toFixed(6)]);
+    push(['summary', 'cohens_d', state.lastSimulation.cohenD.toFixed(6)]);
+    push(['summary', 'irt_model', state.categories === 2 ? '2PL' : 'GRM']);
 
     rows.push('');
     push(['item', 'group', 'a', 'b_thresholds']);
@@ -990,7 +1031,9 @@ const App = (() => {
         categories: state.categories,
         mean_a: state.lastSimulation.meanA,
         mean_b: state.lastSimulation.meanB,
-        delta: state.lastSimulation.delta,
+        delta_raw: state.lastSimulation.delta,
+        cohens_d: state.lastSimulation.cohenD,
+        irt_model: state.categories === 2 ? '2PL' : 'GRM',
         fit_model: state.simFitModel,
       },
       item_parameters: state.items.map(item => ({

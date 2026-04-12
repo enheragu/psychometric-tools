@@ -49,6 +49,7 @@ custom_js:
               <button class="btn-stepper" data-step-target="num-cats" data-step="1" type="button">+</button>
             </div>
           </div>
+          <p id="model-indicator" class="model-indicator grid-2-span"></p>
         </div>
 
         <div class="panel-block grid-2">
@@ -64,9 +65,10 @@ custom_js:
 
         <div class="panel-block preset-block">
           <span class="preset-label section-label" id="lbl-preset">Load example</span>
-          <div class="preset-btns shared-btn-group shared-btn-group--2">
+          <div class="preset-btns shared-btn-group shared-btn-group--3">
             <button id="btn-preset-nodif" class="btn-ghost btn-sm" type="button">No DIF</button>
             <button id="btn-preset-dif" class="btn-ghost btn-sm" type="button">Uniform DIF</button>
+            <button id="btn-preset-2pl" class="btn-ghost btn-sm" type="button">2PL DIF</button>
           </div>
         </div>
 
@@ -93,17 +95,10 @@ custom_js:
           </div>
         </div>
 
-        {% capture sim_method_body %}
-          <p id="method-text"></p>
-        {% endcapture %}
-        {% include widgets/widget_content_box.html
-          tag='div'
-          panel_class='panel-block sim-method'
-          title='How the simulation works'
-          title_id='method-title'
-          title_tone='subtle'
-          body=sim_method_body
-        %}
+        <div class="panel-block sim-method">
+          <p class="section-label" id="method-title"></p>
+          <p id="method-text" class="hint"></p>
+        </div>
       {% endcapture %}
       {% include widgets/widget_content_box.html
         tag='section'

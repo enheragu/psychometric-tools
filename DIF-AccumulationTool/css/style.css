@@ -40,6 +40,10 @@ main {
   gap: .7rem;
 }
 
+.grid-2-span {
+  grid-column: 1 / -1;
+}
+
 input[type='number'], input[type='text'] {
   width: 100%;
   padding: .4rem .55rem;
@@ -130,19 +134,24 @@ input[type='number'] {
   color: var(--clr-text);
 }
 
-.sim-method h3 {
+.sim-method #method-title {
   font-size: var(--txt-sm, .78rem);
   font-weight: var(--txt-w-semibold, 600);
   color: var(--clr-muted);
   text-transform: uppercase;
   letter-spacing: .04em;
-  margin-bottom: .35rem;
+  margin: 0 0 .3rem;
 }
-
-.sim-method p {
+.sim-method #method-text {
   font-size: var(--txt-sm, .78rem);
   color: var(--clr-muted);
   line-height: var(--txt-lh-relaxed);
+  margin: 0;
+}
+.model-indicator {
+  font-size: var(--txt-xs, .72rem);
+  color: var(--clr-muted);
+  margin: .2rem 0 0;
 }
 
 .sim-hist-block .chart-wrap {
@@ -389,3 +398,4 @@ input[type='number'] {
     flex-wrap: wrap;
   }
 }
+
