@@ -224,9 +224,9 @@ const App = (() => {
     const iterations = _readIterations();
     UI.setSimStatus(I18n.t('sim_status_running', { iterations }), true);
 
-    // Defer to next frame so the busy indicator actually paints
-    // before the synchronous simulation blocks the main thread.
-    requestAnimationFrame(() => {
+    // Two RAFs: first commits busy state to DOM, second ensures spinner
+    // is painted before the synchronous simulation blocks the main thread.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
       const t0 = performance.now();
       let result, incomeResult;
       try {
@@ -246,8 +246,9 @@ const App = (() => {
 
       UI.showResults(result, incomeResult);
       const ms = Math.round(performance.now() - t0);
-      UI.setSimStatus(I18n.t('sim_status_done', { ms }), false, 'ok');
-    });
+      const time = ms >= 1000 ? (ms / 1000).toFixed(1) + ' s' : ms + ' ms';
+      UI.setSimStatus(I18n.t('sim_status_done', { time }), false, 'ok');
+    }));
   }
 
   function _exportCsvReport() {
@@ -255,52 +256,56 @@ const App = (() => {
     if (!report) return;
 
     const { result, incomeResult, rows } = report;
-    const lines = [];
-    const pushCsvRow = values => {
-      lines.push(values.map(_csvEscape).join(','));
-    };
+    const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, '');
 
-    pushCsvRow(['section', 'metric', 'value']);
-    pushCsvRow(['summary', 'selected_countries', _selected.size]);
-    pushCsvRow(['summary', 'total_countries', Data.COUNTRY_DATA.length]);
-    pushCsvRow(['summary', 'total_countries_with_income_group',
+    // --- File 1: results (model stats + income subsampling) ---
+    const resultLines = [];
+    const pushResult = values => { resultLines.push(values.map(_csvEscape).join(',')); };
+
+    pushResult(['section', 'metric', 'value']);
+    pushResult(['summary', 'selected_countries', _selected.size]);
+    pushResult(['summary', 'total_countries', Data.COUNTRY_DATA.length]);
+    pushResult(['summary', 'total_countries_with_income_group',
       Data.COUNTRY_DATA.filter(r => r.incomeGroup).length]);
-    pushCsvRow(['summary', 'countries_without_data', Data.NO_HDI_DATA.length]);
+    pushResult(['summary', 'countries_without_data', Data.NO_HDI_DATA.length]);
 
     if (result.error === 'degenerate') {
-      pushCsvRow(['model', 'status', 'degenerate']);
+      pushResult(['model', 'status', 'degenerate']);
     } else {
-      pushCsvRow(['model', 'mean_hdi_selected', result.meanHdiSel.toFixed(6)]);
-      pushCsvRow(['model', 'mean_hdi_not_selected', result.meanHdiNsel.toFixed(6)]);
-      pushCsvRow(['model', 'beta0', result.beta0.toFixed(6)]);
-      pushCsvRow(['model', 'beta1', result.beta1.toFixed(6)]);
-      pushCsvRow(['model', 'odds_ratio_exp_beta1', Math.exp(result.beta1).toFixed(6)]);
-      pushCsvRow(['model', 'std_error_beta1', result.se.toFixed(6)]);
-      pushCsvRow(['model', 'z', result.z.toFixed(6)]);
-      pushCsvRow(['model', 'p_value', result.pValue.toFixed(6)]);
-      pushCsvRow(['model', 'auc', result.auc.toFixed(6)]);
+      pushResult(['model', 'mean_hdi_selected', result.meanHdiSel.toFixed(6)]);
+      pushResult(['model', 'mean_hdi_not_selected', result.meanHdiNsel.toFixed(6)]);
+      pushResult(['model', 'beta0', result.beta0.toFixed(6)]);
+      pushResult(['model', 'beta1', result.beta1.toFixed(6)]);
+      pushResult(['model', 'odds_ratio_exp_beta1', Math.exp(result.beta1).toFixed(6)]);
+      pushResult(['model', 'std_error_beta1', result.se.toFixed(6)]);
+      pushResult(['model', 'z', result.z.toFixed(6)]);
+      pushResult(['model', 'p_value', result.pValue.toFixed(6)]);
+      pushResult(['model', 'auc', result.auc.toFixed(6)]);
     }
 
     if (incomeResult && !incomeResult.error) {
-      pushCsvRow(['income_subsampling', 'sample_size', incomeResult.sampleSize]);
-      pushCsvRow(['income_subsampling', 'universe_size', incomeResult.universeSize]);
-      pushCsvRow(['income_subsampling', 'iterations', incomeResult.iterations]);
-      pushCsvRow(['income_subsampling', 'excluded_iso3', incomeResult.excludedIso3.join('|')]);
+      pushResult(['income_subsampling', 'sample_size', incomeResult.sampleSize]);
+      pushResult(['income_subsampling', 'universe_size', incomeResult.universeSize]);
+      pushResult(['income_subsampling', 'iterations', incomeResult.iterations]);
+      pushResult(['income_subsampling', 'excluded_iso3', incomeResult.excludedIso3.join('|')]);
       for (const g of incomeResult.groups) {
-        pushCsvRow(['income_subsampling_' + g.key, 'observed_pct', g.observedPct.toFixed(3)]);
-        pushCsvRow(['income_subsampling_' + g.key, 'observed_count', g.observedCount]);
-        pushCsvRow(['income_subsampling_' + g.key, 'universe_pct', g.universePct.toFixed(3)]);
-        pushCsvRow(['income_subsampling_' + g.key, 'p025', g.p025.toFixed(3)]);
-        pushCsvRow(['income_subsampling_' + g.key, 'p50', g.p50.toFixed(3)]);
-        pushCsvRow(['income_subsampling_' + g.key, 'p975', g.p975.toFixed(3)]);
-        pushCsvRow(['income_subsampling_' + g.key, 'outside_95', g.outsideCi ? '1' : '0']);
+        pushResult(['income_subsampling_' + g.key, 'observed_pct', g.observedPct.toFixed(3)]);
+        pushResult(['income_subsampling_' + g.key, 'observed_count', g.observedCount]);
+        pushResult(['income_subsampling_' + g.key, 'universe_pct', g.universePct.toFixed(3)]);
+        pushResult(['income_subsampling_' + g.key, 'p025', g.p025.toFixed(3)]);
+        pushResult(['income_subsampling_' + g.key, 'p50', g.p50.toFixed(3)]);
+        pushResult(['income_subsampling_' + g.key, 'p975', g.p975.toFixed(3)]);
+        pushResult(['income_subsampling_' + g.key, 'outside_95', g.outsideCi ? '1' : '0']);
       }
     } else if (incomeResult) {
-      pushCsvRow(['income_subsampling', 'status', incomeResult.error]);
+      pushResult(['income_subsampling', 'status', incomeResult.error]);
     }
 
-    lines.push('');
-    pushCsvRow(['country', 'iso3', 'selected', 'hdi', 'hdi_year', 'income_group', 'income_year', 'predicted_probability', 'has_hdi_data']);
+    // --- File 2: countries ---
+    const countryLines = [];
+    const pushCountry = values => { countryLines.push(values.map(_csvEscape).join(',')); };
+
+    pushCountry(['country', 'iso3', 'selected', 'hdi', 'hdi_year', 'income_group', 'income_year', 'prob_selected_by_hdi']);
 
     for (const row of rows) {
       const isSelected = _selected.has(row.iso3);
@@ -309,8 +314,7 @@ const App = (() => {
       if (hasHdi && result.error !== 'degenerate') {
         predicted = Regression.sigmoid(result.beta0 + result.beta1 * row.hdi).toFixed(6);
       }
-
-      pushCsvRow([
+      pushCountry([
         row.country,
         row.iso3,
         isSelected ? '1' : '0',
@@ -319,22 +323,13 @@ const App = (() => {
         row.incomeGroup ?? '',
         row.incomeYear ?? '',
         predicted,
-        hasHdi ? '1' : '0',
       ]);
     }
 
-    const blob = new Blob([lines.join('\n') + '\n'], { type: 'text/csv;charset=utf-8;' });
-    const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const filename = `c-nrsbtool-export-${datePart}.csv`;
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    _downloadBlob(resultLines.join('\n') + '\n', 'text/csv;charset=utf-8;',
+      `c-nrsbtool-results-${datePart}.csv`);
+    _downloadBlob(countryLines.join('\n') + '\n', 'text/csv;charset=utf-8;',
+      `c-nrsbtool-countries-${datePart}.csv`);
   }
 
   function _exportJsonReport() {
@@ -349,7 +344,11 @@ const App = (() => {
         total_countries_with_income_group: Data.COUNTRY_DATA.filter(r => r.incomeGroup).length,
         countries_without_data: Data.NO_HDI_DATA.length,
       },
-      model: report.result,
+      model: (() => {
+        // eslint-disable-next-line no-unused-vars
+        const { sigmoidCurve, rocCurve, samples, ...modelStats } = report.result;
+        return modelStats;
+      })(),
       income_subsampling: report.incomeResult ? (() => {
         const { groups, ...rest } = report.incomeResult;
         return {
@@ -371,25 +370,15 @@ const App = (() => {
           income_group: row.incomeGroup ?? null,
           income_group_label: row.incomeGroupLabel ?? null,
           income_year: row.incomeYear ?? null,
-          predicted_probability: predicted,
+          prob_selected_by_hdi: predicted,
           has_hdi_data: hasHdi,
         };
       }),
     };
 
-    const blob = new Blob([JSON.stringify(payload, null, 2) + '\n'], {
-      type: 'application/json;charset=utf-8;',
-    });
     const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const filename = `c-nrsbtool-export-${datePart}.json`;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    _downloadBlob(JSON.stringify(payload, null, 2) + '\n', 'application/json;charset=utf-8;',
+      `c-nrsbtool-export-${datePart}.json`);
   }
 
   function _buildExportReport() {
@@ -416,6 +405,18 @@ const App = (() => {
     rows.sort((a, b) => String(a.country).localeCompare(String(b.country)));
 
     return { result, incomeResult, rows };
+  }
+
+  function _downloadBlob(content, mimeType, filename) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   }
 
   function _csvEscape(value) {

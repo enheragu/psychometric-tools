@@ -45,16 +45,6 @@ main {
   line-height: 1.35;
   text-align: left;
 }
-.sim-status-block {
-  grid-column: 2;
-  grid-row: 2;
-  padding: .15rem .15rem 0;
-  font-size: var(--txt-xs, .72rem);
-  color: var(--clr-muted);
-  line-height: 1.35;
-  min-height: 1.2em;
-}
-.sim-status-block .sim-progress { margin: 0; }
 
 /* ── Panels ─────────────────────────────────────────────────────── */
 .panel {
@@ -405,31 +395,22 @@ body.dark .cb-meta-chip--inc-abbr {
   margin-right: .15rem;
 }
 .run-block .btn-primary { margin: 0; }
-.run-block .export-row { margin-top: .15rem; }
+/* Wrapper is the flex child — takes only button height, no extra.
+   Status text is absolutely positioned below the button; nothing in
+   the flow moves when it appears or disappears. */
+.run-btn-wrap {
+  position: relative;
+}
+.run-btn-wrap .sim-progress {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: .15rem;
+  min-height: 0;
+  pointer-events: none;
+}
 
-.sim-progress {
-  margin: 0;
-  min-height: 1.1em;
-  font-size: var(--txt-sm, .78rem);
-  color: var(--clr-muted);
-}
-.sim-progress[data-type="ok"]    { color: var(--clr-status-success, #16a34a); }
-.sim-progress[data-type="error"] { color: var(--clr-status-danger, #dc2626); }
-.sim-progress.is-busy::before {
-  content: '';
-  display: inline-block;
-  width: .72rem;
-  height: .72rem;
-  margin-right: .4rem;
-  border-radius: 999px;
-  border: 2px solid color-mix(in oklab, var(--clr-primary) 45%, transparent);
-  border-top-color: var(--clr-primary);
-  animation: cnrsb-spin .8s linear infinite;
-  vertical-align: -1px;
-}
-body.cnrsb-busy,
-body.cnrsb-busy * { cursor: progress !important; }
-@keyframes cnrsb-spin { to { transform: rotate(360deg); } }
 
 /* Tabbed results shell — give the panel some breathing room */
 .results-tabs-shell .shared-tabbed-panel {

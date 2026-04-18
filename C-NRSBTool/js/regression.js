@@ -154,6 +154,10 @@ const Regression = (() => {
     const { se, z, pValue } = waldTest(samples, beta0, beta1);
     const auc = aucROC(samples, beta0, beta1);
 
+    const hdiValues = samples.map(s => s.hdi);
+    const hdiMin = Math.min(...hdiValues);
+    const hdiMax = Math.max(...hdiValues);
+
     return {
       samples,
       n1, n0,
@@ -164,7 +168,9 @@ const Regression = (() => {
       se, z, pValue,
       auc,
       significant: pValue < 0.05,
-      sigmoidCurve: sigmoidCurve(beta0, beta1, 0, 1),
+      hdiMin,
+      hdiMax,
+      sigmoidCurve: sigmoidCurve(beta0, beta1, hdiMin, hdiMax),
       rocCurve: rocCurve(samples, beta0, beta1),
     };
   }

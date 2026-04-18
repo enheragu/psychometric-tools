@@ -14,6 +14,8 @@ webapp_description: Analyze country selection bias with Human Development Index 
 with_checkbox_list: true
 with_chart_legend: true
 with_tabs: true
+with_analysis_panels: true
+with_sim_status: true
 header_title: C-NRSBTool
 header_title_i18n_key: site_title
 header_subtitle: Explore whether your country list correlates with the Human Development Index
@@ -145,9 +147,12 @@ custom_js:
             <input id="n-sim-iter" type="number" min="500" max="200000" step="500" value="20000">
           </div>
         </div>
-        <button id="btn-run" class="btn-primary btn-block" data-i18n="btn_run">
-          Run analysis
-        </button>
+        <div class="run-btn-wrap">
+          <button id="btn-run" class="btn-primary btn-block" data-i18n="btn_run">
+            Run analysis
+          </button>
+          <p id="sim-progress" class="sim-progress shared-status-hint" aria-live="polite"></p>
+        </div>
         <div class="export-row">
           <button id="btn-export" class="btn-secondary btn-export" data-i18n="btn_export" type="button">
             Export CSV
@@ -171,9 +176,6 @@ custom_js:
       <p id="footer-latest-year"></p>
       <p id="footer-data-source"></p>
     </section>
-    <aside class="sim-status-block" aria-live="polite">
-      <p id="sim-progress" class="sim-progress hint shared-status-hint"></p>
-    </aside>
     </main>
   </div>
 

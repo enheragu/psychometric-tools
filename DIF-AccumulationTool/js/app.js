@@ -15,6 +15,9 @@ const App = (() => {
     modalViewMode: 'category',
     lastScoresA: null,
     lastScoresB: null,
+    lastMeansA: null,
+    lastMeansB: null,
+    lastNSim: 1,
     simHistChart: null,
     modalIsHistogram: false,
     modalDefaults: null,
@@ -48,6 +51,22 @@ const App = (() => {
         { aA:1.9, bA:[-1.45,-0.95, 0.45,1.05], hasDIF:false, aB:1.9, bB:[-1.45,-0.95, 0.45,1.05] },
         { aA:1.5, bA:[-1.25,-0.35, 0.65,1.55], hasDIF:false, aB:1.5, bB:[-1.25,-0.35, 0.65,1.55] },
         { aA:1.7, bA:[-1.0,-0.45, 0.75,1.6], hasDIF:false, aB:1.7, bB:[-1.0,-0.45, 0.75,1.6] },
+      ],
+    },
+    // 2PL preset: dichotomous items (2 categories), no DIF.
+    nodif2pl: {
+      numItems: 10, categories: 2,
+      items: [
+        { aA:1.2, bA:[0.0],   hasDIF:false, aB:1.2,  bB:[0.0] },
+        { aA:1.5, bA:[-0.5],  hasDIF:false, aB:1.5,  bB:[-0.5] },
+        { aA:1.8, bA:[0.3],   hasDIF:false, aB:1.8,  bB:[0.3] },
+        { aA:1.0, bA:[-0.8],  hasDIF:false, aB:1.0,  bB:[-0.8] },
+        { aA:1.6, bA:[0.1],   hasDIF:false, aB:1.6,  bB:[0.1] },
+        { aA:1.3, bA:[-0.3],  hasDIF:false, aB:1.3,  bB:[-0.3] },
+        { aA:2.0, bA:[0.6],   hasDIF:false, aB:2.0,  bB:[0.6] },
+        { aA:1.4, bA:[-0.6],  hasDIF:false, aB:1.4,  bB:[-0.6] },
+        { aA:1.7, bA:[0.2],   hasDIF:false, aB:1.7,  bB:[0.2] },
+        { aA:1.1, bA:[-0.4],  hasDIF:false, aB:1.1,  bB:[-0.4] },
       ],
     },
     // 2PL preset: dichotomous items (2 categories), mix of DIF and non-DIF items.
@@ -153,6 +172,7 @@ const App = (() => {
     document.getElementById('btn-simulate').addEventListener('click', runSimulation);
     document.getElementById('btn-preset-nodif').addEventListener('click', () => loadPreset('nodif'));
     document.getElementById('btn-preset-dif').addEventListener('click', () => loadPreset('dif'));
+    document.getElementById('btn-preset-nodif2pl').addEventListener('click', () => loadPreset('nodif2pl'));
     document.getElementById('btn-preset-2pl').addEventListener('click', () => loadPreset('dif2pl'));
     document.getElementById('btn-apply-bulk').addEventListener('click', applyBulkInput);
     const expandHistBtn = document.getElementById('btn-expand-hist');
@@ -202,6 +222,7 @@ const App = (() => {
     document.getElementById('lbl-cats').textContent = t('lblCats');
     document.getElementById('lbl-group-a').textContent = t('lblGroupA');
     document.getElementById('lbl-group-b').textContent = t('lblGroupB');
+    document.getElementById('lbl-simulations').textContent = t('lblSimulations');
     document.getElementById('btn-simulate').textContent = t('simulate');
     document.getElementById('method-title').textContent = t('methodTitle');
     document.getElementById('method-text').textContent = t('methodText');
@@ -218,6 +239,7 @@ const App = (() => {
     document.getElementById('lbl-preset').textContent = t('presetTitle');
     document.getElementById('btn-preset-nodif').textContent = t('presetNoDIF');
     document.getElementById('btn-preset-dif').textContent = t('presetDIF');
+    document.getElementById('btn-preset-nodif2pl').textContent = t('preset2PLNoDIF');
     document.getElementById('btn-preset-2pl').textContent = t('preset2PL');
     document.getElementById('items-title').textContent = t('itemsTitle');
     const itemsHint = document.getElementById('items-hint');
@@ -438,7 +460,9 @@ const App = (() => {
     const canvas = document.getElementById('chart-modal-canvas');
     if (state.modalChart) { state.modalChart.destroy(); state.modalChart = null; }
     const maxScore = state.items.length * (state.categories - 1);
-    state.modalDefaults = { xMin: -0.5, xMax: maxScore + 0.5, yMin: 0, yMax: 1, mode: 'x' };
+    state.modalDefaults = state.lastNSim > 1
+      ? null
+      : { xMin: -0.5, xMax: maxScore + 0.5, yMin: 0, yMax: 1, mode: 'x' };
     state.modalChart = renderSimHistogram(state.lastScoresA, state.lastScoresB, canvas);
     attachChartInteractions({ canvas, getChart: () => state.modalChart, defaults: state.modalDefaults });
   }
@@ -599,23 +623,59 @@ const App = (() => {
   function runSimulation() {
     const nA = clampInt(document.getElementById('n-group-a').value, 100, 50000);
     const nB = clampInt(document.getElementById('n-group-b').value, 100, 50000);
+    const nSim = clampInt(document.getElementById('n-simulations').value, 1, 1000);
 
-    const scoresA = simulateGroupScores(nA, 'A');
-    const scoresB = simulateGroupScores(nB, 'B');
+    setSimStatus(t('simRunning', { n: nSim }), true);
 
-    const meanA = mean(scoresA);
-    const meanB = mean(scoresB);
-    const delta = meanB - meanA;
-    const cohenD = cohensD(scoresA, scoresB);
+    // Two RAFs: first lets the browser commit the busy state to the DOM,
+    // second ensures the spinner frame is actually painted before the
+    // synchronous simulation loop blocks the main thread.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const t0 = performance.now();
+      let lastScoresA, lastScoresB, meanA, meanB, cohenD;
+      const meansA = [], meansB = [];
 
-    state.lastSimulation = { meanA, meanB, delta, cohenD };
-    state.lastNGroupA = nA;
-    state.lastNGroupB = nB;
-    renderSimulationSummary(state.lastSimulation);
-    document.getElementById('sim-results').classList.remove('hidden');
-    state.lastScoresA = scoresA;
-    state.lastScoresB = scoresB;
-    renderSimHistogram(scoresA, scoresB);
+      try {
+        let sumMeanA = 0, sumMeanB = 0, sumCohenD = 0;
+        for (let s = 0; s < nSim; s++) {
+          const scoresA = simulateGroupScores(nA, 'A');
+          const scoresB = simulateGroupScores(nB, 'B');
+          const mA = mean(scoresA);
+          const mB = mean(scoresB);
+          meansA.push(mA);
+          meansB.push(mB);
+          sumMeanA += mA;
+          sumMeanB += mB;
+          sumCohenD += cohensD(scoresA, scoresB);
+          lastScoresA = scoresA;
+          lastScoresB = scoresB;
+        }
+        meanA = sumMeanA / nSim;
+        meanB = sumMeanB / nSim;
+        cohenD = sumCohenD / nSim;
+      } catch (err) {
+        console.error('[DIF-AccumulationTool] Simulation failed:', err);
+        setSimStatus(t('simError'), false, 'error');
+        return;
+      }
+
+      const ms = Math.round(performance.now() - t0);
+      const time = ms >= 1000 ? (ms / 1000).toFixed(1) + ' s' : ms + ' ms';
+      const delta = meanB - meanA;
+
+      state.lastSimulation = { meanA, meanB, delta, cohenD };
+      state.lastNGroupA = nA;
+      state.lastNGroupB = nB;
+      state.lastNSim = nSim;
+      state.lastMeansA = meansA;
+      state.lastMeansB = meansB;
+      state.lastScoresA = lastScoresA;
+      state.lastScoresB = lastScoresB;
+      renderSimulationSummary(state.lastSimulation);
+      document.getElementById('sim-results').classList.remove('hidden');
+      renderSimHistogram(lastScoresA, lastScoresB);
+      setSimStatus(t('simDone', { time }), false, 'ok');
+    }));
   }
 
   function renderSimulationSummary({ meanA, meanB, delta, cohenD }) {
@@ -635,63 +695,89 @@ const App = (() => {
   }
 
   function renderSimHistogram(scoresA, scoresB, targetCanvas) {
-    const maxScore = state.items.length * (state.categories - 1);
     const shared = window.SharedHistogramNormalChart;
     const dataColors = window.SharedChartLegend.getDataColors();
-    const discrete = shared?.buildDiscreteHistogramDatasets
-      ? shared.buildDiscreteHistogramDatasets({
-          maxScore,
-          groups: [
-            { label: t('simGroupA'), scores: scoresA, color: dataColors.blue },
-            { label: t('simGroupB'), scores: scoresB, color: dataColors.red },
-          ],
-          fit: { type: 'normal-binmass', labelPrefix: t('simFitOgive') },
-        })
-      : null;
+    const useMeans = state.lastNSim > 1;
 
-    const labels = discrete?.labels || [];
+    let chartData, defaults, histChartOpts;
 
-    if (!targetCanvas) {
-      const block = document.getElementById('sim-hist-block');
-      block.classList.remove('hidden');
+    if (useMeans) {
+      chartData = shared?.buildContinuousDatasets
+        ? shared.buildContinuousDatasets({
+            series: [
+              { label: t('simGroupA'), values: state.lastMeansA },
+              { label: t('simGroupB'), values: state.lastMeansB },
+            ],
+          })
+        : null;
+      defaults = null;
+      const theme = getChartTheme();
+      histChartOpts = window.SharedChartLegend.buildChartOptions({
+        theme,
+        plugins: {
+          chartAreaBackground: { color: theme.area },
+          legend: shared.createLegendOptions({ normalLabel: t('simFitOgive') }),
+          tooltip: window.SharedChartLegend.createTooltipLabelOptions({
+            label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}`,
+          }),
+        },
+        scales: {
+          x: buildCategoryScale(t('simMeansHistX'), {
+            ticks: { color: theme.text, maxTicksLimit: 14 },
+          }),
+          y: buildLinearScale(t('simMeansHistY'), 0, undefined, {
+            ticks: { color: theme.text },
+          }),
+        },
+      });
+    } else {
+      const maxScore = state.items.length * (state.categories - 1);
+      chartData = shared?.buildDiscreteHistogramDatasets
+        ? shared.buildDiscreteHistogramDatasets({
+            maxScore,
+            groups: [
+              { label: t('simGroupA'), scores: scoresA, color: dataColors.blue },
+              { label: t('simGroupB'), scores: scoresB, color: dataColors.red },
+            ],
+            fit: { type: 'normal-binmass', labelPrefix: t('simFitOgive') },
+          })
+        : null;
+      defaults = { xMin: -0.5, xMax: maxScore + 0.5, yMin: 0, yMax: 1, mode: 'x' };
+      const theme = getChartTheme();
+      histChartOpts = window.SharedChartLegend.buildChartOptions({
+        theme,
+        plugins: {
+          chartAreaBackground: { color: theme.area },
+          legend: shared.createLegendOptions({ normalLabel: t('simFitOgive') }),
+          tooltip: window.SharedChartLegend.createTooltipLabelOptions({
+            label: ctx => `${ctx.dataset.label}: ${(ctx.parsed.y * 100).toFixed(1)} %`,
+          }),
+        },
+        scales: {
+          x: buildCategoryScale(t('simHistX'), {
+            ticks: { color: theme.text, maxTicksLimit: 14 },
+          }),
+          y: buildLinearScale(t('simHistY'), undefined, undefined, {
+            ticks: { color: theme.text, callback: v => `${(v * 100).toFixed(0)} %` },
+          }),
+        },
+      });
     }
 
-    const canvas = targetCanvas || document.getElementById('sim-hist-canvas');
+    const labels = chartData?.labels || [];
+
     if (!targetCanvas) {
+      document.getElementById('sim-hist-block').classList.remove('hidden');
       if (state.simHistChart) { state.simHistChart.destroy(); state.simHistChart = null; }
     }
 
-    const theme = getChartTheme();
-    const histChartOpts = window.SharedChartLegend.buildChartOptions({
-      theme: theme,
-      plugins: {
-        chartAreaBackground: { color: theme.area },
-        legend: window.SharedHistogramNormalChart.createLegendOptions({
-          normalLabel: t('simFitOgive'),
-        }),
-        tooltip: window.SharedChartLegend.createTooltipLabelOptions({
-          label: ctx => `${ctx.dataset.label}: ${(ctx.parsed.y * 100).toFixed(1)} %`,
-        }),
-      },
-      scales: {
-        x: buildCategoryScale(t('simHistX'), {
-          ticks: { color: theme.text, maxTicksLimit: 14 },
-        }),
-        y: buildLinearScale(t('simHistY'), undefined, undefined, {
-          ticks: { color: theme.text, callback: v => `${(v * 100).toFixed(0)} %` },
-        }),
-      },
-    });
+    const canvas = targetCanvas || document.getElementById('sim-hist-canvas');
     const chart = new Chart(canvas.getContext('2d'), {
       type: 'bar',
-      data: {
-        labels,
-        datasets: discrete?.datasets || [],
-      },
+      data: { labels, datasets: chartData?.datasets || [] },
       options: histChartOpts,
     });
 
-    const defaults = { xMin: -0.5, xMax: maxScore + 0.5, yMin: 0, yMax: 1, mode: 'x' };
     if (!targetCanvas) state.simHistChart = chart;
     attachChartInteractions({
       canvas,
@@ -714,6 +800,9 @@ const App = (() => {
     document.getElementById('sim-summary').innerHTML = '';
     state.lastScoresA = null;
     state.lastScoresB = null;
+    state.lastMeansA = null;
+    state.lastMeansB = null;
+    state.lastNSim = 1;
     state.lastSimulation = null;
     state.lastNGroupA = null;
     state.lastNGroupB = null;
@@ -809,6 +898,10 @@ const App = (() => {
       ? shared
       : window.SharedChartLegend.getDataPalette();
     return colors[idx % colors.length];
+  }
+
+  function setSimStatus(text, isBusy, type) {
+    if (window.SharedSimStatus) window.SharedSimStatus.set('sim-progress', text, isBusy, type);
   }
 
   function clampInt(value, min, max) {

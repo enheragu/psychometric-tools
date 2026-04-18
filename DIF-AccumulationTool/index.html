@@ -13,6 +13,8 @@ intro_title: About this tool
 intro_text: This simulator shows how small Differential Item Functioning (DIF) effects at the item level can accumulate into systematic total-score differences between groups in graded response model (GRM) tests.
 with_chart_legend: true
 with_histogram_chart: true
+with_analysis_panels: true
+with_sim_status: true
 footer_report_enabled: true
 footer_report_label: Report problem
 footer_credits_html: |
@@ -64,11 +66,14 @@ custom_js:
         </div>
 
         <div class="panel-block preset-block">
-          <span class="preset-label section-label" id="lbl-preset">Load example</span>
-          <div class="preset-btns shared-btn-group shared-btn-group--3">
+          <span class="section-label" id="lbl-preset">Load example</span>
+          <div class="preset-btns shared-btn-group shared-btn-group--2">
             <button id="btn-preset-nodif" class="btn-ghost btn-sm" type="button">No DIF</button>
             <button id="btn-preset-dif" class="btn-ghost btn-sm" type="button">Uniform DIF</button>
-            <button id="btn-preset-2pl" class="btn-ghost btn-sm" type="button">2PL DIF</button>
+          </div>
+          <div class="preset-btns shared-btn-group shared-btn-group--2">
+            <button id="btn-preset-nodif2pl" class="btn-ghost btn-sm" type="button">2PL · No DIF</button>
+            <button id="btn-preset-2pl" class="btn-ghost btn-sm" type="button">2PL · DIF</button>
           </div>
         </div>
 
@@ -88,7 +93,14 @@ custom_js:
         </div>
 
         <div class="panel-block controls-row">
-          <button id="btn-simulate" class="btn-primary btn-block" type="button">Run base simulation</button>
+          <div>
+            <label for="n-simulations" id="lbl-simulations">Number of simulations</label>
+            <input id="n-simulations" type="number" min="1" max="10000" value="100">
+          </div>
+          <div class="run-btn-wrap">
+            <button id="btn-simulate" class="btn-primary btn-block" type="button">Run base simulation</button>
+            <p id="sim-progress" class="sim-progress shared-status-hint" aria-live="polite"></p>
+          </div>
           <div class="preset-btns export-row">
             <button id="btn-export-csv" class="btn-secondary btn-export" type="button">Export CSV</button>
             <button id="btn-export-json" class="btn-secondary btn-export" type="button">Export JSON</button>

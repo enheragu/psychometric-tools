@@ -501,7 +501,26 @@ const UI = (() => {
       if (density[b] > peak) peak = density[b];
     }
     if (peak > 0) for (let b = 0; b < bins; b++) density[b] /= peak;
-    return { yValues, density };
+
+    // Gaussian post-smoothing to remove residual jaggedness from
+    // discrete/clustered income data where Silverman bandwidth is narrow.
+    // Gaussian post-smoothing (2 passes) to remove residual jaggedness from
+    // discrete/clustered income data where Silverman bandwidth is narrow.
+    const kernel = [0.0625, 0.25, 0.375, 0.25, 0.0625]; // σ≈1 bin
+    const half = Math.floor(kernel.length / 2);
+    function gaussPass(src) {
+      const out = new Array(bins);
+      for (let b = 0; b < bins; b++) {
+        let s = 0;
+        for (let k = 0; k < kernel.length; k++) {
+          const idx = Math.min(Math.max(b + k - half, 0), bins - 1);
+          s += kernel[k] * src[idx];
+        }
+        out[b] = s;
+      }
+      return out;
+    }
+    return { yValues, density: gaussPass(gaussPass(density)) };
   }
 
   function _incomeChartDatasets(r) {
@@ -925,7 +944,7 @@ const UI = (() => {
         }),
       },
       scales: {
-        x: _linearScale(I18n.t('chart_x'), 0, 1.0),
+        x: _linearScale(I18n.t('chart_x'), Math.max(0, r.hdiMin - 0.03), Math.min(1, r.hdiMax + 0.03)),
         y: _linearScale(I18n.t('chart_y'), -0.06, 1.06),
       },
     });
@@ -1045,8 +1064,10 @@ const UI = (() => {
       isScatter ? 'chart_modal_scatter' : (isIncome ? 'chart_modal_income' : 'chart_modal_roc')
     );
     const incomeViolinCount = (isIncome && _lastIncome?.groups) ? _lastIncome.groups.length : 0;
+    const scatterXMin = isScatter ? Math.max(0, _lastResult.hdiMin - 0.03) : 0;
+    const scatterXMax = isScatter ? Math.min(1, _lastResult.hdiMax + 0.03) : 1.0;
     _modalDefaults = isScatter
-      ? { xMin: 0, xMax: 1.0, yMin: -0.06, yMax: 1.06 }
+      ? { xMin: scatterXMin, xMax: scatterXMax, yMin: -0.06, yMax: 1.06 }
       : (isIncome
           ? { xMin: -0.6, xMax: (incomeViolinCount || 1) - 0.4, yMin: 0, yMax: 100 }
           : { xMin: 0, xMax: 1, yMin: 0, yMax: 1 });
@@ -1108,7 +1129,7 @@ const UI = (() => {
       },
       scales: isScatter
         ? {
-            x: _linearScale(I18n.t('chart_x'), 0, 1.0),
+            x: _linearScale(I18n.t('chart_x'), scatterXMin, scatterXMax),
             y: _linearScale(I18n.t('chart_y'), -0.06, 1.06),
           }
         : {
@@ -1166,17 +1187,9 @@ const UI = (() => {
   }
 
   function setSimStatus(text, isBusy, type) {
-    const el = document.getElementById('sim-progress');
-    if (!el) return;
-    el.textContent = text || '';
-    el.classList.toggle('is-busy', !!isBusy);
-    if (document.body) {
-      document.body.classList.toggle('cnrsb-busy', !!isBusy);
-      document.body.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+    if (window.SharedSimStatus) {
+      window.SharedSimStatus.set('sim-progress', text, isBusy, type);
     }
-    if (type === 'error')    el.dataset.type = 'error';
-    else if (type === 'ok')  el.dataset.type = 'ok';
-    else                     el.dataset.type = '';
   }
 
   function refreshCharts() {
