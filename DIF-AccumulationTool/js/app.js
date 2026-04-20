@@ -43,59 +43,59 @@ const App = (() => {
     nodif: {
       numItems: 8, categories: 5,
       items: [
-        { aA:1.8, bA:[-1.7,-0.8, 0.15,1.05], hasDIF:false, aB:1.8, bB:[-1.7,-0.8, 0.15,1.05] },
-        { aA:1.4, bA:[-1.05,-0.15, 0.35,1.45], hasDIF:false, aB:1.4, bB:[-1.05,-0.15, 0.35,1.45] },
-        { aA:2.0, bA:[-1.95,-1.05,-0.05,0.95], hasDIF:false, aB:2.0, bB:[-1.95,-1.05,-0.05,0.95] },
-        { aA:1.6, bA:[-0.9,-0.1, 0.9,1.7], hasDIF:false, aB:1.6, bB:[-0.9,-0.1, 0.9,1.7] },
-        { aA:1.3, bA:[-1.55,-0.55, 0.25,1.35], hasDIF:false, aB:1.3, bB:[-1.55,-0.55, 0.25,1.35] },
-        { aA:1.9, bA:[-1.45,-0.95, 0.45,1.05], hasDIF:false, aB:1.9, bB:[-1.45,-0.95, 0.45,1.05] },
-        { aA:1.5, bA:[-1.25,-0.35, 0.65,1.55], hasDIF:false, aB:1.5, bB:[-1.25,-0.35, 0.65,1.55] },
-        { aA:1.7, bA:[-1.0,-0.45, 0.75,1.6], hasDIF:false, aB:1.7, bB:[-1.0,-0.45, 0.75,1.6] },
+        { a_a:1.8, b_a:[-1.7,-0.8, 0.15,1.05], hasDIF:false, a_b:1.8, b_b:[-1.7,-0.8, 0.15,1.05] },
+        { a_a:1.4, b_a:[-1.05,-0.15, 0.35,1.45], hasDIF:false, a_b:1.4, b_b:[-1.05,-0.15, 0.35,1.45] },
+        { a_a:2.0, b_a:[-1.95,-1.05,-0.05,0.95], hasDIF:false, a_b:2.0, b_b:[-1.95,-1.05,-0.05,0.95] },
+        { a_a:1.6, b_a:[-0.9,-0.1, 0.9,1.7], hasDIF:false, a_b:1.6, b_b:[-0.9,-0.1, 0.9,1.7] },
+        { a_a:1.3, b_a:[-1.55,-0.55, 0.25,1.35], hasDIF:false, a_b:1.3, b_b:[-1.55,-0.55, 0.25,1.35] },
+        { a_a:1.9, b_a:[-1.45,-0.95, 0.45,1.05], hasDIF:false, a_b:1.9, b_b:[-1.45,-0.95, 0.45,1.05] },
+        { a_a:1.5, b_a:[-1.25,-0.35, 0.65,1.55], hasDIF:false, a_b:1.5, b_b:[-1.25,-0.35, 0.65,1.55] },
+        { a_a:1.7, b_a:[-1.0,-0.45, 0.75,1.6], hasDIF:false, a_b:1.7, b_b:[-1.0,-0.45, 0.75,1.6] },
       ],
     },
     // 2PL preset: dichotomous items (2 categories), no DIF.
     nodif2pl: {
       numItems: 10, categories: 2,
       items: [
-        { aA:1.2, bA:[0.0],   hasDIF:false, aB:1.2,  bB:[0.0] },
-        { aA:1.5, bA:[-0.5],  hasDIF:false, aB:1.5,  bB:[-0.5] },
-        { aA:1.8, bA:[0.3],   hasDIF:false, aB:1.8,  bB:[0.3] },
-        { aA:1.0, bA:[-0.8],  hasDIF:false, aB:1.0,  bB:[-0.8] },
-        { aA:1.6, bA:[0.1],   hasDIF:false, aB:1.6,  bB:[0.1] },
-        { aA:1.3, bA:[-0.3],  hasDIF:false, aB:1.3,  bB:[-0.3] },
-        { aA:2.0, bA:[0.6],   hasDIF:false, aB:2.0,  bB:[0.6] },
-        { aA:1.4, bA:[-0.6],  hasDIF:false, aB:1.4,  bB:[-0.6] },
-        { aA:1.7, bA:[0.2],   hasDIF:false, aB:1.7,  bB:[0.2] },
-        { aA:1.1, bA:[-0.4],  hasDIF:false, aB:1.1,  bB:[-0.4] },
+        { a_a:1.2, b_a:[0.0],   hasDIF:false, a_b:1.2,  b_b:[0.0] },
+        { a_a:1.5, b_a:[-0.5],  hasDIF:false, a_b:1.5,  b_b:[-0.5] },
+        { a_a:1.8, b_a:[0.3],   hasDIF:false, a_b:1.8,  b_b:[0.3] },
+        { a_a:1.0, b_a:[-0.8],  hasDIF:false, a_b:1.0,  b_b:[-0.8] },
+        { a_a:1.6, b_a:[0.1],   hasDIF:false, a_b:1.6,  b_b:[0.1] },
+        { a_a:1.3, b_a:[-0.3],  hasDIF:false, a_b:1.3,  b_b:[-0.3] },
+        { a_a:2.0, b_a:[0.6],   hasDIF:false, a_b:2.0,  b_b:[0.6] },
+        { a_a:1.4, b_a:[-0.6],  hasDIF:false, a_b:1.4,  b_b:[-0.6] },
+        { a_a:1.7, b_a:[0.2],   hasDIF:false, a_b:1.7,  b_b:[0.2] },
+        { a_a:1.1, b_a:[-0.4],  hasDIF:false, a_b:1.1,  b_b:[-0.4] },
       ],
     },
     // 2PL preset: dichotomous items (2 categories), mix of DIF and non-DIF items.
     dif2pl: {
       numItems: 10, categories: 2,
       items: [
-        { aA:1.2, bA:[0.0],   hasDIF:false, aB:1.2,  bB:[0.0] },
-        { aA:1.5, bA:[-0.5],  hasDIF:true,  aB:1.5,  bB:[0.4] },
-        { aA:1.8, bA:[0.3],   hasDIF:false, aB:1.8,  bB:[0.3] },
-        { aA:1.0, bA:[-0.8],  hasDIF:true,  aB:1.0,  bB:[0.2] },
-        { aA:1.6, bA:[0.1],   hasDIF:false, aB:1.6,  bB:[0.1] },
-        { aA:1.3, bA:[-0.3],  hasDIF:true,  aB:1.3,  bB:[0.5] },
-        { aA:2.0, bA:[0.6],   hasDIF:false, aB:2.0,  bB:[0.6] },
-        { aA:1.4, bA:[-0.6],  hasDIF:true,  aB:1.4,  bB:[0.3] },
-        { aA:1.7, bA:[0.2],   hasDIF:false, aB:1.7,  bB:[0.2] },
-        { aA:1.1, bA:[-0.4],  hasDIF:false, aB:1.1,  bB:[-0.4] },
+        { a_a:1.2, b_a:[0.0],   hasDIF:false, a_b:1.2,  b_b:[0.0] },
+        { a_a:1.5, b_a:[-0.5],  hasDIF:true,  a_b:1.5,  b_b:[0.4] },
+        { a_a:1.8, b_a:[0.3],   hasDIF:false, a_b:1.8,  b_b:[0.3] },
+        { a_a:1.0, b_a:[-0.8],  hasDIF:true,  a_b:1.0,  b_b:[0.2] },
+        { a_a:1.6, b_a:[0.1],   hasDIF:false, a_b:1.6,  b_b:[0.1] },
+        { a_a:1.3, b_a:[-0.3],  hasDIF:true,  a_b:1.3,  b_b:[0.5] },
+        { a_a:2.0, b_a:[0.6],   hasDIF:false, a_b:2.0,  b_b:[0.6] },
+        { a_a:1.4, b_a:[-0.6],  hasDIF:true,  a_b:1.4,  b_b:[0.3] },
+        { a_a:1.7, b_a:[0.2],   hasDIF:false, a_b:1.7,  b_b:[0.2] },
+        { a_a:1.1, b_a:[-0.4],  hasDIF:false, a_b:1.1,  b_b:[-0.4] },
       ],
     },
     dif: {
       numItems: 8, categories: 5,
       items: [
-        { aA:1.8, bA:[-1.7,-0.8, 0.15,1.05], hasDIF:false, aB:1.8, bB:[-1.7,-0.8, 0.15,1.05] },
-        { aA:1.4, bA:[-1.05,-0.15, 0.35,1.45], hasDIF:true,  aB:1.15, bB:[-0.35, 0.55, 1.15,2.15] },
-        { aA:2.0, bA:[-1.95,-1.05,-0.05,0.95], hasDIF:false, aB:2.0, bB:[-1.95,-1.05,-0.05,0.95] },
-        { aA:1.6, bA:[-0.9,-0.1, 0.9,1.7], hasDIF:true,  aB:1.35, bB:[-0.2, 0.65, 1.55,2.45] },
-        { aA:1.3, bA:[-1.55,-0.55, 0.25,1.35], hasDIF:false, aB:1.3, bB:[-1.55,-0.55, 0.25,1.35] },
-        { aA:1.9, bA:[-1.45,-0.95, 0.45,1.05], hasDIF:true,  aB:1.65, bB:[-0.55, 0.05, 1.2,1.95] },
-        { aA:1.5, bA:[-1.25,-0.35, 0.65,1.55], hasDIF:false, aB:1.5, bB:[-1.25,-0.35, 0.65,1.55] },
-        { aA:1.7, bA:[-1.0,-0.45, 0.75,1.6], hasDIF:true,  aB:1.25, bB:[-0.15, 0.55, 1.45,2.25] },
+        { a_a:1.8, b_a:[-1.7,-0.8, 0.15,1.05], hasDIF:false, a_b:1.8, b_b:[-1.7,-0.8, 0.15,1.05] },
+        { a_a:1.4, b_a:[-1.05,-0.15, 0.35,1.45], hasDIF:true,  a_b:1.15, b_b:[-0.35, 0.55, 1.15,2.15] },
+        { a_a:2.0, b_a:[-1.95,-1.05,-0.05,0.95], hasDIF:false, a_b:2.0, b_b:[-1.95,-1.05,-0.05,0.95] },
+        { a_a:1.6, b_a:[-0.9,-0.1, 0.9,1.7], hasDIF:true,  a_b:1.35, b_b:[-0.2, 0.65, 1.55,2.45] },
+        { a_a:1.3, b_a:[-1.55,-0.55, 0.25,1.35], hasDIF:false, a_b:1.3, b_b:[-1.55,-0.55, 0.25,1.35] },
+        { a_a:1.9, b_a:[-1.45,-0.95, 0.45,1.05], hasDIF:true,  a_b:1.65, b_b:[-0.55, 0.05, 1.2,1.95] },
+        { a_a:1.5, b_a:[-1.25,-0.35, 0.65,1.55], hasDIF:false, a_b:1.5, b_b:[-1.25,-0.35, 0.65,1.55] },
+        { a_a:1.7, b_a:[-1.0,-0.45, 0.75,1.6], hasDIF:true,  a_b:1.25, b_b:[-0.15, 0.55, 1.45,2.25] },
       ],
     },
   };
@@ -213,51 +213,51 @@ const App = (() => {
   }
 
   function applyLang() {
-    document.getElementById('intro-title').textContent = t('introTitle');
-    document.getElementById('intro-text').textContent = t('introText');
-    document.getElementById('cfg-title').textContent = t('cfgTitle');
+    document.getElementById('intro-title').textContent = t('intro_title');
+    document.getElementById('intro-text').innerHTML = t('intro_text');
+    document.getElementById('cfg-title').textContent = t('cfg_title');
     const cfgHint = document.getElementById('cfg-hint');
-    if (cfgHint) cfgHint.textContent = t('cfgHint');
-    document.getElementById('lbl-items').textContent = t('lblItems');
-    document.getElementById('lbl-cats').textContent = t('lblCats');
-    document.getElementById('lbl-group-a').textContent = t('lblGroupA');
-    document.getElementById('lbl-group-b').textContent = t('lblGroupB');
-    document.getElementById('lbl-simulations').textContent = t('lblSimulations');
+    if (cfgHint) cfgHint.textContent = t('cfg_hint');
+    document.getElementById('lbl-items').textContent = t('lbl_items');
+    document.getElementById('lbl-cats').textContent = t('lbl_cats');
+    document.getElementById('lbl-group-a').textContent = t('lbl_group_a');
+    document.getElementById('lbl-group-b').textContent = t('lbl_group_b');
+    document.getElementById('lbl-simulations').textContent = t('lbl_simulations');
     document.getElementById('btn-simulate').textContent = t('simulate');
-    document.getElementById('method-title').textContent = t('methodTitle');
-    document.getElementById('method-text').textContent = t('methodText');
-    document.getElementById('sim-output-title').textContent = t('simOutputTitle');
+    document.getElementById('method-title').textContent = t('method_title');
+    document.getElementById('method-text').innerHTML = t('method_text');
+    document.getElementById('sim-output-title').textContent = t('sim_output_title');
     const simOutputHint = document.getElementById('sim-output-hint');
-    if (simOutputHint) simOutputHint.textContent = t('simOutputHint');
-    document.getElementById('sim-hist-title').textContent = t('simHistTitle');
+    if (simOutputHint) simOutputHint.textContent = t('sim_output_hint');
+    document.getElementById('sim-hist-title').textContent = t('sim_hist_title');
     const expandHistBtn = document.getElementById('btn-expand-hist');
-    if (expandHistBtn) expandHistBtn.textContent = t('expandChart');
-    document.getElementById('btn-export-csv').textContent = t('exportCsv');
-    document.getElementById('btn-export-json').textContent = t('exportJson');
-    document.getElementById('lbl-bulk').textContent = t('bulkLabel');
-    document.getElementById('btn-apply-bulk').textContent = t('bulkApply');
-    document.getElementById('lbl-preset').textContent = t('presetTitle');
-    document.getElementById('btn-preset-nodif').textContent = t('presetNoDIF');
-    document.getElementById('btn-preset-dif').textContent = t('presetDIF');
-    document.getElementById('btn-preset-nodif2pl').textContent = t('preset2PLNoDIF');
-    document.getElementById('btn-preset-2pl').textContent = t('preset2PL');
-    document.getElementById('items-title').textContent = t('itemsTitle');
+    if (expandHistBtn) expandHistBtn.textContent = t('expand_chart');
+    document.getElementById('btn-export-csv').textContent = t('export_csv');
+    document.getElementById('btn-export-json').textContent = t('export_json');
+    document.getElementById('lbl-bulk').textContent = t('bulk_label');
+    document.getElementById('btn-apply-bulk').textContent = t('bulk_apply');
+    document.getElementById('lbl-preset').textContent = t('preset_title');
+    document.getElementById('btn-preset-nodif').textContent = t('preset_no_dif');
+    document.getElementById('btn-preset-dif').textContent = t('preset_dif');
+    document.getElementById('btn-preset-nodif2pl').textContent = t('preset_2pl_no_dif');
+    document.getElementById('btn-preset-2pl').textContent = t('preset_2pl');
+    document.getElementById('items-title').textContent = t('items_title');
     const itemsHint = document.getElementById('items-hint');
-    if (itemsHint) itemsHint.textContent = t('itemsHint');
-    document.getElementById('btn-view-category').textContent = t('viewCategory');
-    document.getElementById('btn-view-cumulative').textContent = t('viewCumulative');
-    document.getElementById('btn-modal-view-category').textContent = t('viewCategory');
-    document.getElementById('btn-modal-view-cumulative').textContent = t('viewCumulative');
+    if (itemsHint) itemsHint.textContent = t('items_hint');
+    document.getElementById('btn-view-category').textContent = t('view_category');
+    document.getElementById('btn-view-cumulative').textContent = t('view_cumulative');
+    document.getElementById('btn-modal-view-category').textContent = t('view_category');
+    document.getElementById('btn-modal-view-cumulative').textContent = t('view_cumulative');
     document.getElementById('btn-close-modal').textContent = t('close');
     const reportProblemLink = document.getElementById('footer-report-problem');
-    if (reportProblemLink) reportProblemLink.textContent = t('reportProblem');
+    if (reportProblemLink) reportProblemLink.textContent = t('report_problem');
     if (state.lastSimulation) renderSimulationSummary(state.lastSimulation);
   }
 
   function _updateModelIndicator() {
     const el = document.getElementById('model-indicator');
     if (!el) return;
-    el.textContent = t(state.categories === 2 ? 'modelIndicator2PL' : 'modelIndicatorGRM');
+    el.textContent = t(state.categories === 2 ? 'model_indicator_2pl' : 'model_indicator_grm');
   }
 
   function buildItemForms() {
@@ -275,8 +275,8 @@ const App = (() => {
     for (let i = 1; i <= itemCount; i++) {
       const prev = oldById.get(i);
       const item = prev || createDefaultItem(i, categories);
-      item.bA = normalizeThresholds(item.bA, categories, item.id, 'A');
-      item.bB = normalizeThresholds(item.bB, categories, item.id, 'B');
+      item.b_a = normalizeThresholds(item.b_a, categories, item.id, 'A');
+      item.b_b = normalizeThresholds(item.b_b, categories, item.id, 'B');
       state.items.push(item);
 
       const card = document.createElement('article');
@@ -285,26 +285,26 @@ const App = (() => {
         <h3 class="shared-plot-title">Item ${i}</h3>
         <div class="item-row">
           <div>
-            <label>${t('aA')}</label>
-            <input type="number" step="0.01" min="0.2" max="4" data-item="${i}" data-field="aA" value="${item.aA}">
+            <label>${t('a_a')}</label>
+            <input type="number" step="0.01" min="0.2" max="4" data-item="${i}" data-field="a_a" value="${item.a_a}">
           </div>
           <div>
-            <label>${t('bA')}</label>
-            <input type="text" data-item="${i}" data-field="bA" value="${item.bA.join(', ')}">
+            <label>${t('b_a')}</label>
+            <input type="text" data-item="${i}" data-field="b_a" value="${item.b_a.join(', ')}">
           </div>
         </div>
         <label class="shared-checkbox-row">
           <input type="checkbox" data-item="${i}" data-field="hasDIF" ${item.hasDIF ? 'checked' : ''}>
-          <span>${t('difToggle')}</span>
+          <span>${t('dif_toggle')}</span>
         </label>
         <div class="item-row ${item.hasDIF ? '' : 'hidden'}" data-item-b="${i}">
           <div>
-            <label>${t('aB')}</label>
-            <input type="number" step="0.01" min="0.2" max="4" data-item="${i}" data-field="aB" value="${item.aB}">
+            <label>${t('a_b')}</label>
+            <input type="number" step="0.01" min="0.2" max="4" data-item="${i}" data-field="a_b" value="${item.a_b}">
           </div>
           <div>
-            <label>${t('bB')}</label>
-            <input type="text" data-item="${i}" data-field="bB" value="${item.bB.join(', ')}">
+            <label>${t('b_b')}</label>
+            <input type="text" data-item="${i}" data-field="b_b" value="${item.b_b.join(', ')}">
           </div>
         </div>
         <div class="item-chart-wrap" data-open-item="${i}" role="button" tabindex="0" aria-label="Open item ${i} chart">
@@ -335,14 +335,14 @@ const App = (() => {
   }
 
   function createDefaultItem(id, categories) {
-    const aA = Number((0.9 + ((id * 17) % 9) * 0.11).toFixed(2));
+    const a_a = Number((0.9 + ((id * 17) % 9) * 0.11).toFixed(2));
     return {
       id,
-      aA,
-      bA: defaultThresholds(categories, id, 'A'),
+      a_a,
+      b_a: defaultThresholds(categories, id, 'A'),
       hasDIF: false,
-      aB: Number((aA + 0.08).toFixed(2)),
-      bB: defaultThresholds(categories, id, 'B'),
+      a_b: Number((a_a + 0.08).toFixed(2)),
+      b_b: defaultThresholds(categories, id, 'B'),
     };
   }
 
@@ -395,8 +395,8 @@ const App = (() => {
       item.hasDIF = input.checked;
       const row = document.querySelector(`[data-item-b="${itemId}"]`);
       if (row) row.classList.toggle('hidden', !item.hasDIF);
-    } else if (field === 'bA' || field === 'bB') {
-      item[field] = parseThresholdCsv(input.value, state.categories, itemId, field === 'bA' ? 'A' : 'B', item[field]);
+    } else if (field === 'b_a' || field === 'b_b') {
+      item[field] = parseThresholdCsv(input.value, state.categories, itemId, field === 'b_a' ? 'A' : 'B', item[field]);
     } else {
       item[field] = Number(input.value);
     }
@@ -453,7 +453,7 @@ const App = (() => {
     if (!state.lastScoresA) return;
     state.modalIsHistogram = true;
     state.modalItemIndex = null;
-    document.getElementById('chart-modal-title').textContent = t('histModalTitle');
+    document.getElementById('chart-modal-title').textContent = t('hist_modal_title');
     document.getElementById('chart-modal-overlay').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     document.querySelector('.chart-modal-actions .view-toggle').classList.add('hidden');
@@ -499,8 +499,8 @@ const App = (() => {
     const theta = Array.from({ length: 121 }, (_, i) => -3 + i * 0.05);
     const datasets = [];
     const chartTheme = getChartTheme();
-    const bA = normalizeThresholds(item.bA, state.categories, item.id, 'A');
-    const bB = normalizeThresholds(item.bB, state.categories, item.id, 'B');
+    const b_a = normalizeThresholds(item.b_a, state.categories, item.id, 'A');
+    const b_b = normalizeThresholds(item.b_b, state.categories, item.id, 'B');
 
     const addGroup = (labelPrefix, a, b, dashed = false) => {
       const curves = mode === 'cumulative'
@@ -520,8 +520,8 @@ const App = (() => {
       });
     };
 
-    addGroup('A', item.aA, bA, false);
-    if (item.hasDIF) addGroup('B', item.aB, bB, true);
+    addGroup('A', item.a_a, b_a, false);
+    if (item.hasDIF) addGroup('B', item.a_b, b_b, true);
 
     return new Chart(canvas.getContext('2d'), {
       type: 'line',
@@ -533,7 +533,7 @@ const App = (() => {
           interaction: { mode: 'nearest', intersect: false },
           scales: {
             x: buildLinearScale('θ', -3, 3, { ticks: { maxTicksLimit: 7, color: chartTheme.text } }),
-            y: buildLinearScale(mode === 'cumulative' ? t('yCumulative') : t('yCategory'), 0, 1, { ticks: { maxTicksLimit: 5, color: chartTheme.text } }),
+            y: buildLinearScale(mode === 'cumulative' ? t('y_cumulative') : t('y_category'), 0, 1, { ticks: { maxTicksLimit: 5, color: chartTheme.text } }),
           },
           plugins: {
             chartAreaBackground: { color: chartTheme.area },
@@ -625,7 +625,7 @@ const App = (() => {
     const nB = clampInt(document.getElementById('n-group-b').value, 100, 50000);
     const nSim = clampInt(document.getElementById('n-simulations').value, 1, 1000);
 
-    setSimStatus(t('simRunning', { n: nSim }), true);
+    setSimStatus(t('sim_running', { n: nSim }), true);
 
     // Two RAFs: first lets the browser commit the busy state to the DOM,
     // second ensures the spinner frame is actually painted before the
@@ -655,7 +655,7 @@ const App = (() => {
         cohenD = sumCohenD / nSim;
       } catch (err) {
         console.error('[DIF-AccumulationTool] Simulation failed:', err);
-        setSimStatus(t('simError'), false, 'error');
+        setSimStatus(t('sim_error'), false, 'error');
         return;
       }
 
@@ -674,22 +674,22 @@ const App = (() => {
       renderSimulationSummary(state.lastSimulation);
       document.getElementById('sim-results').classList.remove('hidden');
       renderSimHistogram(lastScoresA, lastScoresB);
-      setSimStatus(t('simDone', { time }), false, 'ok');
+      setSimStatus(t('sim_done', { time }), false, 'ok');
     }));
   }
 
   function renderSimulationSummary({ meanA, meanB, delta, cohenD }) {
     document.getElementById('sim-summary').innerHTML = `
       <div class="sim-badge">
-        <span class="sim-badge-label">${t('simMeanA')}</span>
+        <span class="sim-badge-label">${t('sim_mean_a')}</span>
         <span class="sim-badge-value">${meanA.toFixed(3)}</span>
       </div>
       <div class="sim-badge">
-        <span class="sim-badge-label">${t('simMeanB')}</span>
+        <span class="sim-badge-label">${t('sim_mean_b')}</span>
         <span class="sim-badge-value">${meanB.toFixed(3)}</span>
       </div>
       <div class="sim-badge delta">
-        <span class="sim-badge-label">${t('simDelta')}</span>
+        <span class="sim-badge-label">${t('sim_delta')}</span>
         <span class="sim-badge-value">${cohenD.toFixed(3)}</span>
       </div>`;
   }
@@ -705,8 +705,8 @@ const App = (() => {
       chartData = shared?.buildContinuousDatasets
         ? shared.buildContinuousDatasets({
             series: [
-              { label: t('simGroupA'), values: state.lastMeansA },
-              { label: t('simGroupB'), values: state.lastMeansB },
+              { label: t('sim_group_a'), values: state.lastMeansA },
+              { label: t('sim_group_b'), values: state.lastMeansB },
             ],
           })
         : null;
@@ -716,16 +716,16 @@ const App = (() => {
         theme,
         plugins: {
           chartAreaBackground: { color: theme.area },
-          legend: shared.createLegendOptions({ normalLabel: t('simFitOgive') }),
+          legend: shared.createLegendOptions({ normalLabel: t('sim_fit_ogive') }),
           tooltip: window.SharedChartLegend.createTooltipLabelOptions({
             label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}`,
           }),
         },
         scales: {
-          x: buildCategoryScale(t('simMeansHistX'), {
+          x: buildCategoryScale(t('sim_means_hist_x'), {
             ticks: { color: theme.text, maxTicksLimit: 14 },
           }),
-          y: buildLinearScale(t('simMeansHistY'), 0, undefined, {
+          y: buildLinearScale(t('sim_means_hist_y'), 0, undefined, {
             ticks: { color: theme.text },
           }),
         },
@@ -736,10 +736,10 @@ const App = (() => {
         ? shared.buildDiscreteHistogramDatasets({
             maxScore,
             groups: [
-              { label: t('simGroupA'), scores: scoresA, color: dataColors.blue },
-              { label: t('simGroupB'), scores: scoresB, color: dataColors.red },
+              { label: t('sim_group_a'), scores: scoresA, color: dataColors.blue },
+              { label: t('sim_group_b'), scores: scoresB, color: dataColors.red },
             ],
-            fit: { type: 'normal-binmass', labelPrefix: t('simFitOgive') },
+            fit: { type: 'normal-binmass', labelPrefix: t('sim_fit_ogive') },
           })
         : null;
       defaults = { xMin: -0.5, xMax: maxScore + 0.5, yMin: 0, yMax: 1, mode: 'x' };
@@ -748,16 +748,16 @@ const App = (() => {
         theme,
         plugins: {
           chartAreaBackground: { color: theme.area },
-          legend: shared.createLegendOptions({ normalLabel: t('simFitOgive') }),
+          legend: shared.createLegendOptions({ normalLabel: t('sim_fit_ogive') }),
           tooltip: window.SharedChartLegend.createTooltipLabelOptions({
             label: ctx => `${ctx.dataset.label}: ${(ctx.parsed.y * 100).toFixed(1)} %`,
           }),
         },
         scales: {
-          x: buildCategoryScale(t('simHistX'), {
+          x: buildCategoryScale(t('sim_hist_x'), {
             ticks: { color: theme.text, maxTicksLimit: 14 },
           }),
-          y: buildLinearScale(t('simHistY'), undefined, undefined, {
+          y: buildLinearScale(t('sim_hist_y'), undefined, undefined, {
             ticks: { color: theme.text, callback: v => `${(v * 100).toFixed(0)} %` },
           }),
         },
@@ -815,8 +815,8 @@ const App = (() => {
       let total = 0;
       for (const item of state.items) {
         const useB = group === 'B' && item.hasDIF;
-        const a = useB ? item.aB : item.aA;
-        const b = normalizeThresholds(useB ? item.bB : item.bA, state.categories, item.id, useB ? 'B' : 'A');
+        const a = useB ? item.a_b : item.a_a;
+        const b = normalizeThresholds(useB ? item.b_b : item.b_a, state.categories, item.id, useB ? 'B' : 'A');
         const probs = categoryProbabilities([theta], a, b).map(arr => arr[0]);
         total += sampleCategory(probs);
       }
@@ -911,7 +911,7 @@ const App = (() => {
   }
 
   function loadPreset(presetId) {
-    if (!window.confirm(t('presetConfirm'))) return;
+    if (!window.confirm(t('preset_confirm'))) return;
     const preset = PRESETS[presetId];
     if (!preset) return;
     document.getElementById('num-items').value = preset.numItems;
@@ -921,17 +921,17 @@ const App = (() => {
       const item = state.items[i];
       if (!item) return;
       const idx = item.id;
-      item.aA = pi.aA;  item.bA = pi.bA.slice();
+      item.a_a = pi.a_a;  item.b_a = pi.b_a.slice();
       item.hasDIF = pi.hasDIF;
-      item.aB = pi.aB;  item.bB = pi.bB.slice();
-      document.querySelector(`input[data-item="${idx}"][data-field="aA"]`).value = pi.aA;
-      document.querySelector(`input[data-item="${idx}"][data-field="bA"]`).value = pi.bA.join(', ');
+      item.a_b = pi.a_b;  item.b_b = pi.b_b.slice();
+      document.querySelector(`input[data-item="${idx}"][data-field="a_a"]`).value = pi.a_a;
+      document.querySelector(`input[data-item="${idx}"][data-field="b_a"]`).value = pi.b_a.join(', ');
       const chk = document.querySelector(`input[data-item="${idx}"][data-field="hasDIF"]`);
       chk.checked = pi.hasDIF;
       const bRow = document.querySelector(`[data-item-b="${idx}"]`);
       if (bRow) bRow.classList.toggle('hidden', !pi.hasDIF);
-      document.querySelector(`input[data-item="${idx}"][data-field="aB"]`).value = pi.aB;
-      document.querySelector(`input[data-item="${idx}"][data-field="bB"]`).value = pi.bB.join(', ');
+      document.querySelector(`input[data-item="${idx}"][data-field="a_b"]`).value = pi.a_b;
+      document.querySelector(`input[data-item="${idx}"][data-field="b_b"]`).value = pi.b_b.join(', ');
     });
     renderItemCharts();
     document.getElementById('sim-summary').innerHTML = '';
@@ -944,8 +944,8 @@ const App = (() => {
     const status = document.getElementById('bulk-status');
     const errorsEl = document.getElementById('bulk-errors');
     if (!raw) {
-      status.textContent = t('bulkError');
-      renderBulkErrors([{ line: 0, reason: t('bulkNoValidLines') }]);
+      status.textContent = t('bulk_error');
+      renderBulkErrors([{ line: 0, reason: t('bulk_no_valid_lines') }]);
       return;
     }
 
@@ -966,8 +966,8 @@ const App = (() => {
     });
 
     if (errors.length || !parsed.length) {
-      status.textContent = !parsed.length ? t('bulkNoValidLines') : t('bulkError');
-      renderBulkErrors(errors.length ? errors : [{ line: 0, reason: t('bulkNoValidLines') }]);
+      status.textContent = !parsed.length ? t('bulk_no_valid_lines') : t('bulk_error');
+      renderBulkErrors(errors.length ? errors : [{ line: 0, reason: t('bulk_no_valid_lines') }]);
       return;
     }
 
@@ -982,18 +982,18 @@ const App = (() => {
       if (!item) continue;
       if (entry.group === 'B') {
         item.hasDIF = true;
-        item.aB = entry.a;
-        item.bB = normalizeThresholds(entry.b, state.categories, entry.itemId, 'B');
+        item.a_b = entry.a;
+        item.b_b = normalizeThresholds(entry.b, state.categories, entry.itemId, 'B');
       } else {
-        item.aA = entry.a;
-        item.bA = normalizeThresholds(entry.b, state.categories, entry.itemId, 'A');
+        item.a_a = entry.a;
+        item.b_a = normalizeThresholds(entry.b, state.categories, entry.itemId, 'A');
       }
     }
 
     syncItemsToInputs();
     renderItemCharts();
     clearSimHistogram();
-    status.textContent = t('bulkApplied', { n: parsed.length, items: maxItem });
+    status.textContent = t('bulk_applied', { n: parsed.length, items: maxItem });
     errorsEl.innerHTML = '';
     errorsEl.classList.add('hidden');
   }
@@ -1001,7 +1001,7 @@ const App = (() => {
   function parseBulkLine(line) {
     if (!line || line.startsWith('#')) return { skip: true };
     const parts = line.split(';').map(x => x.trim()).filter(Boolean);
-    if (parts.length < 3) return { errorKey: 'bulkLineErrFormat' };
+    if (parts.length < 3) return { errorKey: 'bulk_line_err_format' };
 
     let itemToken = parts[0];
     let group = 'A';
@@ -1009,13 +1009,13 @@ const App = (() => {
     let bText;
 
     if (parts.length >= 4) {
-      if (!/^(A|B)$/i.test(parts[1])) return { errorKey: 'bulkLineErrGroup' };
+      if (!/^(A|B)$/i.test(parts[1])) return { errorKey: 'bulk_line_err_group' };
       group = parts[1].toUpperCase();
       aText = parts[2];
       bText = parts.slice(3).join(';');
     } else {
       const tokenMatch = itemToken.match(/^(\d+)([abAB])?$/);
-      if (!tokenMatch) return { errorKey: 'bulkLineErrItem' };
+      if (!tokenMatch) return { errorKey: 'bulk_line_err_item' };
       itemToken = tokenMatch[1];
       if (tokenMatch[2]) group = tokenMatch[2].toUpperCase();
       aText = parts[1];
@@ -1025,10 +1025,10 @@ const App = (() => {
     const itemId = Number(itemToken);
     const a = Number(aText);
     const b = bText.split(',').map(x => Number(x.trim())).filter(Number.isFinite);
-    if (!/^(A|B)$/.test(group)) return { errorKey: 'bulkLineErrGroup' };
-    if (!Number.isFinite(itemId) || itemId < 1) return { errorKey: 'bulkLineErrItem' };
-    if (!Number.isFinite(a)) return { errorKey: 'bulkLineErrA' };
-    if (!b.length) return { errorKey: 'bulkLineErrB' };
+    if (!/^(A|B)$/.test(group)) return { errorKey: 'bulk_line_err_group' };
+    if (!Number.isFinite(itemId) || itemId < 1) return { errorKey: 'bulk_line_err_item' };
+    if (!Number.isFinite(a)) return { errorKey: 'bulk_line_err_a' };
+    if (!b.length) return { errorKey: 'bulk_line_err_b' };
     return { data: { itemId, group, a, b } };
   }
 
@@ -1041,7 +1041,7 @@ const App = (() => {
     }
     errorsEl.innerHTML = errors.map(err => {
       if (!err.line) return `<li>${err.reason}</li>`;
-      return `<li>${t('bulkLinePrefix', { line: err.line, reason: err.reason })}</li>`;
+      return `<li>${t('bulk_line_prefix', { line: err.line, reason: err.reason })}</li>`;
     }).join('');
     errorsEl.classList.remove('hidden');
   }
@@ -1049,19 +1049,19 @@ const App = (() => {
   function syncItemsToInputs() {
     for (const item of state.items) {
       const idx = item.id;
-      const inputAA = document.querySelector(`input[data-item="${idx}"][data-field="aA"]`);
-      const inputBA = document.querySelector(`input[data-item="${idx}"][data-field="bA"]`);
+      const inputAA = document.querySelector(`input[data-item="${idx}"][data-field="a_a"]`);
+      const inputBA = document.querySelector(`input[data-item="${idx}"][data-field="b_a"]`);
       const chk = document.querySelector(`input[data-item="${idx}"][data-field="hasDIF"]`);
-      const inputAB = document.querySelector(`input[data-item="${idx}"][data-field="aB"]`);
-      const inputBB = document.querySelector(`input[data-item="${idx}"][data-field="bB"]`);
+      const inputAB = document.querySelector(`input[data-item="${idx}"][data-field="a_b"]`);
+      const inputBB = document.querySelector(`input[data-item="${idx}"][data-field="b_b"]`);
       const bRow = document.querySelector(`[data-item-b="${idx}"]`);
       const wrap = document.querySelector(`[data-open-item="${idx}"] .item-chart-head span:first-child`);
 
-      if (inputAA) inputAA.value = item.aA;
-      if (inputBA) inputBA.value = item.bA.join(', ');
+      if (inputAA) inputAA.value = item.a_a;
+      if (inputBA) inputBA.value = item.b_a.join(', ');
       if (chk) chk.checked = item.hasDIF;
-      if (inputAB) inputAB.value = item.aB;
-      if (inputBB) inputBB.value = item.bB.join(', ');
+      if (inputAB) inputAB.value = item.a_b;
+      if (inputBB) inputBB.value = item.b_b.join(', ');
       if (bRow) bRow.classList.toggle('hidden', !item.hasDIF);
       if (wrap) wrap.textContent = item.hasDIF ? 'DIF' : 'No DIF';
     }
@@ -1069,7 +1069,7 @@ const App = (() => {
 
   function exportSimulationCsv() {
     if (!state.lastScoresA || !state.lastScoresB || !state.lastSimulation) {
-      alert(t('exportNeedSimulation'));
+      alert(t('export_need_simulation'));
       return;
     }
     const rows = [];
@@ -1095,8 +1095,8 @@ const App = (() => {
     rows.push('');
     push(['item', 'group', 'a', 'b_thresholds']);
     for (const item of state.items) {
-      push([item.id, 'A', item.aA, item.bA.join('|')]);
-      if (item.hasDIF) push([item.id, 'B', item.aB, item.bB.join('|')]);
+      push([item.id, 'A', item.a_a, item.b_a.join('|')]);
+      if (item.hasDIF) push([item.id, 'B', item.a_b, item.b_b.join('|')]);
     }
 
     rows.push('');
@@ -1111,7 +1111,7 @@ const App = (() => {
 
   function exportSimulationJson() {
     if (!state.lastScoresA || !state.lastScoresB || !state.lastSimulation) {
-      alert(t('exportNeedSimulation'));
+      alert(t('export_need_simulation'));
       return;
     }
     const payload = {
@@ -1131,8 +1131,8 @@ const App = (() => {
       },
       item_parameters: state.items.map(item => ({
         item: item.id,
-        group_a: { a: item.aA, b: item.bA.slice() },
-        group_b: item.hasDIF ? { a: item.aB, b: item.bB.slice() } : null,
+        group_a: { a: item.a_a, b: item.b_a.slice() },
+        group_b: item.hasDIF ? { a: item.a_b, b: item.b_b.slice() } : null,
       })),
       score_samples: {
         group_a: state.lastScoresA.slice(),

@@ -7,12 +7,11 @@ const I18n = (() => {
   const TRANSLATIONS = {
     en: {
       page_title:          'C-NRSBTool — Country Sample Selection Bias Analysis (HDI & World Bank income groups)',
-      meta_description:    'Analyze whether a country sample is biased by Human Development Index (HDI) and by World Bank income group, with logistic regression, ROC curve, random subsampling reference distributions and interactive country selection.',
+      meta_description:    'Analyze whether country sampling is biased by Human Development Index (HDI) and by World Bank income group, with logistic regression, ROC curve, random subsampling reference distributions and interactive country selection.',
       site_title:          'C-NRSBTool',
-      site_subtitle:       'Check whether country inclusion is systematically linked to HDI or to World Bank income group, with interpretable diagnostics and transparent reporting.',
+      site_subtitle:       'Check whether country information availability is linked to HDI or to World Bank income groups, with interpretable diagnostics and transparent reporting.',
       intro_title:         'Why this tool matters',
-      intro_text_html:     'Cross-national datasets often look complete enough to analyze, but <strong>missing countries are rarely random</strong>. This tool helps you test whether country inclusion is systematically associated with the <strong>Human Development Index (HDI)</strong> — via logistic regression and ROC — and whether the share of <strong>World Bank income groups</strong> in your sample deviates from what random sampling would produce, by comparing it against a reference distribution built from random subsamples of N countries (drawn without replacement from the world). In short: it supports a more honest discussion of representativeness before drawing substantive conclusions.',
-      intro_text:          'Cross-national datasets often look complete enough to analyze, but missing countries are rarely random. This tool helps you test whether country inclusion is systematically associated with the Human Development Index (HDI) — via logistic regression and ROC — and whether the share of World Bank income groups in your sample deviates from what random sampling would produce, by comparing it against a reference distribution built from random subsamples of N countries (drawn without replacement from the world). In short: it supports a more honest discussion of representativeness before drawing substantive conclusions.',
+      intro_text_html:     'Cross-national datasets often look complete enough to analyze, but <strong>missing information across countries is seldom random</strong>. This tool helps you test whether country information availability is systematically associated with the <strong>Human Development Index (HDI)</strong>— via logistic regression and ROC — and whether the share of <strong>World Bank income groups</strong> in your sample deviates from what random sampling would truly produce, by comparing it against a reference distribution built from random subsamples, drawn without replacement from the world, of N countries. In short: it supports a more honest discussion of representativeness before drawing substantive conclusions.',
       theme_btn_dark:      'Dark',
       theme_btn_light:     'Light',
       map_title:           'World Map',
@@ -136,13 +135,12 @@ const I18n = (() => {
     },
 
     es: {
-      page_title:          'C-NRSBTool — Análisis del sesgo de selección muestral por IDH y grupos de renta del Banco Mundial',
-      meta_description:    'Analiza si una muestra de países está sesgada por el Índice de Desarrollo Humano (IDH) o por el grupo de renta del Banco Mundial, con regresión logística, curva ROC, distribución de referencia por remuestreo aleatorio y selección interactiva.',
+      page_title:          'C-NRSBTool — Análisis de sesgo de selección muestral según IDH y grupos de renta del Banco Mundial',
+      meta_description:    'Analiza si el muestreo de países está sesgado por el Índice de Desarrollo Humano (IDH) o por el grupo de renta del Banco Mundial, con regresión logística, curva ROC, distribución de referencia por remuestreo aleatorio y selección interactiva.',
       site_title:          'C-NRSBTool',
-      site_subtitle:       'Comprueba si la inclusión de países está sistemáticamente ligada al IDH o al grupo de renta del Banco Mundial, con métricas claras y reportable.',
+      site_subtitle:       'Comprueba si la inclusión de países está ligada al IDH o al grupo de renta del Banco Mundial, con métricas claras y reportes transparentes.',
       intro_title:         '¿Qué te aporta esta herramienta?',
-      intro_text_html:     'En estudios transnacionales, una base de datos puede parecer suficiente y aun así estar sesgada: <strong>los países que faltan rara vez faltan al azar</strong>. Esta herramienta te permite comprobar si la inclusión de países se relaciona con el <strong>Índice de Desarrollo Humano (IDH)</strong> mediante regresión logística y ROC, y si la proporción de <strong>grupos de renta del Banco Mundial</strong> en tu muestra se desvía de lo que produciría un muestreo aleatorio, comparándola con una distribución de referencia construida mediante remuestreo aleatorio de N países (sin reemplazo) del conjunto mundial. En pocas palabras: te ayuda a discutir la representatividad de forma más honesta antes de sacar conclusiones de fondo.',
-      intro_text:          'En estudios transnacionales, una base de datos puede parecer suficiente y aun así estar sesgada: los países que faltan rara vez faltan al azar. Esta herramienta te permite comprobar si la inclusión de países se relaciona con el Índice de Desarrollo Humano (IDH) mediante regresión logística y ROC, y si la proporción de grupos de renta del Banco Mundial en tu muestra se desvía de lo que produciría un muestreo aleatorio, comparándola con una distribución de referencia construida mediante remuestreo aleatorio de N países (sin reemplazo) del conjunto mundial. En pocas palabras: te ayuda a discutir la representatividad de forma más honesta antes de sacar conclusiones de fondo.',
+      intro_text_html:     'Los datos internacionales suelen parecer lo suficientemente completos para su análisis, pero <strong>la falta de información entre países rara vez es aleatoria</strong>. Esta herramienta te ayuda a comprobar si la disponibilidad de información de los países está sistemáticamente asociada con el <strong>Índice de Desarrollo Humano (IDH)</strong> —mediante una regresión logística y curvas ROC— y si la proporción de <strong>grupos de renta del Banco Mundial</strong> en su muestra se desvía de lo que produciría un muestreo aleatorio, comparándola con una distribución de referencia construida a partir de submuestras aleatorias, extraídas sin reemplazo del mundo, de N países. En resumen: promueve un análisis más objetivo de la representatividad antes de llegar a conclusiones definitivas.',
       theme_btn_dark:      'Oscuro',
       theme_btn_light:     'Claro',
       map_title:           'Mapa Mundial',
@@ -303,13 +301,11 @@ const I18n = (() => {
 
   function getLang() { return _i18n.getLang(); }
 
-  // Apply translations to every [data-i18n] element in the DOM
+  // Apply translations to every [data-i18n] element in the DOM.
+  // innerHTML is used throughout so translation values can contain markup.
   function _applyToDOM() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
-      el.textContent = t(el.dataset.i18n);
-    });
-    document.querySelectorAll('[data-i18n-html]').forEach(el => {
-      el.innerHTML = t(el.dataset.i18nHtml);
+      el.innerHTML = t(el.dataset.i18n);
     });
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
       el.placeholder = t(el.dataset.i18nPlaceholder);
