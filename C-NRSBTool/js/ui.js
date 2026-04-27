@@ -741,6 +741,7 @@ const UI = (() => {
     });
 
     return window.SharedChartLegend.buildChartOptions({
+      responsive: false,
       theme: _chartTheme(),
       interaction: { mode: 'nearest', intersect: true, axis: 'xy' },
       plugins: {
@@ -924,6 +925,7 @@ const UI = (() => {
     const ctx = canvasEl.getContext('2d');
 
     const scatterOpts = window.SharedChartLegend.buildChartOptions({
+      responsive: false,
       theme: _chartTheme(),
       interaction: {
         mode: 'point',
@@ -1006,6 +1008,7 @@ const UI = (() => {
     const ctx = canvasEl.getContext('2d');
 
     const rocOpts = window.SharedChartLegend.buildChartOptions({
+      responsive: false,
       theme: _chartTheme(),
       interaction: {
         mode: 'nearest',
@@ -1195,6 +1198,8 @@ const UI = (() => {
 
   function refreshCharts() {
     if (!_lastResult) return;
+    _renderStats(_lastResult);
+    if (_lastIncome) _renderIncome(_lastIncome);
     _renderScatter(_lastResult);
     _renderROC(_lastResult);
     if (_lastIncome) _renderIncomeChart(_lastIncome);

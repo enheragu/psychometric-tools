@@ -102,6 +102,7 @@ const App = (() => {
         _refreshMapUnavailableText();
         _refreshThemeButton();
         _renderFooterMeta();
+        UI.refreshCharts();
       },
       onApplyTheme: (theme) => {
         _theme = theme;
@@ -131,6 +132,12 @@ const App = (() => {
     } catch (error) {
       _setMapUnavailable(error);
     }
+
+    let _resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(_resizeTimer);
+      _resizeTimer = setTimeout(() => UI.refreshCharts(), 120);
+    });
 
     if (!localStorage.getItem('theme') && window.matchMedia) {
       const media = window.matchMedia('(prefers-color-scheme: dark)');
