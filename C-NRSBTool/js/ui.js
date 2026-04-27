@@ -1048,9 +1048,6 @@ const UI = (() => {
     overlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 
-    const helpEl = document.getElementById('chart-modal-help');
-    if (helpEl) helpEl.textContent = I18n.t('chart_modal_help');
-
     if (_modalChart) {
       _modalChart.destroy();
       _modalChart = null;
@@ -1060,6 +1057,10 @@ const UI = (() => {
     const isScatter = kind === 'scatter';
     const isIncome = kind === 'income';
     _modalKind = kind;
+    const helpEl = document.getElementById('chart-modal-help');
+    if (helpEl) {
+      helpEl.textContent = I18n.t(isIncome ? 'chart_modal_help_violin' : 'chart_modal_help');
+    }
     titleEl.textContent = I18n.t(
       isScatter ? 'chart_modal_scatter' : (isIncome ? 'chart_modal_income' : 'chart_modal_roc')
     );

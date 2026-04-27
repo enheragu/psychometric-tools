@@ -9,7 +9,6 @@
       introTitle: 'Just pick one of your liking and get started',
       introText: 'Each tool here targets a concrete methodological question. The goal is simple: make solid statistical reasoning easier to apply, explain, and share. Hope you enjoy! :)',
       toolsTitle: 'Psychometric tools',
-      mlToolsTitle: 'ML variance analysis',
       reportProblem: 'Report problem',
       toggleTheme: 'Toggle theme',
       cards: {
@@ -42,7 +41,6 @@
       introTitle: 'Elige la que más te encaje y juega con ella',
       introText: 'Cada herramienta responde a una pregunta metodológica concreta. La idea es simple: hacer que el razonamiento estadístico sólido sea más fácil de aplicar, explicar y compartir. ¡Espero que te guste! :)',
       toolsTitle: 'Herramientas psicométricas',
-      mlToolsTitle: 'Análisis de varianza en ML',
       reportProblem: 'Reportar problema',
       toggleTheme: 'Cambiar tema',
       cards: {

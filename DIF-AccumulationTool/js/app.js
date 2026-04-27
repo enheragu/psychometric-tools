@@ -573,9 +573,9 @@ const App = (() => {
     return values.slice().sort((a, b) => a - b).map(v => Number(v.toFixed(2)));
   }
 
-  function attachChartInteractions({ canvas, getChart, defaults, onActivate }) {
+  function attachChartInteractions({ canvas, getChart, defaults, onActivate, readonly }) {
     if (!window.SharedChartInteractions?.attach) return;
-    window.SharedChartInteractions.attach({ canvas, getChart, defaults, onActivate });
+    window.SharedChartInteractions.attach({ canvas, getChart, defaults, onActivate, readonly });
   }
 
   function detachChartInteractions(canvas) {
@@ -784,6 +784,7 @@ const App = (() => {
       getChart: () => targetCanvas ? state.modalChart : state.simHistChart,
       defaults,
       onActivate: targetCanvas ? null : openHistModal,
+      readonly: !targetCanvas,
     });
 
     if (!targetCanvas) {
