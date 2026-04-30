@@ -339,7 +339,7 @@ const UI = (() => {
       ['stat_hdi_nsel',   fmt2(r.meanHdiNsel)],
       ['stat_beta0',      fmt2(r.beta0)],
       ['stat_beta1',      fmt2(r.beta1)],
-      ['stat_or',         fmtOr(Math.exp(r.beta1))],
+      ['stat_or',         fmtOr(Math.exp(r.beta1 / 100))],
       ['stat_se',         fmt2(r.se)],
       ['stat_z',          fmt2(r.z)],
       ['stat_pval',       fmtP(r.pValue)],
@@ -741,7 +741,7 @@ const UI = (() => {
     });
 
     return window.SharedChartLegend.buildChartOptions({
-      responsive: false,
+      responsive: Boolean(modal),
       theme: _chartTheme(),
       interaction: { mode: 'nearest', intersect: true, axis: 'xy' },
       plugins: {
@@ -1062,7 +1062,8 @@ const UI = (() => {
     _modalKind = kind;
     const helpEl = document.getElementById('chart-modal-help');
     if (helpEl) {
-      helpEl.textContent = I18n.t(isIncome ? 'chart_modal_help_violin' : 'chart_modal_help');
+      helpEl.hidden = false;
+      helpEl.textContent = I18n.t('chart_modal_help');
     }
     titleEl.textContent = I18n.t(
       isScatter ? 'chart_modal_scatter' : (isIncome ? 'chart_modal_income' : 'chart_modal_roc')

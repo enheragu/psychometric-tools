@@ -283,7 +283,7 @@ const App = (() => {
       pushResult(['model', 'mean_hdi_not_selected', result.meanHdiNsel.toFixed(6)]);
       pushResult(['model', 'beta0', result.beta0.toFixed(6)]);
       pushResult(['model', 'beta1', result.beta1.toFixed(6)]);
-      pushResult(['model', 'odds_ratio_exp_beta1', Math.exp(result.beta1).toFixed(6)]);
+      pushResult(['model', 'odds_ratio_exp_beta1', Math.exp(result.beta1 / 100).toFixed(6)]);
       pushResult(['model', 'std_error_beta1', result.se.toFixed(6)]);
       pushResult(['model', 'z', result.z.toFixed(6)]);
       pushResult(['model', 'p_value', result.pValue.toFixed(6)]);

@@ -393,6 +393,14 @@ const App = (() => {
 
     if (field === 'hasDIF') {
       item.hasDIF = input.checked;
+      if (input.checked) {
+        item.a_b = item.a_a;
+        item.b_b = item.b_a.slice();
+        const inputAB = document.querySelector(`input[data-item="${itemId}"][data-field="a_b"]`);
+        const inputBB = document.querySelector(`input[data-item="${itemId}"][data-field="b_b"]`);
+        if (inputAB) inputAB.value = item.a_b;
+        if (inputBB) inputBB.value = item.b_b.join(', ');
+      }
       const row = document.querySelector(`[data-item-b="${itemId}"]`);
       if (row) row.classList.toggle('hidden', !item.hasDIF);
     } else if (field === 'b_a' || field === 'b_b') {
@@ -710,7 +718,8 @@ const App = (() => {
             ],
           })
         : null;
-      defaults = null;
+      const nLabels = chartData?.labels?.length ?? 0;
+      defaults = nLabels > 1 ? { xMin: 0, xMax: nLabels - 1, mode: 'x' } : null;
       const theme = getChartTheme();
       histChartOpts = window.SharedChartLegend.buildChartOptions({
         theme,
