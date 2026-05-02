@@ -11,6 +11,12 @@
       "href": "/psychometric-tools/DIF-AccumulationTool/",
       "imageDark": "/psychometric-tools/DIF-AccumulationTool/assets/og-image.svg",
       "imageLight": "/psychometric-tools/DIF-AccumulationTool/assets/og-image-light.svg"
+    },
+    {
+      "key": "difAnalysis",
+      "href": "/psychometric-tools/DIF-AnalysisTool/",
+      "imageDark": "/psychometric-tools/DIF-AnalysisTool/assets/og-image.svg",
+      "imageLight": "/psychometric-tools/DIF-AnalysisTool/assets/og-image-light.svg"
     }
   ]
 }

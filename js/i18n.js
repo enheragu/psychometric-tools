@@ -20,6 +20,10 @@
           title: 'DIF-AccumulationTool',
           desc: 'Explore how small item-level DIF effects can accumulate into meaningful group differences in total test scores.'
         },
+        difAnalysis: {
+          title: 'DIF-AnalysisTool',
+          desc: 'Detect Differential Item Functioning using Mantel-Haenszel and TSW likelihood-ratio tests with iterative purification. Supports dichotomous and polytomous items, multiple groups, and nested group structures.'
+        },
         replicationComparison: {
           title: 'Replication and Comparison',
           desc: 'Compare repeated-run metric distributions, inspect fitted normals, and estimate rank inversion probabilities under single-run sampling.'
@@ -51,6 +55,10 @@
         dif: {
           title: 'DIF-AccumulationTool',
           desc: 'Explora cómo pequeños efectos DIF por ítem pueden acumularse y acabar generando diferencias relevantes de puntuación total entre grupos.'
+        },
+        difAnalysis: {
+          title: 'DIF-AnalysisTool',
+          desc: 'Detecta el Funcionamiento Diferencial de Ítems mediante los tests de Mantel-Haenszel y TSW (razón de verosimilitud) con purificación iterativa. Soporta ítems dicotómicos y politómicos, múltiples grupos y estructuras de grupos anidados.'
         },
         replicationComparison: {
           title: 'Replication and Comparison',

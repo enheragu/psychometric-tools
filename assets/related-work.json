@@ -53,6 +53,45 @@
       "category_id": "psychometric-tools",
       "links": [],
       "publication_keys": []
+    },
+    "DIF-AnalysisTool": {
+      "category_id": "psychometric-tools",
+      "links": [],
+      "publication_keys": [],
+      "references": [
+        {
+          "key": "liu1996mantel",
+          "type": "article",
+          "authors": ["Liu, I.-M.", "Agresti, A."],
+          "year": "1996",
+          "title": "Mantel-Haenszel-Type Inference for Cumulative Odds Ratios with a Stratified Ordinal Response",
+          "venue": "Biometrics",
+          "volume": "52",
+          "issue": "4",
+          "pages": "1223–1234",
+          "url": "http://www.jstor.org/stable/2532838"
+        },
+        {
+          "key": "meade2010taxonomy",
+          "type": "article",
+          "authors": ["Meade, A. W."],
+          "year": "2010",
+          "title": "A Taxonomy of Effect Size Measures for the Differential Functioning of Items and Scales",
+          "venue": "Journal of Applied Psychology",
+          "volume": "95",
+          "issue": "4",
+          "pages": "728–743",
+          "doi": "10.1037/a0018966"
+        },
+        {
+          "key": "openpsychometrics2019",
+          "type": "misc",
+          "authors": ["OpenPsychometrics.org"],
+          "year": "2019",
+          "title": "Raw data from online personality tests",
+          "url": "https://openpsychometrics.org/_rawdata/"
+        }
+      ]
     }
   }
 }
