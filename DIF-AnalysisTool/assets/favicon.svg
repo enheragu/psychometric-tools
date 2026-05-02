@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DIF-AnalysisTool favicon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="url(#bg)" stroke="#30363d"/>
+
+  <!-- Reference group ICC: solid blue, modest slope -->
+  <path d="M 8 50 C 18 50, 22 32, 32 32 C 42 32, 46 14, 56 14"
+        fill="none" stroke="#58a6ff" stroke-width="2.8" stroke-linecap="round"/>
+
+  <!-- Focal group ICC: dashed amber, shifted right (DIF effect) -->
+  <path d="M 8 50 C 18 50, 26 38, 36 38 C 46 38, 50 20, 56 20"
+        fill="none" stroke="#d29922" stroke-width="2.8" stroke-linecap="round" stroke-dasharray="5 4"/>
+
+  <!-- Vertical dashed marker at inflection region showing divergence -->
+  <line x1="36" y1="18" x2="36" y2="52" stroke="#3fb950" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.7"/>
+</svg>

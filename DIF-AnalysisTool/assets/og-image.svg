@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="DIF-AnalysisTool">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0f14"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="68" y="58" width="1064" height="514" rx="22" fill="#161b22" stroke="#30363d"/>
+
+  <text x="112" y="156" fill="#58a6ff" font-size="68" font-family="Segoe UI, Arial, sans-serif" font-weight="700">DIF-AnalysisTool</text>
+  <text x="112" y="210" fill="#e6edf3" font-size="40" font-family="Segoe UI, Arial, sans-serif">Mantel-Haenszel · TSW likelihood ratio · IRT</text>
+
+  <!-- Panel 1: item with no DIF (curves overlap) -->
+  <rect x="112" y="264" width="290" height="252" rx="12" fill="#0f1725" stroke="#30363d"/>
+  <text x="257" y="298" fill="#8b949e" font-size="15" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">No DIF</text>
+  <path d="M 130 480 C 160 480, 180 370, 210 350 C 240 330, 260 300, 385 295"
+        fill="none" stroke="#58a6ff" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M 130 480 C 160 480, 183 368, 213 348 C 243 328, 263 298, 385 293"
+        fill="none" stroke="#d29922" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="9 7"/>
+
+  <!-- Panel 2: item with DIF (curves diverge) -->
+  <rect x="455" y="264" width="290" height="252" rx="12" fill="#0f1725" stroke="#30363d"/>
+  <text x="600" y="298" fill="#f85149" font-size="15" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">DIF detected</text>
+  <path d="M 472 480 C 510 480, 535 390, 560 360 C 585 330, 610 300, 735 295"
+        fill="none" stroke="#58a6ff" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M 472 480 C 510 480, 548 430, 573 400 C 598 370, 640 330, 735 320"
+        fill="none" stroke="#d29922" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="9 7"/>
+  <line x1="600" y1="275" x2="600" y2="508" stroke="#f85149" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.6"/>
+
+  <!-- Panel 3: MH results table sketch -->
+  <rect x="798" y="264" width="290" height="252" rx="12" fill="#0f1725" stroke="#30363d"/>
+  <text x="943" y="298" fill="#8b949e" font-size="15" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">MH · TSW Results</text>
+  <!-- Table rows -->
+  <rect x="818" y="312" width="250" height="22" rx="4" fill="#1c2333"/>
+  <text x="830" y="328" fill="#58a6ff" font-size="12" font-family="Segoe UI, Arial, sans-serif" font-weight="600">Item</text>
+  <text x="890" y="328" fill="#58a6ff" font-size="12" font-family="Segoe UI, Arial, sans-serif" font-weight="600">OR</text>
+  <text x="940" y="328" fill="#58a6ff" font-size="12" font-family="Segoe UI, Arial, sans-serif" font-weight="600">p-adj</text>
+  <text x="1004" y="328" fill="#58a6ff" font-size="12" font-family="Segoe UI, Arial, sans-serif" font-weight="600">SIDS</text>
+
+  <text x="830" y="353" fill="#e6edf3" font-size="12" font-family="Segoe UI, Arial, sans-serif">R1</text>
+  <text x="886" y="353" fill="#3fb950" font-size="12" font-family="Segoe UI, Arial, sans-serif">1.04</text>
+  <text x="936" y="353" fill="#3fb950" font-size="12" font-family="Segoe UI, Arial, sans-serif">0.74</text>
+  <text x="1001" y="353" fill="#3fb950" font-size="12" font-family="Segoe UI, Arial, sans-serif">0.02</text>
+
+  <text x="830" y="375" fill="#e6edf3" font-size="12" font-family="Segoe UI, Arial, sans-serif">R2</text>
+  <text x="882" y="375" fill="#f85149" font-size="12" font-family="Segoe UI, Arial, sans-serif">1.41</text>
+  <text x="932" y="375" fill="#f85149" font-size="12" font-family="Segoe UI, Arial, sans-serif">0.001</text>
+  <text x="997" y="375" fill="#f85149" font-size="12" font-family="Segoe UI, Arial, sans-serif">-0.18</text>
+  <rect x="818" y="381" width="250" height="22" rx="4" fill="#2d1515" opacity="0.6"/>
+
+  <text x="830" y="397" fill="#e6edf3" font-size="12" font-family="Segoe UI, Arial, sans-serif">R3</text>
+  <text x="886" y="397" fill="#3fb950" font-size="12" font-family="Segoe UI, Arial, sans-serif">0.97</text>
+  <text x="936" y="397" fill="#3fb950" font-size="12" font-family="Segoe UI, Arial, sans-serif">0.91</text>
+  <text x="1001" y="397" fill="#3fb950" font-size="12" font-family="Segoe UI, Arial, sans-serif">-0.01</text>
+
+  <text x="830" y="419" fill="#e6edf3" font-size="12" font-family="Segoe UI, Arial, sans-serif">R4</text>
+  <text x="882" y="419" fill="#f85149" font-size="12" font-family="Segoe UI, Arial, sans-serif">1.28</text>
+  <text x="932" y="419" fill="#f85149" font-size="12" font-family="Segoe UI, Arial, sans-serif">0.012</text>
+  <text x="1001" y="419" fill="#f85149" font-size="12" font-family="Segoe UI, Arial, sans-serif"> 0.11</text>
+  <rect x="818" y="425" width="250" height="22" rx="4" fill="#2d1515" opacity="0.6"/>
+
+  <!-- Legend -->
+  <line x1="112" y1="548" x2="140" y2="548" stroke="#58a6ff" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="148" y="553" fill="#8b949e" font-size="18" font-family="Segoe UI, Arial, sans-serif">Reference group</text>
+  <line x1="340" y1="548" x2="368" y2="548" stroke="#d29922" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 5"/>
+  <text x="376" y="553" fill="#8b949e" font-size="18" font-family="Segoe UI, Arial, sans-serif">Focal group</text>
+</svg>

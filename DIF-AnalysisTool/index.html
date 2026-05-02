@@ -1,0 +1,227 @@
+---
+layout: tool_document
+redirect_path: /psychometric-tools/DIF-AnalysisTool
+meta_title: DIF-AnalysisTool - Differential Item Functioning Analysis (MH & TSW)
+meta_description: Detect Differential Item Functioning using Mantel-Haenszel and TSW likelihood-ratio tests with iterative purification, multi-group and nested-group support. Runs entirely in the browser via Pyodide.
+og_title: DIF-AnalysisTool - DIF analysis via Mantel-Haenszel and TSW
+webapp_description: Interactive DIF analysis tool using Mantel-Haenszel and TSW (Thissen-Steinberg-Wainer) likelihood-ratio tests with iterative purification.
+header_title: DIF-AnalysisTool
+header_subtitle: Differential Item Functioning analysis via Mantel-Haenszel and TSW
+intro_title: About this tool
+intro_text: DIF-AnalysisTool detects items that function differently across groups using Mantel-Haenszel and TSW likelihood-ratio tests with iterative purification. Supports dichotomous and polytomous items, multiple groups, and nested group structures. Runs entirely in the browser.
+intro_title_i18n_key: intro_title
+intro_text_i18n_key: intro_text
+with_analysis_panels: true
+with_sim_status: true
+footer_report_enabled: true
+footer_report_label: Report problem
+footer_credits_html: |
+  <p id="footer-app-updated">Author: <a href="https://enheragu.github.io/" target="_blank" rel="noopener noreferrer">Enrique Heredia-Aguado</a></p>
+custom_css:
+  - css/style.css
+custom_js:
+  - js/i18n.js
+  - /psychometric-tools/assets/publications-config.js
+  - js/data.js
+  - js/workers.js
+  - js/mh.js
+  - js/tsw.js
+  - js/app.js
+---
+<!--THEME_BODY-->
+  <div class="content-shell">
+    <main>
+
+      {% capture setup_body %}
+        <div class="panel-block">
+          <label class="section-label" data-i18n="upload_label">Upload data file</label>
+          <div id="dif-drop-zone" class="dif-drop-zone" role="button" tabindex="0" aria-label="Upload data file">
+            <div class="dif-drop-icon">📂</div>
+            <p class="dif-drop-hint" data-i18n="upload_hint">Drag & drop or click to select a .csv or .txt file</p>
+            <p class="dif-drop-or" data-i18n="upload_or">or</p>
+            <div class="drop-zone-btns">
+              <button id="dif-browse-btn" class="btn-secondary btn-sm" type="button" data-i18n="upload_btn">Browse file</button>
+              <button id="dif-load-example-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_example_btn">Load example</button>
+              <button id="dif-dl-example-btn" class="btn-ghost btn-sm" type="button" data-i18n="download_example_btn">⬇ Example CSV</button>
+              <button id="dif-dl-mh-btn" class="btn-ghost btn-sm" type="button" data-i18n="download_mh_results">⬇ MH example results</button>
+              <button id="dif-dl-irt-btn" class="btn-ghost btn-sm" type="button" data-i18n="download_irt_params">⬇ IRT parameters example</button>
+            </div>
+          </div>
+          <input id="dif-file-input" type="file" accept=".csv,.txt" style="display:none" aria-hidden="true">
+          <p id="dif-status" class="dif-status dif-status--idle"></p>
+        </div>
+
+        <div class="panel-block">
+          <div class="form-row single">
+            <div class="form-field">
+              <label for="dif-delimiter" data-i18n="delimiter_label">Delimiter</label>
+              <select id="dif-delimiter">
+                <option value="auto">Auto</option>
+                <option value=",">,  (comma)</option>
+                <option value=";">; (semicolon)</option>
+                <option value="&#9;">⇥ (tab)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row single" style="margin-top:.6rem">
+            <div class="form-field">
+              <label for="dif-group-var" data-i18n="group_var_label">Grouping variable</label>
+              <select id="dif-group-var" disabled></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="dif-group-ref" data-i18n="group_ref_label">Reference group</label>
+              <select id="dif-group-ref" disabled></select>
+            </div>
+            <div class="form-field">
+              <label for="dif-group-foc" data-i18n="group_foc_label">Focal group</label>
+              <select id="dif-group-foc" disabled></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="dif-nested-var" data-i18n="nested_var_label">Nested grouping variable (optional)</label>
+              <select id="dif-nested-var" disabled>
+                <option value="">—</option>
+              </select>
+              <p class="hint" data-i18n="nested_var_hint"></p>
+            </div>
+            <div class="form-field">
+              <label for="dif-item-type" data-i18n="item_type_label">Item type</label>
+              <select id="dif-item-type">
+                <option value="auto" data-i18n="item_type_auto">Auto-detect</option>
+                <option value="dichot" data-i18n="item_type_dichot">Dichotomous (0/1)</option>
+                <option value="polytomus" data-i18n="item_type_polytomus">Polytomous</option>
+              </select>
+              <p id="dif-type-detected" class="type-detected-note"></p>
+            </div>
+          </div>
+          <div id="dif-nested-filter-wrap" class="form-row single hidden">
+            <div class="form-field">
+              <label for="dif-nested-filter" data-i18n="nested_filter_label">Run only for</label>
+              <select id="dif-nested-filter">
+                <option value="" data-i18n="nested_filter_all">All levels</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      {% endcapture %}
+      {% include widgets/widget_content_box.html
+        tag='section'
+        panel_class='panel panel-setup'
+        title='Data & Setup'
+        title_id='setup-title'
+        title_tone='primary'
+        body=setup_body
+      %}
+
+      {% capture method_body %}
+        <div class="panel-block">
+          <span class="section-label" data-i18n="method_label">Analysis method</span>
+          <div class="method-options" role="radiogroup">
+            <label>
+              <input type="radio" name="dif-method" id="dif-method-mh" value="mh">
+              <span data-i18n="method_mh">MH only</span>
+            </label>
+            <label>
+              <input type="radio" name="dif-method" id="dif-method-tsw" value="tsw">
+              <span data-i18n="method_tsw">TSW only</span>
+            </label>
+            <label>
+              <input type="radio" name="dif-method" id="dif-method-both" value="both" checked>
+              <span data-i18n="method_both">MH + TSW</span>
+            </label>
+          </div>
+          <p id="dif-method-desc" class="hint" style="margin-top:.55rem"></p>
+        </div>
+
+        <div class="panel-block">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="dif-or-thr" data-i18n="or_threshold_label">OR threshold</label>
+              <input id="dif-or-thr" type="number" min="1.01" max="3" step="0.01" value="1.25">
+              <p class="hint" data-i18n="or_threshold_hint"></p>
+            </div>
+            <div class="form-field">
+              <label for="dif-p-thr" data-i18n="p_threshold_label">Corrected p threshold</label>
+              <input id="dif-p-thr" type="number" min="0.001" max="0.2" step="0.005" value="0.05">
+            </div>
+          </div>
+          <div class="form-row single" style="margin-top:.5rem">
+            <div class="form-field">
+              <label for="dif-max-iter" data-i18n="max_iter_label">Max. purification iterations</label>
+              <div class="stepper">
+                <button class="btn-stepper" data-step-target="dif-max-iter" data-step="-5" type="button">−</button>
+                <input id="dif-max-iter" type="number" min="1" max="200" value="50">
+                <button class="btn-stepper" data-step-target="dif-max-iter" data-step="5" type="button">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-block">
+          <button id="dif-run-btn" class="btn-primary btn-block" type="button" disabled data-i18n="run_btn">Run analysis</button>
+          <p id="sim-progress" class="sim-progress shared-status-hint" aria-live="polite"></p>
+        </div>
+      {% endcapture %}
+      {% include widgets/widget_content_box.html
+        tag='section'
+        panel_class='panel panel-method'
+        title='Method & Configuration'
+        title_id='method-title'
+        title_tone='primary'
+        body=method_body
+      %}
+
+      <div id="dif-progress-section" class="dif-progress-section hidden">
+        <div class="dif-progress-track">
+          <div id="dif-progress-bar" class="dif-progress-fill" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%"></div>
+          <p id="dif-progress-label" class="dif-progress-text"></p>
+        </div>
+      </div>
+
+    </main>
+
+    <div id="dif-warnings" class="dif-warnings hidden"></div>
+
+  </div>
+
+  <section id="dif-results-section" class="hidden">
+    {% include widgets/widget_section_heading.html
+      title='Results'
+      title_id='results-title'
+      title_i18n_key='results_title'
+    %}
+
+    {% capture mh_body %}
+      <div id="dif-mh-results"></div>
+    {% endcapture %}
+    {% include widgets/widget_content_box.html
+      tag='section'
+      panel_id='dif-mh-panel'
+      panel_class='panel'
+      title='Mantel-Haenszel results'
+      title_id='mh-results-title'
+      title_i18n_key='mh_results_title'
+      title_tone='primary'
+      body=mh_body
+      body_class='dif-results-body'
+    %}
+
+    {% capture tsw_body %}
+      <div id="dif-tsw-results"></div>
+      <div id="dif-tsw-summary"></div>
+    {% endcapture %}
+    {% include widgets/widget_content_box.html
+      tag='section'
+      panel_id='dif-tsw-panel'
+      panel_class='panel'
+      title='TSW results'
+      title_id='tsw-results-title'
+      title_i18n_key='tsw_results_title'
+      title_tone='primary'
+      body=tsw_body
+      body_class='dif-results-body'
+    %}
+  </section>
