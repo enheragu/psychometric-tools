@@ -35,23 +35,22 @@
   <!-- ── Card 2: DIF-AccumulationTool (x=446, w=306) ───────────────── -->
   <rect x="446" y="264" width="306" height="284" rx="12" fill="#0f1725" stroke="#30363d"/>
   <!--
-    ICC curves scaled ×0.665 from original (460px card at x=620).
-    x range: 473–725 (27px margin each side). Split at x=599 (midpoint).
-    sigLeft:  M 473 516 L 501 516 C 580 516, 580 297, 638 297 L 725 297
-    sigRight: M 473 516 L 560 516 C 618 516, 618 297, 677 297 L 725 297
+    ICC curves: y=491 (bottom) → y=321 (top), 57px margins → 60% fill matching DIF-AccumulationTool.
+    sigLeft:  M 473 491 L 501 491 C 580 491, 580 321, 638 321 L 725 321
+    sigRight: M 473 491 L 560 491 C 618 491, 618 321, 677 321 L 725 321
   -->
   <!-- left half -->
-  <path d="M 473 516 L 560 516 C 618 516, 618 297, 677 297 L 725 297"
+  <path d="M 473 491 L 560 491 C 618 491, 618 321, 677 321 L 725 321"
         fill="none" stroke="#d29922" stroke-width="6" stroke-linecap="round"
         stroke-dasharray="10 7" clip-path="url(#dif-left)"/>
-  <path d="M 473 516 L 501 516 C 580 516, 580 297, 638 297 L 725 297"
+  <path d="M 473 491 L 501 491 C 580 491, 580 321, 638 321 L 725 321"
         fill="none" stroke="#58a6ff" stroke-width="6" stroke-linecap="round"
         clip-path="url(#dif-left)"/>
   <!-- right half -->
-  <path d="M 473 516 L 501 516 C 580 516, 580 297, 638 297 L 725 297"
+  <path d="M 473 491 L 501 491 C 580 491, 580 321, 638 321 L 725 321"
         fill="none" stroke="#58a6ff" stroke-width="6" stroke-linecap="round"
         clip-path="url(#dif-right)"/>
-  <path d="M 473 516 L 560 516 C 618 516, 618 297, 677 297 L 725 297"
+  <path d="M 473 491 L 560 491 C 618 491, 618 321, 677 321 L 725 321"
         fill="none" stroke="#d29922" stroke-width="6" stroke-linecap="round"
         stroke-dasharray="10 7" clip-path="url(#dif-right)"/>
 

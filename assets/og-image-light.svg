@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Psychometric Tools light preview">
+  <style>
+    :root {
+      --c-bg-1:       #f4f6f9;
+      --c-bg-2:       #e8ecf2;
+      --c-surface:    #ffffff;
+      --c-card:       #f4f6f9;
+      --c-border:     #dde1e7;
+      --c-text:       #3a4658;
+      --c-blue:       #58a6ff;
+      --c-green:      #3fb950;
+      --c-red:        #f85149;
+      --c-amber:      #d29922;
+      --c-gray:       #6e7681;
+      --c-purple:     #bc8cff;
+      --c-cyan:       #79c0ff;
+      --c-node-root:  #dbeafe;
+      --c-node-green: #dcfce7;
+      --c-node-red:   #fee2e2;
+      --c-node-dim:   #e2e8f0;
+      --c-line-dim:   #94a3b8;
+    }
+  </style>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="var(--c-bg-1)"/>
+      <stop offset="100%" stop-color="var(--c-bg-2)"/>
+    </linearGradient>
+    <!-- DIF-AccumulationTool crossing-clip: split card 2 at its midpoint x=599 -->
+    <clipPath id="dif-left">
+      <rect x="446" y="264" width="153" height="284"/>
+    </clipPath>
+    <clipPath id="dif-right">
+      <rect x="599" y="264" width="153" height="284"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="68" y="58" width="1064" height="514" rx="22" fill="var(--c-surface)" stroke="var(--c-border)"/>
+
+  <!-- Title + subtitle -->
+  <text x="112" y="156" fill="var(--c-blue)" font-size="70" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Psychometric Tools</text>
+  <text x="112" y="210" fill="var(--c-text)"  font-size="45" font-family="Segoe UI, Arial, sans-serif">Psychometric tools for research and analysis</text>
+
+  <!-- ── Card 1: C-NRSBTool (x=120, w=306) ──────────────────────────── -->
+  <rect x="120" y="264" width="306" height="284" rx="12" fill="var(--c-card)" stroke="var(--c-border)"/>
+  <line x1="148" y1="336" x2="333" y2="336" stroke="var(--c-blue)"  stroke-width="22" stroke-linecap="round"/>
+  <line x1="148" y1="406" x2="373" y2="406" stroke="var(--c-amber)" stroke-width="22" stroke-linecap="round"/>
+  <line x1="148" y1="476" x2="401" y2="476" stroke="var(--c-green)" stroke-width="22" stroke-linecap="round"/>
+
+  <!-- ── Card 2: DIF-AccumulationTool (x=446, w=306) ───────────────── -->
+  <rect x="446" y="264" width="306" height="284" rx="12" fill="var(--c-card)" stroke="var(--c-border)"/>
+  <!--
+    ICC curves: y=491 (bottom) → y=321 (top), 57px margins → 60% fill.
+  -->
+  <!-- left half -->
+  <path d="M 473 491 L 560 491 C 618 491, 618 321, 677 321 L 725 321"
+        fill="none" stroke="var(--c-amber)" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="10 7" clip-path="url(#dif-left)"/>
+  <path d="M 473 491 L 501 491 C 580 491, 580 321, 638 321 L 725 321"
+        fill="none" stroke="var(--c-blue)"  stroke-width="6" stroke-linecap="round"
+        clip-path="url(#dif-left)"/>
+  <!-- right half -->
+  <path d="M 473 491 L 501 491 C 580 491, 580 321, 638 321 L 725 321"
+        fill="none" stroke="var(--c-blue)"  stroke-width="6" stroke-linecap="round"
+        clip-path="url(#dif-right)"/>
+  <path d="M 473 491 L 560 491 C 618 491, 618 321, 677 321 L 725 321"
+        fill="none" stroke="var(--c-amber)" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="10 7" clip-path="url(#dif-right)"/>
+
+  <!-- ── Card 3: DIF-AnalysisTool (x=772, w=306) ──────────────────── -->
+  <rect x="772" y="264" width="306" height="284" rx="12" fill="var(--c-card)" stroke="var(--c-border)"/>
+  <line x1="925" y1="272" x2="925" y2="526" stroke="var(--c-line-dim)" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <line x1="925" y1="292" x2="963"  y2="292" stroke="var(--c-blue)"  stroke-width="18" stroke-linecap="round"/>
+  <line x1="925" y1="350" x2="1042" y2="350" stroke="var(--c-red)"   stroke-width="18" stroke-linecap="round"/>
+  <line x1="890" y1="408" x2="925"  y2="408" stroke="var(--c-blue)"  stroke-width="18" stroke-linecap="round"/>
+  <line x1="816" y1="466" x2="925"  y2="466" stroke="var(--c-red)"   stroke-width="18" stroke-linecap="round"/>
+  <line x1="925" y1="516" x2="956"  y2="516" stroke="var(--c-gray)"  stroke-width="14" stroke-linecap="round"/>
+</svg>
