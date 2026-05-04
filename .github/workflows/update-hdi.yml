@@ -22,7 +22,7 @@ jobs:
           python-version: "3.11"
 
       - name: Update HDI data files
-        run: python psychometric-tools/C-NRSBTool/scripts/update_hdi.py
+        run: python C-NRSBTool/scripts/update_country_data.py
 
       - name: Commit changes
         run: |
@@ -32,6 +32,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add psychometric-tools/C-NRSBTool/data/hdi.csv psychometric-tools/C-NRSBTool/data/metadata.json psychometric-tools/C-NRSBTool/data/country_aliases.json
+          git add C-NRSBTool/data/hdi.csv C-NRSBTool/data/income_groups.csv C-NRSBTool/data/metadata.json C-NRSBTool/data/country_aliases.json
           git commit -m "chore(data): update HDI snapshot"
           git push
