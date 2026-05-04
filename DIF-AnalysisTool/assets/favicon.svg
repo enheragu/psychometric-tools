@@ -8,14 +8,16 @@
 
   <rect x="2" y="2" width="60" height="60" rx="12" fill="url(#bg)" stroke="#30363d"/>
 
-  <!-- Reference group ICC: solid blue, modest slope -->
-  <path d="M 8 50 C 18 50, 22 32, 32 32 C 42 32, 46 14, 56 14"
-        fill="none" stroke="#58a6ff" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- Center reference line -->
+  <line x1="32" y1="12" x2="32" y2="54" stroke="#30363d" stroke-width="1.5"/>
 
-  <!-- Focal group ICC: dashed amber, shifted right (DIF effect) -->
-  <path d="M 8 50 C 18 50, 26 38, 36 38 C 46 38, 50 20, 56 20"
-        fill="none" stroke="#d29922" stroke-width="2.8" stroke-linecap="round" stroke-dasharray="5 4"/>
-
-  <!-- Vertical dashed marker at inflection region showing divergence -->
-  <line x1="36" y1="18" x2="36" y2="52" stroke="#3fb950" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.7"/>
+  <!-- Item bars: short = no DIF (blue), long = DIF (red) -->
+  <!-- Item 1: no DIF, right -->
+  <line x1="32" y1="20" x2="42" y2="20" stroke="#58a6ff" stroke-width="5" stroke-linecap="round"/>
+  <!-- Item 2: DIF, right -->
+  <line x1="32" y1="30" x2="51" y2="30" stroke="#f85149" stroke-width="5" stroke-linecap="round"/>
+  <!-- Item 3: no DIF, left -->
+  <line x1="22" y1="40" x2="32" y2="40" stroke="#58a6ff" stroke-width="5" stroke-linecap="round"/>
+  <!-- Item 4: DIF, left -->
+  <line x1="13" y1="50" x2="32" y2="50" stroke="#f85149" stroke-width="5" stroke-linecap="round"/>
 </svg>

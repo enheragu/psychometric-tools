@@ -5,19 +5,25 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://enheragu.github.io/psychometric-tools/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://enheragu.github.io/psychometric-tools/?lang=en" />
     <xhtml:link rel="alternate" hreflang="es" href="https://enheragu.github.io/psychometric-tools/?lang=es" />
-    <lastmod>2026-03-15</lastmod>
+    <lastmod>2026-05-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://enheragu.github.io/psychometric-tools/C-NRSBTool/</loc>
-    <lastmod>2026-03-15</lastmod>
+    <lastmod>2026-05-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
     <loc>https://enheragu.github.io/psychometric-tools/DIF-AccumulationTool/</loc>
-    <lastmod>2026-03-15</lastmod>
+    <lastmod>2026-05-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://enheragu.github.io/psychometric-tools/DIF-AnalysisTool/</loc>
+    <lastmod>2026-05-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
