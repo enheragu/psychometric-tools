@@ -484,46 +484,96 @@
       section.className = 'dif-dim-section';
       section.innerHTML = '<h4 class="dif-dim-title">Dimension ' + dim + ' <span class="dif-iter-note">' + iterNote + '</span></h4>';
 
+      // ── All-DIF warning ────────────────────────────────────────────────────
+      if (dimResult.all_dif) {
+        var warnDiv = document.createElement('div');
+        warnDiv.className = 'dif-warning';
+        warnDiv.innerHTML = '<span class="warn-icon">⚠</span><span class="warn-text">' + t('warn_all_dif') + '</span>';
+        section.appendChild(warnDiv);
+      }
+
+      // ── Group latent distribution ──────────────────────────────────────────
+      if (dimResult.group_params && dimResult.group_params.length > 1) {
+        var gp = dimResult.group_params[1];
+        var gpDiv = document.createElement('div');
+        gpDiv.className = 'dif-group-params';
+        gpDiv.textContent = t('focal_latent_params', {
+          mu: fmtNum(gp.mu, 3),
+          sigma: fmtNum(gp.sigma, 3),
+        });
+        section.appendChild(gpDiv);
+      }
+
+      // ── Item results table ─────────────────────────────────────────────────
       var tbl = document.createElement('table');
       tbl.className = 'shared-results-table shared-results-table--hover shared-results-table--num';
-      tbl.innerHTML = '<thead><tr>' +
-        '<th class="shared-cell-text">' + t('col_item') + '</th>' +
-        '<th title="' + t('col_a_ref_hint') + '">' + t('col_a_ref') + '</th>' +
-        '<th title="' + t('col_b_ref_hint') + '">' + t('col_b_ref') + '</th>' +
-        '<th title="' + t('col_a_foc_hint') + '">' + t('col_a_foc') + '</th>' +
-        '<th title="' + t('col_b_foc_hint') + '">' + t('col_b_foc') + '</th>' +
-        '<th title="' + t('col_sids_hint') + '">' + t('col_sids') + '</th>' +
-        '<th title="' + t('col_uids_hint') + '">' + t('col_uids') + '</th>' +
-        '<th title="' + t('col_dmax_hint') + '">' + t('col_dmax') + '</th>' +
-        '<th title="' + t('col_essd_hint') + '">' + t('col_essd') + '</th>' +
+
+      // When all items show DIF only the model-fit columns are meaningful
+      var allDif = !!dimResult.all_dif;
+      var thead = '<thead><tr>' +
+        '<th class="shared-cell-text">' + t('col_item') + '</th>';
+      if (!allDif) {
+        thead +=
+          '<th title="' + t('col_a_ref_hint') + '">' + t('col_a_ref') + '</th>' +
+          '<th title="' + t('col_b_ref_hint') + '">' + t('col_b_ref') + '</th>' +
+          '<th title="' + t('col_a_foc_hint') + '">' + t('col_a_foc') + '</th>' +
+          '<th title="' + t('col_b_foc_hint') + '">' + t('col_b_foc') + '</th>' +
+          '<th title="' + t('col_sids_hint') + '">' + t('col_sids') + '</th>' +
+          '<th title="' + t('col_uids_hint') + '">' + t('col_uids') + '</th>' +
+          '<th title="' + t('col_sidn_hint') + '">' + t('col_sidn') + '</th>' +
+          '<th title="' + t('col_uidn_hint') + '">' + t('col_uidn') + '</th>' +
+          '<th title="' + t('col_essd_hint') + '">' + t('col_essd') + '</th>' +
+          '<th title="' + t('col_theta_maxd_hint') + '">' + t('col_theta_maxd') + '</th>' +
+          '<th title="' + t('col_maxd_hint') + '">' + t('col_maxd') + '</th>' +
+          '<th title="' + t('col_mean_es_foc_hint') + '">' + t('col_mean_es_foc') + '</th>' +
+          '<th title="' + t('col_mean_es_ref_hint') + '">' + t('col_mean_es_ref') + '</th>';
+      }
+      thead +=
         '<th title="' + t('col_tsw_stat_hint') + '">' + t('col_tsw_stat') + '</th>' +
+        '<th title="' + t('col_tsw_df_hint') + '">' + t('col_tsw_df') + '</th>' +
         '<th title="' + t('col_tsw_p_hint') + '">' + t('col_tsw_p') + '</th>' +
+        '<th title="' + t('col_delta_sabic_hint') + '">' + t('col_delta_sabic') + '</th>' +
         '<th title="' + t('col_variant_hint') + '">' + t('col_variant') + '</th>' +
-        '</tr></thead><tbody></tbody>';
+        '</tr></thead>';
+      tbl.innerHTML = thead + '<tbody></tbody>';
 
       var tbody = tbl.querySelector('tbody');
+      var nCols = allDif ? 6 : 19;
       (dimResult.results || []).forEach(function (r) {
         if (r.error) {
           var tr = document.createElement('tr');
-          tr.innerHTML = '<td class="cell-item shared-cell-text">' + r.item + '</td><td colspan="11" class="cell-error">—</td>';
+          tr.innerHTML = '<td class="cell-item shared-cell-text">' + r.item + '</td>' +
+            '<td colspan="' + (nCols - 1) + '" class="cell-error">—</td>';
           tbody.appendChild(tr);
           return;
         }
+        var isDif = r.dif || r.variant;
         var tr = document.createElement('tr');
-        if (r.variant) tr.classList.add('row-variant');
-        tr.innerHTML =
-          '<td class="cell-item shared-cell-text">' + r.item + '</td>' +
-          '<td>' + fmtNum(r.a_ref, 2) + '</td>' +
-          '<td class="cell-b">' + fmtArr(r.b_ref) + '</td>' +
-          '<td>' + fmtNum(r.a_foc, 2) + '</td>' +
-          '<td class="cell-b">' + fmtArr(r.b_foc) + '</td>' +
-          '<td>' + fmtNum(r.sids, 3) + '</td>' +
-          '<td>' + fmtNum(r.uids, 3) + '</td>' +
-          '<td>' + fmtNum(r.dmax, 3) + '</td>' +
-          '<td>' + fmtNum(r.essd, 3) + '</td>' +
-          '<td>' + fmtNum(r.G2, 2) + '</td>' +
-          '<td>' + fmtNum(r.p_adj, 4) + '</td>' +
-          '<td>' + variantBadge(r.variant) + '</td>';
+        if (isDif) tr.classList.add('row-variant');
+        var html = '<td class="cell-item shared-cell-text">' + r.item + '</td>';
+        if (!allDif) {
+          html +=
+            '<td>' + fmtNum(r.a_ref, 2) + '</td>' +
+            '<td class="cell-b">' + fmtArr(r.b_ref) + '</td>' +
+            '<td>' + fmtNum(r.a_foc, 2) + '</td>' +
+            '<td class="cell-b">' + fmtArr(r.b_foc) + '</td>' +
+            '<td>' + fmtNum(r.SIDS, 3) + '</td>' +
+            '<td>' + fmtNum(r.UIDS, 3) + '</td>' +
+            '<td>' + fmtNum(r.SIDN, 3) + '</td>' +
+            '<td>' + fmtNum(r.UIDN, 3) + '</td>' +
+            '<td>' + fmtNum(r.ESSD, 3) + '</td>' +
+            '<td>' + fmtNum(r.theta_maxD, 3) + '</td>' +
+            '<td>' + fmtNum(r.maxD, 3) + '</td>' +
+            '<td>' + fmtNum(r.mean_ES_foc, 3) + '</td>' +
+            '<td>' + fmtNum(r.mean_ES_ref, 3) + '</td>';
+        }
+        html +=
+          '<td>' + fmtNum(r.X2, 2) + '</td>' +
+          '<td>' + (r.df !== undefined ? r.df : '—') + '</td>' +
+          '<td>' + fmtNum(r.p, 4) + '</td>' +
+          '<td>' + fmtNum(r.delta_SABIC, 2) + '</td>' +
+          '<td>' + variantBadge(isDif) + '</td>';
+        tr.innerHTML = html;
         tbody.appendChild(tr);
       });
 
@@ -532,27 +582,30 @@
       tblWrap.appendChild(tbl);
       section.appendChild(tblWrap);
 
-      // Per-dimension test-level summary
-      if (dimResult.test_level) {
+      // ── Test-level summary ─────────────────────────────────────────────────
+      if (!allDif && dimResult.test_level) {
         var tl = dimResult.test_level;
         var tlDiv = document.createElement('div');
         tlDiv.className = 'dif-testlevel';
         tlDiv.innerHTML =
-          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_stds_hint') + '">STDS</span><span class="tl-val">' + fmtNum(tl.stds, 3) + '</span></div>' +
-          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_utds_hint') + '">UTDS</span><span class="tl-val">' + fmtNum(tl.utds, 3) + '</span></div>' +
-          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_etsd_hint') + '">ETSD</span><span class="tl-val">' + fmtNum(tl.etsd, 3) + '</span></div>' +
-          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_uetsd_hint') + '">UETSD</span><span class="tl-val">' + fmtNum(tl.uetsd, 3) + '</span></div>';
+          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_stds_hint') + '">STDS</span><span class="tl-val">' + fmtNum(tl.STDS, 3) + '</span></div>' +
+          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_utds_hint') + '">UTDS</span><span class="tl-val">' + fmtNum(tl.UTDS, 3) + '</span></div>' +
+          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_uetsds_hint') + '">UETSDS</span><span class="tl-val">' + fmtNum(tl.UETSDS, 3) + '</span></div>' +
+          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_etssd_hint') + '">ETSSD</span><span class="tl-val">' + fmtNum(tl.ETSSD, 3) + '</span></div>' +
+          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_starks_dtfr_hint') + '">Starks.DTFR</span><span class="tl-val">' + fmtNum(tl.Starks_DTFR, 3) + '</span></div>' +
+          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_udtfr_hint') + '">UDTFR</span><span class="tl-val">' + fmtNum(tl.UDTFR, 3) + '</span></div>' +
+          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_uetsdn_hint') + '">UETSDN</span><span class="tl-val">' + fmtNum(tl.UETSDN, 3) + '</span></div>' +
+          '<div class="tl-metric"><span class="tl-label" title="' + t('tsw_test_maxd_hint') + '">Test D-max</span><span class="tl-val">' + fmtNum(tl.test_maxD, 3) + ' (θ=' + fmtNum(tl.theta_maxD_test, 2) + ')</span></div>';
         section.appendChild(tlDiv);
       }
 
       var exportBtn = document.createElement('button');
       exportBtn.className = 'btn-secondary btn-sm dif-export-btn';
       exportBtn.textContent = t('export_csv');
-      exportBtn.addEventListener('click', function () { exportTSWCSV(dim, dimResult.results); });
+      exportBtn.addEventListener('click', function () { exportTSWCSV(dim, dimResult); });
       section.appendChild(exportBtn);
       container.appendChild(section);
     });
-
   }
 
   // ── Multi-level results rendering ─────────────────────────────────────────
@@ -671,12 +724,46 @@
     downloadCSV('MH_' + dim + '.csv', [header.join(',')].concat(rows).join('\n'));
   }
 
-  function exportTSWCSV(dim, results) {
-    var header = ['Item', 'Dimension', 'a_ref', 'b_ref', 'a_foc', 'b_foc', 'SIDS', 'UIDS', 'Dmax', 'ESSD', 'G2', 'p_adj', 'Variant'];
+  function exportTSWCSV(dim, dimResult) {
+    var results = dimResult ? dimResult.results : [];
+    var allDif = dimResult && dimResult.all_dif;
+    var header = allDif
+      ? ['Item', 'Dimension', 'X2', 'df', 'p', 'delta_SABIC', 'DIF']
+      : ['Item', 'Dimension',
+         'a_ref', 'b_ref', 'a_foc', 'b_foc',
+         'SIDS', 'UIDS', 'SIDN', 'UIDN', 'ESSD',
+         'theta_maxD', 'maxD', 'mean_ES_foc', 'mean_ES_ref',
+         'X2', 'df', 'p', 'delta_SABIC', 'DIF'];
     var rows = (results || []).filter(function (r) { return !r.error; }).map(function (r) {
-      return [r.item, dim, r.a_ref, (r.b_ref || []).join(';'), r.a_foc, (r.b_foc || []).join(';'), r.sids, r.uids, r.dmax, r.essd, r.G2, r.p_adj, r.variant ? 1 : 0].join(',');
+      var isDif = r.dif || r.variant ? 1 : 0;
+      if (allDif) {
+        return [r.item, dim, r.X2, r.df, r.p, r.delta_SABIC, isDif].join(',');
+      }
+      return [
+        r.item, dim,
+        r.a_ref, (r.b_ref || []).join(';'), r.a_foc, (r.b_foc || []).join(';'),
+        r.SIDS, r.UIDS, r.SIDN, r.UIDN, r.ESSD,
+        r.theta_maxD, r.maxD, r.mean_ES_foc, r.mean_ES_ref,
+        r.X2, r.df, r.p, r.delta_SABIC, isDif,
+      ].join(',');
     });
-    downloadCSV('TSW_' + dim + '.csv', [header.join(',')].concat(rows).join('\n'));
+    var lines = [header.join(',')].concat(rows);
+    // Append test-level metrics as a separate footer block
+    if (!allDif && dimResult && dimResult.test_level) {
+      var tl = dimResult.test_level;
+      lines.push('');
+      lines.push('Test-level metrics');
+      lines.push('STDS,' + tl.STDS);
+      lines.push('UTDS,' + tl.UTDS);
+      lines.push('UETSDS,' + tl.UETSDS);
+      lines.push('ETSSD,' + tl.ETSSD);
+      lines.push('Starks.DTFR,' + tl.Starks_DTFR);
+      lines.push('UDTFR,' + tl.UDTFR);
+      lines.push('UETSDN,' + tl.UETSDN);
+      lines.push('Test.maxD,' + tl.test_maxD);
+      lines.push('theta.of.max.test.D,' + tl.theta_maxD_test);
+    }
+    downloadCSV('TSW_' + dim + '.csv', lines.join('\n'));
   }
 
   function downloadCSV(filename, content) {
