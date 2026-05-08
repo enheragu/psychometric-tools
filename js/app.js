@@ -14,6 +14,13 @@
       imageLight: '/psychometric-tools/C-NRSBTool/assets/og-image-light.svg'
     },
     {
+      key: 'difAnalysis',
+      section: 'psychometric-tools',
+      href: '/psychometric-tools/DIF-AnalysisTool/',
+      imageDark: '/psychometric-tools/DIF-AnalysisTool/assets/og-image.svg',
+      imageLight: '/psychometric-tools/DIF-AnalysisTool/assets/og-image-light.svg'
+    },
+    {
       key: 'dif',
       section: 'psychometric-tools',
       href: '/psychometric-tools/DIF-AccumulationTool/',

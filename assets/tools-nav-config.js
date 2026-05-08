@@ -15,8 +15,8 @@
         title: { en: 'Psychometric tools', es: 'Herramientas psicométricas' },
         items: [
           { href: '/psychometric-tools/C-NRSBTool/', label: 'C-NRSBTool' },
-          { href: '/psychometric-tools/DIF-AccumulationTool/', label: 'DIF-AccumulationTool' },
-          { href: '/psychometric-tools/DIF-AnalysisTool/', label: 'DIF-AnalysisTool' }
+          { href: '/psychometric-tools/DIF-AnalysisTool/', label: 'DIF-AnalysisTool' },
+          { href: '/psychometric-tools/DIF-AccumulationTool/', label: 'DIF-AccumulationTool' }
         ]
       }
     ]
