@@ -16,7 +16,9 @@
     maxIter: 50,
     mhResults: null,
     tswResults: null,
+    allLevelResults: null,
     running: false,
+    cancelled: false,
   };
 
   var t = function (key, vars) {
@@ -63,6 +65,51 @@
   function hideProgress() {
     var section = $('dif-progress-section');
     if (section) section.classList.add('hidden');
+  }
+
+  function setExportEnabled(enabled) {
+    var csvBtn = $('dif-export-csv-btn');
+    var jsonBtn = $('dif-export-json-btn');
+    if (csvBtn) csvBtn.disabled = !enabled;
+    if (jsonBtn) jsonBtn.disabled = !enabled;
+  }
+
+  var LARGE_DATASET_THRESHOLD = 5000;
+
+  function updateSizeWarning() {
+    var el = $('dif-size-warn');
+    if (!el) return;
+    if (!state.parsed) { el.classList.add('hidden'); return; }
+    var method = (document.querySelector('input[name="dif-method"]:checked') || {}).value || 'both';
+    var usesTSW = (method === 'tsw' || method === 'both');
+    if (usesTSW && state.parsed.nRows > LARGE_DATASET_THRESHOLD) {
+      el.textContent = t('warn_large_dataset', { n: state.parsed.nRows.toLocaleString() });
+      el.classList.remove('hidden');
+    } else {
+      el.classList.add('hidden');
+    }
+  }
+
+  function setCancelVisible(visible) {
+    var btn = $('dif-cancel-btn');
+    if (!btn) return;
+    if (visible) btn.classList.remove('hidden');
+    else btn.classList.add('hidden');
+  }
+
+  function cancelAnalysis() {
+    if (!state.running) return;
+    state.cancelled = true;
+    window.DIFWorkerPool.terminateAll();
+    // state.cancelled stays true until next runAnalysis() — onError microtasks
+    // (one per rejected callback) all check it and exit silently.
+    setCancelVisible(false);
+    hideProgress();
+    setExportEnabled(false);
+    setSimStatus(t('cancel_status'), false);
+    state.running = false;
+    var runBtn = $('dif-run-btn');
+    if (runBtn) runBtn.disabled = false;
   }
 
   // ── Warnings ─────────────────────────────────────────────────────────────
@@ -150,6 +197,7 @@
     $('dif-run-btn') && ($('dif-run-btn').disabled = false);
     clearWarnings();
     hideResults();
+    updateSizeWarning();
   }
 
   function updateGroupValues() {
@@ -227,9 +275,13 @@
       setStatus(t('file_error'), 'error'); return;
     }
 
+    state.cancelled = false;
     state.running = true;
     state.mhResults = null;
     state.tswResults = null;
+    state.allLevelResults = null;
+    setExportEnabled(false);
+    setCancelVisible(true);
     var btn = $('dif-run-btn');
     if (btn) btn.disabled = true;
     setSimStatus(t('loading_pyodide'), true);
@@ -268,8 +320,11 @@
 
     function runLevel(idx) {
       if (idx >= totalLevels) {
+        state.allLevelResults = allLevelResults;
         renderAllResults(allLevelResults, iterLabel);
         showResultsSection();
+        setExportEnabled(true);
+        setCancelVisible(false);
         var elapsed = ((Date.now() - t0) / 1000).toFixed(1) + 's';
         var doneMsg = t('done', { time: elapsed });
         setProgress(100, doneMsg);
@@ -358,6 +413,8 @@
     }
 
     function onError(err) {
+      setCancelVisible(false);
+      if (state.cancelled) return;
       console.error('[DIFAnalysis]', err);
       setStatus(t('status_error'), 'error');
       setSimStatus(t('status_error'), false, 'error');
@@ -422,17 +479,28 @@
       var dimResult = resultsArr.find(function (r) { return r.dimension === dim; });
       var iters = dimResult ? dimResult.iterations : 0;
       var conv = dimResult ? dimResult.converged : false;
-      var iterNote = conv ? t('converged', { n: iters }) : t('not_converged', { n: iters });
+      var allDif = !!(dimResult && dimResult.all_dif);
+      var iterNote = allDif
+        ? t('mh_restscore_note')
+        : (conv ? t('converged', { n: iters }) : t('not_converged', { n: iters }));
 
       var section = document.createElement('div');
       section.className = 'dif-dim-section';
       section.innerHTML = '<h4 class="dif-dim-title">Dimension ' + dim + ' <span class="dif-iter-note">' + iterNote + '</span></h4>';
+
+      if (allDif) {
+        var warnDiv = document.createElement('div');
+        warnDiv.className = 'dif-warning';
+        warnDiv.innerHTML = '<span class="warn-icon">⚠</span><span class="warn-text">' + t('warn_mh_all_dif_restscore') + '</span>';
+        section.appendChild(warnDiv);
+      }
 
       var tbl = document.createElement('table');
       tbl.className = 'shared-results-table shared-results-table--hover shared-results-table--num';
       tbl.innerHTML = '<thead><tr>' +
         '<th class="shared-cell-text">' + t('col_item') + '</th>' +
         '<th title="' + t('col_or_hint') + '">' + t('col_or') + '</th>' +
+        '<th title="' + t('col_mh_chi2_hint') + '">' + t('col_mh_chi2') + '</th>' +
         '<th title="' + t('col_p_raw_hint') + '">' + t('col_p_raw') + '</th>' +
         '<th title="' + t('col_p_adj_hint') + '">' + t('col_p_adj') + '</th>' +
         '<th title="' + t('col_variant_hint') + '">' + t('col_variant') + '</th>' +
@@ -446,6 +514,7 @@
         tr.innerHTML =
           '<td class="cell-item shared-cell-text">' + r.item + '</td>' +
           '<td>' + fmtNum(r.or, 3) + '</td>' +
+          '<td>' + fmtNum(r.chi2, 3) + '</td>' +
           '<td>' + fmtNum(r.p_raw, 4) + '</td>' +
           '<td>' + fmtNum(r.p_adj, 4) + '</td>' +
           '<td>' + variantBadge(r.variant) + '</td>';
@@ -716,10 +785,10 @@
   // ── CSV export ────────────────────────────────────────────────────────────
 
   function exportMHCSV(dim, dimItems) {
-    var header = ['Item', 'Dimension', 'OR', 'p_raw', 'p_adj', 'Variant'];
+    var header = ['Item', 'Dimension', 'OR_psi', 'chi2', 'df', 'p_raw', 'p_adj', 'Variant'];
     var rows = dimItems.map(function (x) {
       var r = x.r;
-      return [r.item, dim, r.or, r.p_raw, r.p_adj, r.variant ? 1 : 0].join(',');
+      return [r.item, dim, r.or, r.chi2, r.df, r.p_raw, r.p_adj, r.variant ? 1 : 0].join(',');
     });
     downloadCSV('MH_' + dim + '.csv', [header.join(',')].concat(rows).join('\n'));
   }
@@ -764,6 +833,63 @@
       lines.push('theta.of.max.test.D,' + tl.theta_maxD_test);
     }
     downloadCSV('TSW_' + dim + '.csv', lines.join('\n'));
+  }
+
+  function exportAllResultsCSV() {
+    if (!state.allLevelResults || !state.allLevelResults.length) return;
+    var multiLevel = state.allLevelResults.length > 1;
+    var hasMH = state.allLevelResults.some(function (lr) { return lr.doMH && lr.mhResults; });
+    var hasTSW = state.allLevelResults.some(function (lr) { return lr.doTSW && lr.tswResults; });
+    var mhCols = hasMH ? ['OR_psi', 'chi2', 'df', 'p_raw', 'p_adj', 'Variant_MH'] : [];
+    var tswCols = hasTSW ? ['a_ref', 'b_ref', 'a_foc', 'b_foc', 'SIDS', 'UIDS', 'SIDN', 'UIDN', 'ESSD', 'theta_maxD', 'maxD', 'mean_ES_foc', 'mean_ES_ref', 'X2_tsw', 'df_tsw', 'p_tsw', 'delta_SABIC', 'DIF'] : [];
+    var header = (multiLevel ? ['Level'] : []).concat(['Dimension', 'Item']).concat(mhCols).concat(tswCols);
+    var rows = [header.join(',')];
+    state.allLevelResults.forEach(function (lr) {
+      Object.keys(lr.dims || {}).forEach(function (dim) {
+        var mhDim = hasMH && lr.mhResults ? lr.mhResults.find(function (d) { return d.dimension === dim; }) : null;
+        var mhItems = mhDim ? (mhDim.results || []) : [];
+        var tswDim = hasTSW && lr.tswResults ? lr.tswResults.find(function (d) { return d.dimension === dim; }) : null;
+        var tswItems = tswDim ? (tswDim.results || []) : [];
+        var allDif = !!(tswDim && tswDim.all_dif);
+        var itemNames = [];
+        mhItems.forEach(function (r) { if (!itemNames.includes(r.item)) itemNames.push(r.item); });
+        tswItems.forEach(function (r) { if (!r.error && !itemNames.includes(r.item)) itemNames.push(r.item); });
+        itemNames.forEach(function (item) {
+          var row = multiLevel ? [lr.level] : [];
+          row.push(dim, item);
+          if (hasMH) {
+            var mhR = mhItems.find(function (r) { return r.item === item; });
+            row = row.concat(mhR
+              ? [mhR.or, mhR.chi2, mhR.df, mhR.p_raw, mhR.p_adj, mhR.variant ? 1 : 0]
+              : ['', '', '', '', '', '']);
+          }
+          if (hasTSW) {
+            var tswR = tswItems.find(function (r) { return r.item === item; });
+            if (tswR && !tswR.error) {
+              row = row.concat(allDif
+                ? ['', '', '', '', '', '', '', '', '', '', '', '', '', tswR.X2, tswR.df, tswR.p, tswR.delta_SABIC, (tswR.dif || tswR.variant) ? 1 : 0]
+                : [tswR.a_ref, (tswR.b_ref || []).join(';'), tswR.a_foc, (tswR.b_foc || []).join(';'),
+                   tswR.SIDS, tswR.UIDS, tswR.SIDN, tswR.UIDN, tswR.ESSD,
+                   tswR.theta_maxD, tswR.maxD, tswR.mean_ES_foc, tswR.mean_ES_ref,
+                   tswR.X2, tswR.df, tswR.p, tswR.delta_SABIC, (tswR.dif || tswR.variant) ? 1 : 0]);
+            } else {
+              row = row.concat(new Array(tswCols.length).fill(''));
+            }
+          }
+          rows.push(row.join(','));
+        });
+      });
+    });
+    downloadCSV('DIF_results.csv', rows.join('\n'));
+  }
+
+  function exportAllResultsJSON() {
+    if (!state.allLevelResults) return;
+    var blob = new Blob([JSON.stringify(state.allLevelResults, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'DIF_results.json'; a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
   function downloadCSV(filename, content) {
@@ -861,7 +987,7 @@
       el.innerHTML = t('method_desc_' + method);
     }
     document.querySelectorAll('input[name="dif-method"]').forEach(function (r) {
-      r.addEventListener('change', updateMethodDesc);
+      r.addEventListener('change', function () { updateMethodDesc(); updateSizeWarning(); });
     });
     updateMethodDesc();
 
@@ -876,21 +1002,14 @@
       });
     }
 
-    var dlMhBtn = $('dif-dl-mh-btn');
-    if (dlMhBtn) {
-      dlMhBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        window.open('/psychometric-tools/DIF-AnalysisTool/sample_data/MH_cult_stats_BB25.csv');
-      });
-    }
+    var cancelBtn = $('dif-cancel-btn');
+    if (cancelBtn) cancelBtn.addEventListener('click', cancelAnalysis);
 
-    var dlIrtBtn = $('dif-dl-irt-btn');
-    if (dlIrtBtn) {
-      dlIrtBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        window.open('/psychometric-tools/DIF-AnalysisTool/sample_data/variant_parameters_gen.csv');
-      });
-    }
+    var exportCsvBtn = $('dif-export-csv-btn');
+    if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportAllResultsCSV);
+
+    var exportJsonBtn = $('dif-export-json-btn');
+    if (exportJsonBtn) exportJsonBtn.addEventListener('click', exportAllResultsJSON);
   }
 
   // ── Boot ──────────────────────────────────────────────────────────────────

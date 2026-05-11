@@ -100,9 +100,9 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 }
 
 /* ── Method radio buttons ─────────────────────────────────────── */
-.method-options { display: flex; gap: .35rem; flex-wrap: wrap; margin-top: .3rem; }
+.method-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; margin-top: .3rem; }
 .method-options label {
-  display: flex; align-items: center; gap: .3rem;
+  display: flex; align-items: center; justify-content: center; gap: .3rem; text-align: center;
   font-size: var(--txt-sm, .8rem); cursor: pointer;
   padding: .28rem .55rem;
   border: 1px solid var(--clr-border);
@@ -138,10 +138,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 
 /* ── Progress ─────────────────────────────────────────────────── */
 .dif-progress-section {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: start;
-  margin-top: .4rem;
+  margin-top: .5rem;
 }
 .dif-progress-track {
   height: 28px;
@@ -339,6 +336,18 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 /* ── Export button ────────────────────────────────────────────── */
 .dif-export-btn { margin-top: .5rem; }
 
+/* ── Large dataset warning ────────────────────────────────────── */
+.dif-size-warn {
+  font-size: var(--txt-xs, .73rem);
+  color: color-mix(in oklab, var(--clr-warning, #d29922) 85%, var(--clr-text));
+  margin-top: .3rem;
+}
+
+/* ── Run / Cancel row ─────────────────────────────────────────── */
+.run-cancel-row { display: flex; gap: .5rem; align-items: stretch; }
+.run-cancel-row #dif-run-btn { flex: 1; }
+.dif-cancel-btn { flex-shrink: 0; white-space: nowrap; }
+
 /* ── Type detected note ───────────────────────────────────────── */
 .type-detected-note {
   font-size: var(--txt-xs, .72rem);
@@ -349,7 +358,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 760px) {
   main { grid-template-columns: 1fr; }
-  .panel-setup, .panel-method, #dif-progress-section { grid-column: auto; grid-row: auto; }
+  .panel-setup, .panel-method { grid-column: auto; grid-row: auto; }
 }
 
 @media (max-width: 500px) {

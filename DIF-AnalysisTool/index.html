@@ -43,12 +43,11 @@ custom_js:
               <button id="dif-browse-btn" class="btn-secondary btn-sm" type="button" data-i18n="upload_btn">Browse file</button>
               <button id="dif-load-example-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_example_btn">Load example</button>
               <button id="dif-dl-example-btn" class="btn-ghost btn-sm" type="button" data-i18n="download_example_btn">⬇ Example CSV</button>
-              <button id="dif-dl-mh-btn" class="btn-ghost btn-sm" type="button" data-i18n="download_mh_results">⬇ MH example results</button>
-              <button id="dif-dl-irt-btn" class="btn-ghost btn-sm" type="button" data-i18n="download_irt_params">⬇ IRT parameters example</button>
             </div>
           </div>
           <input id="dif-file-input" type="file" accept=".csv,.txt" style="display:none" aria-hidden="true">
           <p id="dif-status" class="dif-status dif-status--idle"></p>
+          <p id="dif-size-warn" class="dif-size-warn hidden"></p>
         </div>
 
         <div class="panel-block">
@@ -161,8 +160,21 @@ custom_js:
         </div>
 
         <div class="panel-block">
-          <button id="dif-run-btn" class="btn-primary btn-block" type="button" disabled data-i18n="run_btn">Run analysis</button>
+          <div class="run-cancel-row">
+            <button id="dif-run-btn" class="btn-primary" type="button" disabled data-i18n="run_btn">Run analysis</button>
+            <button id="dif-cancel-btn" class="btn-ghost btn-sm dif-cancel-btn hidden" type="button" data-i18n="cancel_btn">Cancel</button>
+          </div>
+          <div class="export-row">
+            <button id="dif-export-csv-btn" class="btn-secondary btn-export" type="button" disabled data-i18n="export_csv">Export CSV</button>
+            <button id="dif-export-json-btn" class="btn-secondary btn-export" type="button" disabled data-i18n="export_json">Export JSON</button>
+          </div>
           <p id="sim-progress" class="sim-progress shared-status-hint" aria-live="polite"></p>
+          <div id="dif-progress-section" class="dif-progress-section hidden">
+            <div class="dif-progress-track">
+              <div id="dif-progress-bar" class="dif-progress-fill" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%"></div>
+              <p id="dif-progress-label" class="dif-progress-text"></p>
+            </div>
+          </div>
         </div>
       {% endcapture %}
       {% include widgets/widget_content_box.html
@@ -173,13 +185,6 @@ custom_js:
         title_tone='primary'
         body=method_body
       %}
-
-      <div id="dif-progress-section" class="dif-progress-section hidden">
-        <div class="dif-progress-track">
-          <div id="dif-progress-bar" class="dif-progress-fill" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%"></div>
-          <p id="dif-progress-label" class="dif-progress-text"></p>
-        </div>
-      </div>
 
     </main>
 
