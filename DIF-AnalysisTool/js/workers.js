@@ -5,9 +5,9 @@
 
   function maxWorkers() {
     var ram = (navigator && navigator.deviceMemory) || 0;
-    if (ram > 0 && ram <= 4) return 3;
-    if (ram > 4) return 6;
-    return 4;
+    if (ram > 0 && ram <= 4) return 2;
+    if (ram > 4) return 3;
+    return 2;
   }
 
   function makeWorkerSrc(pythonCode) {
@@ -65,6 +65,7 @@
     self._initPromise = null;
     self._callbacks = {};
     self._callId = 0;
+    self._callWorker = {};
 
     self.init = function () {
       if (self._initPromise) return self._initPromise;
@@ -79,10 +80,23 @@
               var cb = self._callbacks[d.id];
               if (!cb) return;
               delete self._callbacks[d.id];
+              delete self._callWorker[d.id];
               if (d.type === 'result') cb.resolve(JSON.parse(d.result));
               else cb.reject(new Error(d.error));
             }
           });
+          w.onerror = function (err) {
+            Object.keys(self._callWorker).forEach(function (id) {
+              if (self._callWorker[id] === idx) {
+                var cb = self._callbacks[id];
+                if (cb) {
+                  delete self._callbacks[id];
+                  delete self._callWorker[id];
+                  cb.reject(new Error('Worker crashed: ' + (err.message || String(err))));
+                }
+              }
+            });
+          };
         });
         return ws;
       });
@@ -92,18 +106,12 @@
 
     self.dispatch = function (workerIdx, payload) {
       return self.init().then(function (ws) {
-        var w = ws[workerIdx % ws.length];
+        var wIdx = workerIdx % ws.length;
+        var w = ws[wIdx];
         return new Promise(function (resolve, reject) {
           var id = ++self._callId;
           self._callbacks[id] = { resolve: resolve, reject: reject };
-          var timer = setTimeout(function () {
-            delete self._callbacks[id];
-            reject(new Error('Worker timeout'));
-          }, 600000);
-          self._callbacks[id].timer = timer;
-          var origResolve = self._callbacks[id].resolve;
-          self._callbacks[id].resolve = function (v) { clearTimeout(timer); origResolve(v); };
-          self._callbacks[id].reject = function (e) { clearTimeout(timer); reject(e); };
+          self._callWorker[id] = wIdx;
           w.postMessage({ type: 'run', id: id, payload: JSON.stringify(payload) });
         });
       });
@@ -111,6 +119,12 @@
 
     self.terminate = function () {
       if (self._workers) self._workers.forEach(function (w) { w.terminate(); });
+      Object.keys(self._callbacks).forEach(function (id) {
+        var cb = self._callbacks[id];
+        if (cb) cb.reject(new Error('cancelled'));
+      });
+      self._callbacks = {};
+      self._callWorker = {};
       self._workers = null;
       self._initPromise = null;
     };
