@@ -26,6 +26,47 @@ def _compute_matched(resp_arr, item_idx, anchor_idx, restscore):
         return np.zeros(resp_arr.shape[0])
     return np.nansum(resp_arr[:, cols], axis=1)
 
+def _mh_dichot(item_resp, matched, ref_mask, foc_mask):
+    """2-group MH for dichotomous items WITH continuity correction.
+    Matches R difMH(correct=TRUE). Returns (chi2_cc, p_val, or_mh).
+    """
+    strata  = np.unique(matched[np.isfinite(matched)])
+    obs_sum = 0.0
+    var_sum = 0.0
+    or_num  = 0.0
+    or_den  = 0.0
+    for s in strata:
+        m   = matched == s
+        r_m = m & ref_mask
+        f_m = m & foc_mask
+        if not r_m.any() or not f_m.any():
+            continue
+        n_1k = int(r_m.sum())
+        n_2k = int(f_m.sum())
+        n_k  = n_1k + n_2k
+        if n_k < 2:
+            continue
+        a_k  = int((item_resp[r_m] == 1).sum())
+        b_k  = n_1k - a_k
+        c_k  = int((item_resp[f_m] == 1).sum())
+        d_k  = n_2k - c_k
+        m_1k = a_k + c_k
+        m_0k = b_k + d_k
+        if m_1k == 0 or m_0k == 0:
+            continue
+        e_k     = n_1k * m_1k / n_k
+        var_k   = n_1k * n_2k * m_1k * m_0k / (n_k ** 2 * (n_k - 1))
+        obs_sum += a_k - e_k
+        var_sum += var_k
+        or_num  += a_k * d_k / n_k
+        or_den  += b_k * c_k / n_k
+    if var_sum < 1e-15:
+        return None, None, None
+    chi2_cc = max(0.0, abs(obs_sum) - 0.5) ** 2 / var_sum
+    p_val   = float(1.0 - _chi2.cdf(chi2_cc, df=1))
+    or_v    = float(or_num / or_den) if or_den > 1e-15 else None
+    return float(chi2_cc), p_val, or_v
+
 def _mh_genMH_dichot(item_resp, matched, grp_arr, n_groups):
     """Generalized Mantel-Haenszel for dichotomous items (any number of groups).
     grp_arr: 0 = reference, 1..n_groups-1 = focal groups.
@@ -64,26 +105,6 @@ def _mh_genMH_dichot(item_resp, matched, grp_arr, n_groups):
         return None, None
     gmh = max(0.0, gmh)
     return gmh, float(1.0 - _chi2.cdf(gmh, df=nr))
-
-def _mh_or_dichot(item_resp, matched, ref_mask, foc_mask):
-    """Standard MH odds ratio for 2-group dichotomous comparison (display only)."""
-    strata = np.unique(matched[np.isfinite(matched)])
-    num, den = 0.0, 0.0
-    for s in strata:
-        m = matched == s
-        if int(m.sum()) < 2:
-            continue
-        r_m = m & ref_mask
-        f_m = m & foc_mask
-        if not r_m.any() or not f_m.any():
-            continue
-        a = int((item_resp[r_m] == 1).sum())
-        b = int(r_m.sum()) - a
-        c = int((item_resp[f_m] == 1).sum())
-        d = int(f_m.sum()) - c
-        num += a * d / int(m.sum())
-        den += b * c / int(m.sum())
-    return float(num / den) if den > 1e-15 else None
 
 def _mh_polytomus(item_resp, matched, ref_mask, foc_mask):
     """CMH mean score statistic for polytomous items (2 groups).
@@ -165,21 +186,28 @@ def analyze(payload_json):
     resp_arr = resp_arr[valid]
     grp_arr  = groups[valid]
     ref_mask = grp_arr == 0
-    foc_mask = grp_arr == 1  # first focal group (used for 2-group OR and polytomous)
+    foc_mask = grp_arr == 1
 
     def _run_iter(anchor_set, restscore=False):
         anchor_idx = sorted(anchor_set)
         rows = []
         for item_idx in range(n_items):
             matched = _compute_matched(resp_arr, item_idx, anchor_idx, restscore)
-            if is_dichot:
+            if is_dichot and n_groups == 2:
+                # Standard 2-group MH with continuity correction (R difMH correct=TRUE)
+                chi2, p_raw, or_v = _mh_dichot(
+                    resp_arr[:, item_idx].astype(int), matched, ref_mask, foc_mask)
+                df  = 1
+                psi = None
+            elif is_dichot:
+                # Multi-group: generalized MH, no continuity correction
                 chi2, p_raw = _mh_genMH_dichot(
                     resp_arr[:, item_idx].astype(int), matched, grp_arr, n_groups)
                 df   = n_groups - 1
-                or_v = (_mh_or_dichot(resp_arr[:, item_idx].astype(int), matched, ref_mask, foc_mask)
-                        if n_groups == 2 else None)
+                or_v = None
                 psi  = None
             else:
+                # Polytomous 2-group: CMH mean score (R difMantel.poly)
                 chi2, p_raw, psi = _mh_polytomus(
                     resp_arr[:, item_idx].astype(float), matched, ref_mask, foc_mask)
                 df   = 1
@@ -189,9 +217,7 @@ def analyze(payload_json):
                 'chi2': chi2, 'p_raw': p_raw, 'df': df, 'or': or_v, 'psi': psi,
             })
 
-        # p-value adjustment:
-        #   polytomous → Holm (per R difMantel.poly: p.adjust(..., method="holm"))
-        #   dichot     → Bonferroni
+        # p-value adjustment: polytomous → Holm; dichot → Bonferroni
         p_raw_arr = np.array([r['p_raw'] if r['p_raw'] is not None else 1.0 for r in rows])
         if is_dichot:
             p_adj_arr = np.minimum(1.0, p_raw_arr * n_items)
@@ -201,34 +227,39 @@ def analyze(payload_json):
         for j, r in enumerate(rows):
             r['p_adj'] = float(p_adj_arr[j]) if r['p_raw'] is not None else None
             dif_by_p = (r['p_adj'] is not None) and (r['p_adj'] < p_thr)
-            if is_dichot and n_groups == 2 and r['or'] is not None and or_thr > 1:
+            has_or   = r['or'] is not None and or_thr > 1
+            if has_or:
                 r['variant'] = dif_by_p and (r['or'] > or_thr or r['or'] < 1.0 / or_thr)
             else:
                 r['variant'] = dif_by_p
         return rows
 
-    # Iterative purification
+    def _effect_rank(r):
+        """Rank key for Ayala purification: larger = stronger DIF (use |ln OR| or chi2)."""
+        if r['or'] is not None and r['or'] > 0:
+            return abs(np.log(r['or']))
+        if r['chi2'] is not None:
+            return float(r['chi2'])
+        return 0.0
+
+    def _is_dif_candidate(r):
+        """Item should be removed: raw p significant AND effect exceeds threshold."""
+        if r['p_raw'] is None or r['p_raw'] >= p_thr:
+            return False
+        if r['or'] is not None and or_thr > 1:
+            return r['or'] > or_thr or r['or'] < 1.0 / or_thr
+        # No OR (multi-group dichot): significance alone suffices
+        return True
+
+    # Ayala (2003) iterative purification: remove ONE item per iteration
     anchor_set = set(range(n_items))
     converged  = False
     iterations = 0
     results    = []
 
     for it in range(max_iter):
-        prev    = frozenset(anchor_set)
-        results = _run_iter(anchor_set)
-
-        # Anchor-update rule:
-        #   polytomous → raw p-value (per R difMantel.poly purification)
-        #   dichot     → Bonferroni-adjusted p-value
-        if is_dichot:
-            new_anch = {j for j, r in enumerate(results)
-                        if r['p_adj'] is None or r['p_adj'] >= p_thr}
-        else:
-            new_anch = {j for j, r in enumerate(results)
-                        if r['p_raw'] is None or r['p_raw'] >= p_thr}
-
-        if len(new_anch) == 0:
-            # All items flagged as DIF → restscore fallback (no purification)
+        if not anchor_set:
+            # All items removed → restscore fallback
             results = _run_iter(set(range(n_items)), restscore=True)
             return json.dumps({
                 'results': results, 'iterations': it + 1,
@@ -237,12 +268,21 @@ def analyze(payload_json):
                 'anchor_items': item_names,
             })
 
-        if new_anch == prev:
+        results    = _run_iter(anchor_set)
+        candidates = [j for j in sorted(anchor_set) if _is_dif_candidate(results[j])]
+
+        if not candidates:
             converged  = True
             iterations = it + 1
             break
-        anchor_set = new_anch
+
+        # Remove the single item with the largest effect magnitude
+        worst = max(candidates, key=lambda j: _effect_rank(results[j]))
+        anchor_set.discard(worst)
         iterations = it + 1
+
+    # Final pass with the converged anchor
+    results = _run_iter(anchor_set)
 
     return json.dumps({
         'results': results, 'iterations': iterations,

@@ -935,21 +935,27 @@
       browseBtn.addEventListener('click', function (e) { e.stopPropagation(); fileInput.click(); });
     }
 
-    var loadExBtn = $('dif-load-example-btn');
-    if (loadExBtn) {
-      loadExBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        setStatus(t('load_example_loading'), 'idle');
-        fetch('/psychometric-tools/DIF-AnalysisTool/sample_data/riasec.csv')
-          .then(function (r) { return r.text(); })
-          .then(function (text) {
-            var parsed = window.DIFData.parse(text);
-            if (parsed.error) { setStatus(t('file_error_' + parsed.error) || t('file_error'), 'error'); return; }
-            state.parsed = parsed;
-            updateAfterParse('riasec.csv');
-          })
-          .catch(function () { setStatus(t('file_error'), 'error'); });
-      });
+    function loadSampleFile(filename) {
+      setStatus(t('load_example_loading'), 'idle');
+      fetch('/psychometric-tools/DIF-AnalysisTool/sample_data/' + filename)
+        .then(function (r) { return r.text(); })
+        .then(function (text) {
+          var parsed = window.DIFData.parse(text);
+          if (parsed.error) { setStatus(t('file_error_' + parsed.error) || t('file_error'), 'error'); return; }
+          state.parsed = parsed;
+          updateAfterParse(filename);
+        })
+        .catch(function () { setStatus(t('file_error'), 'error'); });
+    }
+
+    var loadVocabBtn = $('dif-load-vocab-btn');
+    if (loadVocabBtn) {
+      loadVocabBtn.addEventListener('click', function (e) { e.stopPropagation(); loadSampleFile('vocab.csv'); });
+    }
+
+    var loadRiasecBtn = $('dif-load-riasec-btn');
+    if (loadRiasecBtn) {
+      loadRiasecBtn.addEventListener('click', function (e) { e.stopPropagation(); loadSampleFile('riasec.csv'); });
     }
 
     if (fileInput) {
@@ -993,14 +999,6 @@
 
     var runBtn = $('dif-run-btn');
     if (runBtn) runBtn.addEventListener('click', runAnalysis);
-
-    var dlExampleBtn = $('dif-dl-example-btn');
-    if (dlExampleBtn) {
-      dlExampleBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        window.open('/psychometric-tools/DIF-AnalysisTool/sample_data/riasec.csv');
-      });
-    }
 
     var cancelBtn = $('dif-cancel-btn');
     if (cancelBtn) cancelBtn.addEventListener('click', cancelAnalysis);
