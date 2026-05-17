@@ -105,6 +105,7 @@
     // (one per rejected callback) all check it and exit silently.
     setCancelVisible(false);
     hideProgress();
+    hideResults();
     setExportEnabled(false);
     setSimStatus(t('cancel_status'), false);
     state.running = false;
@@ -387,6 +388,7 @@
         : Promise.resolve(null);
 
       mhPromise.then(function (mhResults) {
+        if (state.cancelled) return;
         var anchorsByDim = {};
         dimKeys.forEach(function (dim) {
           var dr = mhResults && mhResults.find(function (r) { return r.dimension === dim; });
@@ -404,6 +406,7 @@
           : Promise.resolve(null);
 
         tswPromise.then(function (tswResults) {
+          if (state.cancelled) return;
           if (doMH) state.mhResults = mhResults;
           if (doTSW) state.tswResults = tswResults;
           allLevelResults.push({ level: level, mhResults: mhResults, tswResults: tswResults, dims: dims, doMH: doMH, doTSW: doTSW });
@@ -996,6 +999,17 @@
       r.addEventListener('change', function () { updateMethodDesc(); updateSizeWarning(); });
     });
     updateMethodDesc();
+
+    document.querySelectorAll('[data-step-target]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = document.getElementById(btn.dataset.stepTarget);
+        if (!target) return;
+        var step = Number(btn.dataset.step || 0);
+        var min = Number(target.min !== '' ? target.min : -Infinity);
+        var max = Number(target.max !== '' ? target.max : Infinity);
+        target.value = Math.max(min, Math.min(max, Number(target.value || 0) + step));
+      });
+    });
 
     var runBtn = $('dif-run-btn');
     if (runBtn) runBtn.addEventListener('click', runAnalysis);
