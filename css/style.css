@@ -63,7 +63,7 @@ main {
 }
 
 .tool-title {
-  font-size: var(--txt-base, .95rem);
+  font-size: var(--txt-base);
   font-weight: var(--txt-w-bold, 700);
   color: var(--txt-accent, var(--clr-primary));
 }
@@ -76,14 +76,14 @@ main {
   border: 1px solid color-mix(in oklab, var(--clr-warning, #f59e0b) 45%, var(--clr-border));
   color: color-mix(in oklab, var(--clr-warning, #f59e0b) 85%, var(--clr-text));
   background: color-mix(in oklab, var(--clr-warning, #f59e0b) 18%, transparent);
-  font-size: var(--txt-xs, .72rem);
+  font-size: var(--txt-xs);
   font-weight: var(--txt-w-semibold, 600);
   letter-spacing: .01em;
 }
 
 .tool-desc {
   margin-top: .35rem;
-  font-size: var(--txt-md, .81rem);
+  font-size: var(--txt-md);
   color: var(--txt-muted, var(--clr-muted));
   line-height: var(--txt-lh-relaxed, 1.45);
 }

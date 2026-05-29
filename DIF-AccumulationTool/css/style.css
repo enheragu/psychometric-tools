@@ -47,13 +47,13 @@ main {
 input[type='number'], input[type='text'] {
   width: 100%;
   padding: .4rem .55rem;
-  font-size: var(--txt-md, .82rem);
+  font-size: var(--txt-md);
 }
 
 textarea {
   width: 100%;
   padding: .5rem .6rem;
-  font-size: var(--txt-sm-plus, .8rem);
+  font-size: var(--txt-sm-plus);
   min-height: 110px;
   resize: vertical;
 }
@@ -74,7 +74,7 @@ input[type='number'] {
 }
 
 .view-toggle-label {
-  font-size: var(--txt-xs, .74rem);
+  font-size: var(--txt-xs);
   font-weight: var(--txt-w-semibold, 600);
   letter-spacing: .03em;
   color: var(--clr-muted);
@@ -119,7 +119,7 @@ input[type='number'] {
 
 .sim-badge-label {
   display: block;
-  font-size: var(--txt-xs, .72rem);
+  font-size: var(--txt-xs);
   font-weight: var(--txt-w-bold, 700);
   text-transform: uppercase;
   letter-spacing: .05em;
@@ -129,7 +129,7 @@ input[type='number'] {
 
 .sim-badge-value {
   display: block;
-  font-size: var(--txt-base-plus, 1rem);
+  font-size: var(--txt-base-plus);
   font-weight: var(--txt-w-bold, 700);
   color: var(--clr-text);
 }
@@ -149,7 +149,7 @@ input[type='number'] {
   margin: 0;
 }
 .model-indicator {
-  font-size: var(--txt-xs, .72rem);
+  font-size: var(--txt-xs);
   color: var(--clr-muted);
   margin: .2rem 0 0;
 }
@@ -189,7 +189,7 @@ input[type='number'] {
 }
 
 .section-label {
-  font-size: var(--txt-sm-plus, .8rem);
+  font-size: var(--txt-sm-plus);
   font-weight: var(--txt-w-bold, 700);
   text-transform: uppercase;
   letter-spacing: .04em;
@@ -273,7 +273,7 @@ input[type='number'] {
   margin: .45rem 0 0;
   padding-left: 1rem;
   color: var(--clr-danger);
-  font-size: var(--txt-sm, .76rem);
+  font-size: var(--txt-sm);
 }
 
 .bulk-errors li + li {

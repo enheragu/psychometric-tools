@@ -34,13 +34,13 @@ main {
   background: color-mix(in oklab, var(--clr-primary) 6%, var(--clr-surface));
 }
 .dif-drop-icon { font-size: 1.8rem; margin-bottom: .3rem; }
-.dif-drop-hint { font-size: var(--txt-sm, .78rem); color: var(--clr-muted); margin: .25rem 0; }
-.dif-drop-or   { font-size: var(--txt-xs, .73rem); color: var(--clr-muted); margin: .3rem 0; }
+.dif-drop-hint { font-size: var(--txt-sm); color: var(--clr-muted); margin: .25rem 0; }
+.dif-drop-or   { font-size: var(--txt-xs); color: var(--clr-muted); margin: .3rem 0; }
 .drop-zone-btns { display: flex; gap: .35rem; justify-content: center; flex-wrap: wrap; margin-top: .4rem; }
 
 /* ── Status line ──────────────────────────────────────────────── */
 .dif-status {
-  font-size: var(--txt-sm, .78rem);
+  font-size: var(--txt-sm);
   margin-top: .5rem;
   min-height: 1.1em;
   transition: color .2s;
@@ -63,14 +63,14 @@ main {
 
 .form-field { display: flex; flex-direction: column; gap: .22rem; }
 .form-field label {
-  font-size: var(--txt-xs, .73rem);
+  font-size: var(--txt-xs);
   font-weight: var(--txt-w-semibold, 600);
   color: var(--clr-muted);
   text-transform: uppercase;
   letter-spacing: .04em;
 }
 .form-field .hint {
-  font-size: var(--txt-xs, .72rem);
+  font-size: var(--txt-xs);
   color: var(--clr-muted);
   margin: 0;
 }
@@ -78,7 +78,7 @@ main {
 select, input[type='number'], input[type='text'] {
   width: 100%;
   padding: .35rem .5rem;
-  font-size: var(--txt-sm, .8rem);
+  font-size: var(--txt-sm);
   border-radius: 6px;
   border: 1px solid var(--clr-border);
   background: var(--clr-input-bg, var(--clr-surface));
@@ -90,7 +90,7 @@ input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; marg
 input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 
 .section-label {
-  font-size: var(--txt-sm-plus, .8rem);
+  font-size: var(--txt-sm-plus);
   font-weight: var(--txt-w-bold, 700);
   text-transform: uppercase;
   letter-spacing: .04em;
@@ -103,7 +103,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 .method-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; margin-top: .3rem; }
 .method-options label {
   display: flex; align-items: center; justify-content: center; gap: .3rem; text-align: center;
-  font-size: var(--txt-sm, .8rem); cursor: pointer;
+  font-size: var(--txt-sm); cursor: pointer;
   padding: .28rem .55rem;
   border: 1px solid var(--clr-border);
   border-radius: 6px;
@@ -149,7 +149,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--txt-xs, .73rem);
+  font-size: var(--txt-xs);
   font-weight: 600;
   color: var(--clr-text);
   text-shadow: 0 0 6px var(--clr-surface, #fff), 0 0 6px var(--clr-surface, #fff);
@@ -165,7 +165,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 .dif-warnings { display: flex; flex-direction: column; gap: .4rem; padding: .5rem .9rem; }
 .dif-warning {
   display: flex; gap: .45rem; align-items: flex-start;
-  font-size: var(--txt-sm, .78rem);
+  font-size: var(--txt-sm);
   color: color-mix(in oklab, var(--clr-warning, #d29922) 80%, var(--clr-text));
   background: color-mix(in oklab, var(--clr-warning, #d29922) 10%, var(--clr-surface));
   border: 1px solid color-mix(in oklab, var(--clr-warning, #d29922) 30%, var(--clr-border));
@@ -195,7 +195,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 }
 
 .dif-dim-title {
-  font-size: var(--txt-sm-plus, .82rem);
+  font-size: var(--txt-sm-plus);
   font-weight: var(--txt-w-bold, 700);
   color: var(--clr-primary);
   margin: 0 0 .5rem;
@@ -203,7 +203,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
   flex-wrap: wrap;
 }
 .dif-iter-note {
-  font-size: var(--txt-xs, .72rem);
+  font-size: var(--txt-xs);
   font-weight: 400;
   color: var(--clr-muted);
 }
@@ -219,12 +219,12 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 }
 
 .cell-item { font-weight: var(--txt-w-semibold, 600); }
-.cell-b { font-size: var(--txt-xs, .72rem); max-width: 180px; white-space: normal; }
+.cell-b { font-size: var(--txt-xs); max-width: 180px; white-space: normal; }
 .cell-error { color: var(--clr-muted); font-style: italic; }
 
 /* ── Badges ───────────────────────────────────────────────────── */
 .dif-badge {
-  font-size: var(--txt-xs, .7rem);
+  font-size: var(--txt-xs);
   font-weight: 700;
   padding: .12rem .4rem;
   border-radius: 4px;
@@ -260,7 +260,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
   border-radius: 7px;
 }
 .tl-label {
-  font-size: var(--txt-xs, .71rem);
+  font-size: var(--txt-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .04em;
@@ -268,7 +268,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 }
 .tl-val {
   font-weight: 700;
-  font-size: var(--txt-sm-plus, .82rem);
+  font-size: var(--txt-sm-plus);
   color: var(--clr-text);
 }
 
@@ -290,7 +290,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
   margin-bottom: .75rem;
 }
 .dif-nested-nav-label {
-  font-size: var(--txt-xs, .72rem);
+  font-size: var(--txt-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .04em;
@@ -307,7 +307,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 }
 .dif-nested-counter {
   margin-left: auto;
-  font-size: var(--txt-xs, .72rem);
+  font-size: var(--txt-xs);
   color: var(--clr-muted);
   white-space: nowrap;
   flex-shrink: 0;
@@ -326,7 +326,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 
 /* ── Large dataset warning ────────────────────────────────────── */
 .dif-size-warn {
-  font-size: var(--txt-xs, .73rem);
+  font-size: var(--txt-xs);
   color: color-mix(in oklab, var(--clr-warning, #d29922) 85%, var(--clr-text));
   margin-top: .3rem;
 }
@@ -338,7 +338,7 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 
 /* ── Type detected note ───────────────────────────────────────── */
 .type-detected-note {
-  font-size: var(--txt-xs, .72rem);
+  font-size: var(--txt-xs);
   color: var(--clr-muted);
   margin-top: .2rem;
 }
@@ -352,6 +352,6 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 @media (max-width: 31.25em) {
   .form-row { grid-template-columns: 1fr; }
   .method-options { gap: .25rem; }
-  .shared-results-table { font-size: var(--txt-xs, .72rem); }
+  .shared-results-table { font-size: var(--txt-xs); }
   .shared-results-table th, .shared-results-table td { padding: .25rem .35rem; }
 }
