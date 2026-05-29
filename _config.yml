@@ -26,14 +26,14 @@ defaults:
       with_chart_interactions: true
       with_publication_ui: true
   - scope:
-      path: "psychometric-tools/C-NRSBTool"
+      path: "C-NRSBTool"
     values:
       header_supertitle: Psychometric Tools
   - scope:
-      path: "psychometric-tools/DIF-AnalysisTool"
+      path: "DIF-AnalysisTool"
     values:
       header_supertitle: Psychometric Tools
   - scope:
-      path: "psychometric-tools/DIF-AccumulationTool"
+      path: "DIF-AccumulationTool"
     values:
       header_supertitle: Psychometric Tools
