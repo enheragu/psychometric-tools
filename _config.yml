@@ -25,3 +25,15 @@ defaults:
       with_analysis_panels: true
       with_chart_interactions: true
       with_publication_ui: true
+  - scope:
+      path: "psychometric-tools/C-NRSBTool"
+    values:
+      header_supertitle: Psychometric Tools
+  - scope:
+      path: "psychometric-tools/DIF-AnalysisTool"
+    values:
+      header_supertitle: Psychometric Tools
+  - scope:
+      path: "psychometric-tools/DIF-AccumulationTool"
+    values:
+      header_supertitle: Psychometric Tools

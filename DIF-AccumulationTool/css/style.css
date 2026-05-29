@@ -135,7 +135,7 @@ input[type='number'] {
 }
 
 .sim-method #method-title {
-  font-size: var(--txt-sm, .78rem);
+  font-size: var(--txt-base);
   font-weight: var(--txt-w-semibold, 600);
   color: var(--clr-muted);
   text-transform: uppercase;
@@ -143,7 +143,7 @@ input[type='number'] {
   margin: 0 0 .3rem;
 }
 .sim-method #method-text {
-  font-size: var(--txt-sm, .78rem);
+  font-size: var(--txt-base);
   color: var(--clr-muted);
   line-height: var(--txt-lh-relaxed);
   margin: 0;
@@ -183,7 +183,7 @@ input[type='number'] {
 }
 
 .preset-label {
-  font-size: var(--txt-sm, .78rem);
+  font-size: var(--txt-base);
   color: var(--clr-muted);
   white-space: nowrap;
 }
@@ -355,7 +355,7 @@ input[type='number'] {
   margin-top: 1.75rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 56.25em) {
   main {
     grid-template-columns: 1fr;
     align-items: start;
@@ -373,7 +373,7 @@ input[type='number'] {
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 31.25em) {
   .panel-header .view-toggle-label {
     width: 100%;
     margin-left: 0;

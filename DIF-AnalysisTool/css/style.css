@@ -344,12 +344,12 @@ input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 }
 
 /* ── Responsive ───────────────────────────────────────────────── */
-@media (max-width: 760px) {
+@media (max-width: 47.5em) {
   main { grid-template-columns: 1fr; }
   .panel-setup, .panel-method { grid-column: auto; grid-row: auto; }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 31.25em) {
   .form-row { grid-template-columns: 1fr; }
   .method-options { gap: .25rem; }
   .shared-results-table { font-size: var(--txt-xs, .72rem); }
