@@ -13,6 +13,8 @@ intro_title_i18n_key: intro_title
 intro_text_i18n_key: intro_text
 with_analysis_panels: true
 with_sim_status: true
+with_drop_zone: true
+with_progress_bar: true
 footer_report_enabled: true
 footer_report_label: Report problem
 footer_credits_html: |
@@ -35,16 +37,14 @@ custom_js:
       {% capture setup_body %}
         <div class="panel-block">
           <label class="section-label" data-i18n="upload_label">Upload data file</label>
-          <div id="dif-drop-zone" class="dif-drop-zone" role="button" tabindex="0" aria-label="Upload data file">
-            <div class="dif-drop-icon">📂</div>
-            <p class="dif-drop-hint" data-i18n="upload_hint">Drag & drop or click to select a .csv or .txt file</p>
-            <p class="dif-drop-or" data-i18n="upload_or">or</p>
-            <div class="drop-zone-btns">
-              <button id="dif-browse-btn" class="btn-secondary btn-sm" type="button" data-i18n="upload_btn">Browse file</button>
-              <button id="dif-load-vocab-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_vocab_btn">Load vocab example</button>
-              <button id="dif-load-riasec-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_riasec_btn">Load RIASEC (large)</button>
-            </div>
-          </div>
+          {% capture dif_drop_buttons %}<p class="drop-zone-or" data-i18n="upload_or">or</p><div class="drop-zone-btns"><button id="dif-browse-btn" class="btn-secondary btn-sm" type="button" data-i18n="upload_btn">Browse file</button><button id="dif-load-vocab-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_vocab_btn">Load vocab example</button><button id="dif-load-riasec-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_riasec_btn">Load RIASEC (large)</button></div>{% endcapture %}
+          {% include widgets/widget_drop_zone.html
+            zone_id="dif-drop-zone"
+            aria_label="Upload data file"
+            icon_html="📂"
+            hint_text="Drag & drop or click to select a .csv or .txt file"
+            slot_buttons=dif_drop_buttons
+          %}
           <input id="dif-file-input" type="file" accept=".csv,.txt" style="display:none" aria-hidden="true">
           <p id="dif-status" class="dif-status dif-status--idle"></p>
           <p id="dif-size-warn" class="dif-size-warn hidden"></p>
@@ -169,12 +169,7 @@ custom_js:
             <button id="dif-export-json-btn" class="btn-secondary btn-export" type="button" disabled data-i18n="export_json">Export JSON</button>
           </div>
           <p id="sim-progress" class="sim-progress shared-status-hint" aria-live="polite"></p>
-          <div id="dif-progress-section" class="dif-progress-section hidden">
-            <div class="dif-progress-track">
-              <div id="dif-progress-bar" class="dif-progress-fill" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%"></div>
-              <p id="dif-progress-label" class="dif-progress-text"></p>
-            </div>
-          </div>
+          {% include widgets/widget_progress_bar.html wrap_id="dif-progress-section" bar_id="dif-progress-bar" style="labeled" label_id="dif-progress-label" hidden=true %}
         </div>
       {% endcapture %}
       {% include widgets/widget_content_box.html

@@ -73,9 +73,9 @@ main {
   margin-left: .45rem;
   padding: .1rem .35rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--clr-warning, #f59e0b) 45%, var(--clr-border));
-  color: color-mix(in oklab, var(--clr-warning, #f59e0b) 85%, var(--clr-text));
-  background: color-mix(in oklab, var(--clr-warning, #f59e0b) 18%, transparent);
+  border: 1px solid color-mix(in oklab, var(--clr-status-warning, #f59e0b) 45%, var(--clr-border));
+  color: color-mix(in oklab, var(--clr-status-warning, #f59e0b) 85%, var(--clr-text));
+  background: color-mix(in oklab, var(--clr-status-warning, #f59e0b) 18%, transparent);
   font-size: var(--txt-xs);
   font-weight: var(--txt-w-semibold, 600);
   letter-spacing: .01em;

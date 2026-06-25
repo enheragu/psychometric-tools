@@ -924,10 +924,10 @@
     var browseBtn = $('dif-browse-btn');
 
     if (dropZone) {
-      dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('dragover'); });
-      dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('dragover'); });
+      dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('drag-over'); });
       dropZone.addEventListener('drop', function (e) {
-        e.preventDefault(); dropZone.classList.remove('dragover');
+        e.preventDefault(); dropZone.classList.remove('drag-over');
         var file = e.dataTransfer.files[0];
         if (file) handleFile(file);
       });
