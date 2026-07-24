@@ -192,7 +192,7 @@ const MapView = (() => {
 
     let fillColor, fillOpacity;
     if (selected) {
-      fillColor = '#58a6ff';
+      fillColor = (getComputedStyle(document.documentElement).getPropertyValue('--clr-primary').trim() || '#58a6ff');
       fillOpacity = 0.75;
     } else if (union && _colorMode === 'income' && union.incomeGroup) {
       fillColor = _incomeColor(union.incomeGroup);

@@ -23,18 +23,6 @@
         difAnalysis: {
           title: 'DIF-AnalysisTool',
           desc: 'Detect Differential Item Functioning using Mantel-Haenszel and TSW likelihood-ratio tests with iterative purification. Supports dichotomous and polytomous items, multiple groups, and nested group structures.'
-        },
-        replicationComparison: {
-          title: 'Replication and Comparison',
-          desc: 'Compare repeated-run metric distributions, inspect fitted normals, and estimate rank inversion probabilities under single-run sampling.'
-        },
-        ablationTests: {
-          title: 'Ablation Tests',
-          desc: 'Evaluate which model components really matter under repeated runs, controlling for variance and ranking instability.'
-        },
-        standardizingComparisons: {
-          title: 'Standardizing Comparisons',
-          desc: 'Define consistent comparison protocols so model rankings are fair, reproducible, and less sensitive to variance artifacts.'
         }
       }
     },
@@ -59,18 +47,6 @@
         difAnalysis: {
           title: 'DIF-AnalysisTool',
           desc: 'Detecta el Funcionamiento Diferencial de Ítems mediante los tests de Mantel-Haenszel y TSW (razón de verosimilitud) con purificación iterativa. Soporta ítems dicotómicos y politómicos, múltiples grupos y estructuras de grupos anidados.'
-        },
-        replicationComparison: {
-          title: 'Replication and Comparison',
-          desc: 'Compara distribuciones de métricas en repeticiones, inspecciona normales ajustadas y estima probabilidades de inversión de ranking en una sola corrida.'
-        },
-        ablationTests: {
-          title: 'Ablation Tests',
-          desc: 'Evalúa qué componentes del modelo aportan realmente bajo ejecuciones repetidas, controlando varianza e inestabilidad de ranking.'
-        },
-        standardizingComparisons: {
-          title: 'Standardizing Comparisons',
-          desc: 'Define protocolos de comparación consistentes para que los rankings sean más justos, reproducibles y menos sensibles a artefactos de varianza.'
         }
       }
     }

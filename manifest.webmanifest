@@ -1,6 +1,6 @@
 {
   "name": "Psychometric Tools",
-  "short_name": "StatTools",
+  "short_name": "PsychTools",
   "start_url": "/psychometric-tools/",
   "scope": "/psychometric-tools/",
   "display": "standalone",
