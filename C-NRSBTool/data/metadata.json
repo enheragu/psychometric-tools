@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-01T07:27:12+00:00",
+  "generated_at_utc": "2026-09-01T06:09:51+00:00",
   "indicators": {
     "hdi": {
       "source": "https://ourworldindata.org/grapher/human-development-index",
@@ -8,7 +8,7 @@
     },
     "income_groups": {
       "source": "https://ourworldindata.org/grapher/world-bank-income-groups",
-      "latest_year_global": 2024,
+      "latest_year_global": 2025,
       "countries": 220,
       "categories": [
         "low",
