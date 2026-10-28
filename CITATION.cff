@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Psychometric Tools: Interactive Web Applications for Measurement and Assessment Research"
+abstract: >-
+  Psychometric Tools is a collection of interactive, browser-based web
+  applications designed to support psychometric research and teaching. It
+  includes: (1) C-NRSBTool, a calculator for the Cumulative Normal Response
+  Scale Bias metric; (2) DIF-AnalysisTool, which detects Differential Item
+  Functioning (DIF) using Mantel-Haenszel and Thissen-Steinberg-Wainer (TSW)
+  likelihood-ratio tests with iterative purification; and (3)
+  DIF-AccumulationTool, a simulator that illustrates how item-level DIF effects
+  accumulate into systematic total-score differences between groups under the
+  Graded Response Model (GRM). All tools run entirely in the browser with no
+  installation required. Available online at
+  https://enheragu.github.io/psychometric-tools/
+authors:
+  - family-names: Heredia-Aguado
+    given-names: Enrique
+    orcid: "https://orcid.org/0009-0001-7717-1428"
+    affiliation: "University Institute for Engineering Research, Miguel Hernández University"
+  - family-names: Rujano
+    given-names: Alejandro
+    orcid: "https://orcid.org/0009-0000-7581-2378"
+    affiliation: "Centro San Camilo"
+repository-code: "https://github.com/enheragu/psychometric-tools"
+url: "https://enheragu.github.io/psychometric-tools/"
+keywords:
+  - psychometrics
+  - item response theory
+  - differential item functioning
+  - graded response model
+  - response scale bias
+  - Mantel-Haenszel
+  - web application
+version: 1.0.0
+date-released: 2026-03-22
+license: CC-BY-4.0
+doi: 10.5281/zenodo.19163768
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.19163768
+    description: "Concept DOI: all versions, resolves to the latest release"
+  - type: doi
+    value: 10.5281/zenodo.19163769
+    description: "Version 1.0.0"
