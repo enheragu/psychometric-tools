@@ -337,11 +337,14 @@ const UI = (() => {
       ['stat_n_total',    r.total],
       ['stat_hdi_sel',    fmt2(r.meanHdiSel)],
       ['stat_hdi_nsel',   fmt2(r.meanHdiNsel)],
+      ['stat_method',     I18n.t(r.method === 'firth' ? 'method_firth' : 'method_ml_irls')],
       ['stat_beta0',      fmt2(r.beta0)],
       ['stat_beta1',      fmt2(r.beta1)],
       ['stat_or',         fmtOr(Math.exp(r.beta1 / 100))],
       ['stat_se',         fmt2(r.se)],
-      ['stat_z',          fmt2(r.z)],
+      r.test === 'penalized-lr'
+        ? ['stat_chi2_plr', fmt2(r.chi2)]
+        : ['stat_z',        fmt2(r.z)],
       ['stat_pval',       fmtP(r.pValue)],
       ['stat_auc',        fmtAuc(r.auc)],
     ];
@@ -360,6 +363,15 @@ const UI = (() => {
     const sigClass = r.significant ? 'sig' : 'non-sig';
     sigTr.innerHTML = `<td colspan="2" class="shared-cell-text ${sigClass}">${I18n.t(sigKey)}</td>`;
     tbody.appendChild(sigTr);
+
+    // Why Firth was used instead of ML (separation / non-convergence)
+    const noteEl = document.getElementById('stats-method-note');
+    if (noteEl) {
+      noteEl.hidden = r.method !== 'firth';
+      noteEl.textContent = r.method === 'firth'
+        ? I18n.t('note_firth_' + r.separation.replace('-', '_'))
+        : '';
+    }
 
     // Interpretation
     let interpKey;

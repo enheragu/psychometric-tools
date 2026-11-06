@@ -250,6 +250,11 @@ const App = (() => {
         alert(I18n.t('stat_n_selected') + ': 0 or all countries selected — cannot fit model.');
         return;
       }
+      if (result.error) {   // single_selected / single_unselected (n₁ or n₀ = 1)
+        UI.hideResults();
+        UI.setSimStatus(I18n.t('run_error_' + result.error), false, 'error');
+        return;
+      }
 
       UI.showResults(result, incomeResult);
       const ms = Math.round(performance.now() - t0);
@@ -276,17 +281,23 @@ const App = (() => {
       Data.COUNTRY_DATA.filter(r => r.incomeGroup).length]);
     pushResult(['summary', 'countries_without_data', Data.NO_HDI_DATA.length]);
 
-    if (result.error === 'degenerate') {
-      pushResult(['model', 'status', 'degenerate']);
+    if (result.error) {
+      pushResult(['model', 'status', result.error]);
     } else {
       pushResult(['model', 'mean_hdi_selected', result.meanHdiSel.toFixed(6)]);
       pushResult(['model', 'mean_hdi_not_selected', result.meanHdiNsel.toFixed(6)]);
+      pushResult(['model', 'estimation_method', result.method]);
+      pushResult(['model', 'separation', result.separation]);
+      pushResult(['model', 'iterations', result.iterations]);
+      pushResult(['model', 'converged', result.converged]);
       pushResult(['model', 'beta0', result.beta0.toFixed(6)]);
       pushResult(['model', 'beta1', result.beta1.toFixed(6)]);
       pushResult(['model', 'odds_ratio_exp_beta1', Math.exp(result.beta1 / 100).toFixed(6)]);
       pushResult(['model', 'std_error_beta1', result.se.toFixed(6)]);
       pushResult(['model', 'z', result.z.toFixed(6)]);
-      pushResult(['model', 'p_value', result.pValue.toFixed(6)]);
+      if (result.chi2 !== null) pushResult(['model', 'penalized_lr_chi2', result.chi2.toFixed(6)]);
+      pushResult(['model', 'p_value_test', result.test]);
+      pushResult(['model', 'p_value', result.pValue.toExponential(6)]);
       pushResult(['model', 'auc', result.auc.toFixed(6)]);
     }
 
@@ -318,7 +329,7 @@ const App = (() => {
       const isSelected = _selected.has(row.iso3);
       const hasHdi = Number.isFinite(row.hdi);
       let predicted = '';
-      if (hasHdi && result.error !== 'degenerate') {
+      if (hasHdi && !result.error) {
         predicted = Regression.sigmoid(result.beta0 + result.beta1 * row.hdi).toFixed(6);
       }
       pushCountry([
@@ -365,7 +376,7 @@ const App = (() => {
       })() : null,
       countries: report.rows.map(row => {
         const hasHdi = Number.isFinite(row.hdi);
-        const predicted = (hasHdi && report.result.error !== 'degenerate')
+        const predicted = (hasHdi && !report.result.error)
           ? Regression.sigmoid(report.result.beta0 + report.result.beta1 * row.hdi)
           : null;
         return {
@@ -471,9 +482,11 @@ const App = (() => {
       const incUrl = 'https://ourworldindata.org/grapher/world-bank-income-groups';
       footerSource.innerHTML =
         `${I18n.t('footer_source_prefix')} ` +
-        `<a href="${owid}" target="_blank" rel="noopener noreferrer">Our World in Data</a> (` +
-        `<a href="${hdiUrl}" target="_blank" rel="noopener noreferrer">HDI</a>, ` +
-        `<a href="${incUrl}" target="_blank" rel="noopener noreferrer">World Bank income groups</a>)`;
+        `<a href="${hdiUrl}" target="_blank" rel="noopener noreferrer">UNDP HDI</a> ` +
+        `(<a href="https://hdr.undp.org/copyright-and-terms-use" target="_blank" rel="noopener noreferrer">CC BY 3.0 IGO</a>), ` +
+        `<a href="${incUrl}" target="_blank" rel="noopener noreferrer">World Bank income groups</a> ` +
+        `(<a href="https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>), ` +
+        `<a href="${owid}" target="_blank" rel="noopener noreferrer">Our World in Data</a>`;
     }
     if (footerIdea) {
       footerIdea.innerHTML = `${I18n.t('footer_idea_prefix')} <a href="https://fantasmamecanico.wordpress.com/" target="_blank" rel="noopener noreferrer">Alejandro Rujano</a>`;

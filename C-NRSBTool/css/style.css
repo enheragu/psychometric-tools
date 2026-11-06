@@ -173,7 +173,8 @@ body.dark .cb-meta-chip--inc-abbr {
   color: var(--clr-muted);
   margin: 0 0 .55rem;
 }
-.income-excluded {
+.income-excluded,
+.stats-method-note {
   margin-top: .5rem;
   font-size: var(--txt-sm);
   color: var(--clr-status-warning, #d97706);
