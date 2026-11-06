@@ -365,7 +365,13 @@ def _em_warmup(responses_arr, groups_arr, n_items, n_cats_list, min_cats,
     # Convert EM solution to _fit_model x0 format (binary: direct a; GRM: log_a)
     parts = []
     for j in range(n_items):
-        parts.append([a[j] if n_cats_list[j] == 2 else np.log(max(a[j], 0.05)), b[j]])
+        if n_cats_list[j] == 2:
+            parts.append([a[j], b[j]])
+        else:
+            # The EM only models the top category: keep its slope, thresholds start from the data.
+            init_j = _init_item_params(responses_arr[ref_mask, j].tolist(), n_cats_list[j], min_cats[j])
+            init_j[0] = np.log(max(a[j], 0.05))
+            parts.append(init_j)
     for gi in range(1, n_groups):
         parts.append([mu[gi], np.log(np.clip(sigma[gi], 0.22, 4.48))])
     return -total_ll, np.concatenate([np.array(p) for p in parts])
