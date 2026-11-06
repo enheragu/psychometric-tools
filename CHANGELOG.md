@@ -10,7 +10,7 @@ existed were reconstructed from the git history.
 Versioning note: minor releases mark visible feature jumps; patch releases cover bugfixes and
 maintenance updates, including text and style polish that does not change behavior.
 
-## [Unreleased]
+## [1.5.0](https://github.com/enheragu/psychometric-tools/releases/tag/v1.5.0) - 2026-11-06
 - License: the code is released under the MIT License, except the C-NRSBTool country indicators, which keep the licenses of UNDP and the World Bank (v1.0.0 was deposited in Zenodo under CC BY 4.0).
 - Data: DIF-AnalysisTool examples are now synthetic, with DIF built into known items so results can be checked. The previous files, and two result tables the tool did not use, were removed because their terms do not clearly allow redistribution.
 - Bugfix: TSW stopped with an error on any polytomous data since v1.4.0, because the starting point of the fit carried only two parameters per item. Those analyses run again; dichotomous items are unaffected.

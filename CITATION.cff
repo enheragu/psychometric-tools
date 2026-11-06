@@ -39,8 +39,8 @@ keywords:
   - cross-national research
   - Mantel-Haenszel
   - web application
-version: 1.0.0
-date-released: 2026-03-22
+version: 1.5.0
+date-released: 2026-11-06
 license: MIT
 doi: 10.5281/zenodo.19163768
 identifiers:
@@ -50,7 +50,7 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.19163769
     description: "Version 1.0.0"
-# TBC on the next release (first one archived through the Zenodo-GitHub integration): set `version`
-# and `date-released` to it and add its version DOI. If Zenodo mints a new concept DOI instead of adding
-# the version to this record, set `doi:` to the new concept DOI and keep the two above as the previous
-# record (v1.0.0, uploaded manually).
+# TBC: only v1.0.0 (uploaded manually) is archived in Zenodo so far. On the first release through the
+# Zenodo-GitHub integration, add its version DOI and, if it is newer than the version above, update
+# `version` and `date-released`. If Zenodo mints a new concept DOI instead of adding the version to this
+# record, set `doi:` to the new concept DOI and keep the two above as the previous record.
