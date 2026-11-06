@@ -5,15 +5,20 @@ title: "Psychometric Tools: Interactive Web Applications for Measurement and Ass
 abstract: >-
   Psychometric Tools is a collection of interactive, browser-based web
   applications designed to support psychometric research and teaching. It
-  includes: (1) C-NRSBTool, a calculator for the Cumulative Normal Response
-  Scale Bias metric; (2) DIF-AnalysisTool, which detects Differential Item
+  includes: (1) C-NRSBTool, which checks whether the country sample of a
+  cross-national study is systematically biased by development level (Human
+  Development Index) or by World Bank income group, using logistic
+  regression, ROC analysis and a random-subsampling reference distribution;
+  (2) DIF-AnalysisTool, which detects Differential Item
   Functioning (DIF) using Mantel-Haenszel and Thissen-Steinberg-Wainer (TSW)
   likelihood-ratio tests with iterative purification; and (3)
   DIF-AccumulationTool, a simulator that illustrates how item-level DIF effects
   accumulate into systematic total-score differences between groups under the
   Graded Response Model (GRM). All tools run entirely in the browser with no
   installation required. Available online at
-  https://enheragu.github.io/psychometric-tools/
+  https://enheragu.github.io/psychometric-tools/. The MIT license covers the
+  code; the country indicators keep the licenses of their producers (UNDP, CC
+  BY 3.0 IGO; World Bank, CC BY 4.0).
 authors:
   - family-names: Heredia-Aguado
     given-names: Enrique
@@ -30,12 +35,13 @@ keywords:
   - item response theory
   - differential item functioning
   - graded response model
-  - response scale bias
+  - selection bias
+  - cross-national research
   - Mantel-Haenszel
   - web application
 version: 1.0.0
 date-released: 2026-03-22
-license: CC-BY-4.0
+license: MIT
 doi: 10.5281/zenodo.19163768
 identifiers:
   - type: doi
@@ -44,3 +50,7 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.19163769
     description: "Version 1.0.0"
+# TBC on the next release (first one archived through the Zenodo-GitHub integration): set `version`
+# and `date-released` to it and add its version DOI. If Zenodo mints a new concept DOI instead of adding
+# the version to this record, set `doi:` to the new concept DOI and keep the two above as the previous
+# record (v1.0.0, uploaded manually).
