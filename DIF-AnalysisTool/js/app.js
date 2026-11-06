@@ -951,14 +951,14 @@
         .catch(function () { setStatus(t('file_error'), 'error'); });
     }
 
-    var loadVocabBtn = $('dif-load-vocab-btn');
-    if (loadVocabBtn) {
-      loadVocabBtn.addEventListener('click', function (e) { e.stopPropagation(); loadSampleFile('vocab.csv'); });
+    var loadDichotBtn = $('dif-load-dichot-btn');
+    if (loadDichotBtn) {
+      loadDichotBtn.addEventListener('click', function (e) { e.stopPropagation(); loadSampleFile('synthetic_dichotomous.csv'); });
     }
 
-    var loadRiasecBtn = $('dif-load-riasec-btn');
-    if (loadRiasecBtn) {
-      loadRiasecBtn.addEventListener('click', function (e) { e.stopPropagation(); loadSampleFile('riasec.csv'); });
+    var loadPolyBtn = $('dif-load-poly-btn');
+    if (loadPolyBtn) {
+      loadPolyBtn.addEventListener('click', function (e) { e.stopPropagation(); loadSampleFile('synthetic_polytomous.csv'); });
     }
 
     if (fileInput) {

@@ -82,14 +82,6 @@
           "issue": "4",
           "pages": "728–743",
           "doi": "10.1037/a0018966"
-        },
-        {
-          "key": "openpsychometrics2019",
-          "type": "misc",
-          "authors": ["OpenPsychometrics.org"],
-          "year": "2019",
-          "title": "Raw data from online personality tests",
-          "url": "https://openpsychometrics.org/_rawdata/"
         }
       ]
     }

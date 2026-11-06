@@ -37,7 +37,7 @@ custom_js:
       {% capture setup_body %}
         <div class="panel-block">
           <label class="section-label" data-i18n="upload_label">Upload data file</label>
-          {% capture dif_drop_buttons %}<p class="drop-zone-or" data-i18n="upload_or">or</p><div class="drop-zone-btns"><button id="dif-browse-btn" class="btn-secondary btn-sm" type="button" data-i18n="upload_btn">Browse file</button><button id="dif-load-vocab-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_vocab_btn">Load vocab example</button><button id="dif-load-riasec-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_riasec_btn">Load RIASEC (large)</button></div>{% endcapture %}
+          {% capture dif_drop_buttons %}<p class="drop-zone-or" data-i18n="upload_or">or</p><div class="drop-zone-btns"><button id="dif-browse-btn" class="btn-secondary btn-sm" type="button" data-i18n="upload_btn">Browse file</button><button id="dif-load-dichot-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_dichot_btn">Load dichotomous example</button><button id="dif-load-poly-btn" class="btn-ghost btn-sm" type="button" data-i18n="load_poly_btn">Load polytomous example</button></div>{% endcapture %}
           {% include widgets/widget_drop_zone.html
             zone_id="dif-drop-zone"
             aria_label="Upload data file"
